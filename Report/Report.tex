@@ -1,0 +1,139 @@
+\documentclass[a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{hyperref}
+\usepackage{a4wide}
+\hypersetup{pdftitle={LI4 - Proposta de Projeto},
+pdfauthor={João Teixeira, José Ferreira, Miguel Solino, Maria Silva, Pedro
+Oliveira},
+colorlinks=true,
+urlcolor=blue,
+linkcolor=black}
+\usepackage{subcaption}
+\usepackage[cache=false]{minted}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{appendix}
+\usepackage{tikz}
+\usepackage{authblk}
+\usepackage{bashful}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{tikz,fullpage}
+\usepackage{pgfgantt}
+\usetikzlibrary{arrows,%
+                petri,%
+                topaths}%
+\usepackage{tkz-berge}
+\usetikzlibrary{positioning,automata,decorations.markings}
+\AfterEndEnvironment{figure}{\noindent\ignorespaces}
+\AfterEndEnvironment{table}{\noindent\ignorespaces}
+
+\begin{document}
+
+\title{LI4 - Proposta de Projeto\\ 
+\large PL1 - Grupo 1.1}
+\author{José Ferreira (A83683) \and João Teixeira (A85504) \and Maria Silva
+(A83840) \and Miguel Solino (A86435) \and Pedro Oliveira (A83762)}
+\date{\today}
+
+\begin{center}
+    \begin{minipage}{0.75\linewidth}
+        \centering
+        \includegraphics[width=0.4\textwidth]{images/eng.jpeg}\par\vspace{1cm}
+        \vspace{1.5cm}
+        \href{https://www.uminho.pt/PT}
+        {\color{black}{\scshape\LARGE Universidade do Minho}} \par
+        \vspace{1cm}
+        \href{https://www.di.uminho.pt/}
+        {\color{black}{\scshape\Large Departamento de Informática}} \par
+        \vspace{1.5cm}
+        \maketitle
+    \end{minipage}
+\end{center}
+
+\pagebreak
+\section{Título e Enquadramento}
+Um dos grandes problemas de gestão que todas as pessoas enfrentam ao longo da
+sua vida é como gerir as suas compras de produtos alimentares. É necessário
+gerir o que comprar, quando comprar e como comprar de forma a manter a dispensa
+recheada. E os problemas não acabam por aí, depois de comprar os produtos é
+necessário decidir o que fazer com eles e impedir que eles se estraguem. Com as
+nossas vidas cada vez mais ocupadas e privadas de tempo, algo simples que junte
+estas funcionalidades todas seria uma lufada de ar fresco.
+The Kitchen App
+
+\section{Objetivos}
+O objetivo deste projeto é criar uma aplicação que facilite a gestão e
+aproveiamente da despensa em casa permitindo também a criação de despensas
+partilhadas que podem ser editadas por todos os residentes.
+Para facilitar o aproveitamento dos ingredientes a aplicação irá sugerir várias
+receitas que poderão posteriormente ser adicionadas aos favoritos. De forma a
+diminuir o desperdício alimentar a aplicação também informará o utilizador
+quando os produtos estão quase a ficar fora do prazo de validade.
+
+\section{Requisitos}
+\subsection{Requisitos Funcionais}
+\begin{itemize}
+    \item Inserir/Remover produtos na dispensa
+    \item Criação de Utilizador
+    \item Procurar receitas com base nos produtos desponíveis
+    \item Procurar receitas
+    \item Procurar produtos
+    \item criar lista de compras
+    \item Listar receitas favoritas
+    \item Criar despensa
+    \item Adicionar utilizador a uma despensa
+\end{itemize}
+
+\subsection{Requisitos não-funcionais}
+\begin{itemize}
+    \item Os produtos devem ser adicionados com o nome, tipo e data de validade
+        (opcional)
+    \item Um utilizador deve ser criado fornecendo um nome, password, e-mail e
+        data de nascimento
+    \item Na procura de produtos pode ser fornecido o tipo a pesquisar
+    \item A criação de uma lista de compras pode ser feito com base numa receita
+    \item Receitas podem ser adicionadas por utilizadores de forma pública ou
+        privada
+    \item Um utilizador pode ter receitas favoritas
+    \item As receitas pesquisadas podem ser ordenadas com base nos produtos
+        disponíveis na dispensa
+\end{itemize}
+
+\section{Tecnologias}
+\begin{itemize}
+    \item C\#
+    \item MySQL
+    \item JavaScript
+    \item HTML/CSS
+    \item Python
+    \item Bash
+\end{itemize}
+
+\section{Cronograma}
+\begin{figure}[H]
+    \centering
+    \begin{ganttchart}[vgrid, hgrid]{1}{27}
+        \ganttbar{Task 0}{1}{4}\\
+        \ganttbar{Task 6}{1}{5}\\
+
+        \ganttbar{Task 1}{5}{10}\\
+        \ganttbar{Task 7}{6}{11}\\
+        \ganttbar{Task 10}{6}{13}\\
+        
+        \ganttbar{Task 4}{12}{20}\\
+        \ganttbar{Task 11}{14}{20}\\
+        
+        \ganttbar{Task 8}{17}{20}\\
+        
+        \ganttbar{Task 9}{21}{22}\\
+        
+        \ganttbar{Task 2}{21}{27}\\
+    \end{ganttchart}
+    \caption{diagrama de Gantt}
+\end{figure}
+
+\end{document}
