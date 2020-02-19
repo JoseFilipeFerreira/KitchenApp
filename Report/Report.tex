@@ -65,18 +65,18 @@ nossas vidas cada vez mais ocupadas e privadas de tempo, algo simples que junte
 estas funcionalidades todas seria uma lufada de ar fresco.
 The Kitchen App
 
-\section{Motivacoes}
-As motivacoes que nos levaram a iniciar este projeto foram o querer simplificar
+\section{Motivações}
+As motivações que nos levaram a iniciar este projeto foram o querer simplificar
 o processo de ir as compras e de gestão das nossas dispensas de casa.
 Queremos resolver problemas comuns do quotidiano, como comprar produtos que 
 ja temos em demasia ou querer cozinhar aquele prato
 que nos apetece mesmo e faltar algum dos ingredientes. 
-Desta forma, ser-nos-a possivel facilitar a vida aos utilizadores e, 
+Desta forma, ser-nos-á possível facilitar a vida aos utilizadores e, 
 ao mesmo tempo, reduzir o desperdício alimentar.
 
 \section{Objetivos}
 O objetivo deste projeto é criar uma aplicação que facilite a gestão e
-aproveiamente da despensa em casa permitindo também a criação de despensas
+aproveitamento da despensa em casa permitindo também a criação de despensas
 partilhadas que podem ser editadas por todos os residentes.
 Para facilitar o aproveitamento dos ingredientes a aplicação irá sugerir várias
 receitas que poderão posteriormente ser adicionadas aos favoritos. De forma a
@@ -86,30 +86,31 @@ quando os produtos estão quase a ficar fora do prazo de validade.
 \section{Requisitos}
 \subsection{Requisitos Funcionais}
 \begin{itemize}
-    \item Inserir/Remover produtos na dispensa
-    \item Criação de Utilizador
-    \item Procurar receitas com base nos produtos desponíveis
-    \item Procurar receitas
-    \item Procurar produtos
-    \item criar lista de compras
-    \item Listar receitas favoritas
-    \item Criar despensa
+    \item Criação/Gestão de Utilizador
+    \item Criação/Gestão de despensas
     \item Adicionar utilizador a uma despensa
+    \item Gerir produtos na despensa
+    \item Gerir produtos
+    \item Gerir listas de compras
+    \item Procurar receitas (filtrar com base nos produtos disponíveis)
+    \item Gerir receitas favoritas
 \end{itemize}
 
 \subsection{Requisitos não-funcionais}
 \begin{itemize}
-    \item Os produtos devem ser adicionados com o nome, tipo e data de validade
-        (opcional)
     \item Um utilizador deve ser criado fornecendo um nome, password, e-mail e
         data de nascimento
+    \item Uma despensa deve ser criada com nome e convidados (opcional)
+    \item Os produtos devem ser adicionados com o nome, tipo e data de validade
+        (opcional)
     \item Na procura de produtos pode ser fornecido o tipo a pesquisar
     \item A criação de uma lista de compras pode ser feito com base numa receita
-    \item Receitas podem ser adicionadas por utilizadores de forma pública ou
-        privada
-    \item Um utilizador pode ter receitas favoritas
     \item As receitas pesquisadas podem ser ordenadas com base nos produtos
         disponíveis na dispensa
+    \item Receitas podem ser adicionadas por utilizadores
+    \item Um utilizador pode ter receitas favoritas
+    \item Segurança
+    \item Eficiência
 \end{itemize}
 
 \section{Tecnologias}
@@ -122,6 +123,7 @@ quando os produtos estão quase a ficar fora do prazo de validade.
     \item Bash
 \end{itemize}
 
+\pagebreak
 \section{Cronograma}
 \noindent\resizebox{\textwidth}{!}{
 \begin{tikzpicture}
@@ -130,9 +132,11 @@ quando os produtos estão quase a ficar fora do prazo de validade.
     \ganttbar{Definir Objetivos}{1}{2} \\    
     \ganttbar{Use Cases}{2}{2} \\    
     \ganttbar{Estudo de Mercado}{2}{2} \\
+    \ganttbar{Modelação do Projeto}{3}{3} \\
     \ganttbar{Modelação de Base de Dados}{3}{4} \\
-    \ganttbar{Desenvolvimento}{3}{10} \\
-    \ganttbar{Finalização do Relatório}{10}{10} \\
+    \ganttbar{Planeamento da UI}{3}{4} \\
+    \ganttbar{Desenvolvimento}{5}{10} \\
+    \ganttbar{Escrita do Relatório}{1}{10} \\
     \gantttitle{1}{2}
     \gantttitle{2}{2}
     \gantttitle{3}{2}
