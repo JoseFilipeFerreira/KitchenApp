@@ -11,9 +11,6 @@ namespace KitchenApp
     {
         public static async Task Main(string[] args)
         {
-            var aaa = new UserStore();
-            await aaa.Add(new User("mna", "aaa", "ree", DateTime.Now));
-            await aaa.Get("aaa");
             CreateHostBuilder(args).Build().Run();
         }
 
