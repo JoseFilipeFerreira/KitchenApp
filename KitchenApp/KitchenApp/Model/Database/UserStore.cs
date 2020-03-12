@@ -27,7 +27,6 @@ namespace KitchenApp.Model.Database
                     while (await reader.FetchAsync())
                         lst.Add(reader.Current[0].ToString());
 
-                    Console.WriteLine(lst.Count);
                     return lst.Count != 0;
                 });
             }
