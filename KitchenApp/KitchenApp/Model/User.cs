@@ -7,14 +7,14 @@ namespace KitchenApp.Model
         public string _name { get; set; }
         public string _email { get; set; }
         public string _passwd { get; set; }
-        public DateTime _birth_date { get; set; }
+        public DateTime _birthdate { get; set; }
 
-        public User(string name, string email, string passwd, DateTime birthDate)
+        public User(string name, string email, string passwd, DateTime birthdate)
         {
             _name = name;
             _email = email;
             _passwd = passwd;
-            _birth_date = birthDate;
+            _birthdate = birthdate;
         }
     }
 }
