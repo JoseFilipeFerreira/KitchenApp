@@ -1,10 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Security;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Neo4j.Driver;
 
@@ -22,7 +17,7 @@ namespace KitchenApp.Model.Database
                 exists = await session.ReadTransactionAsync(async tx =>
                 {
                     var lst = new List<string>();
-                    var reader = await tx.RunAsync("MATCH(u:User) WHERE u.email = $email RETURN u.email",
+                    var reader = await tx.RunAsync("MATCH(u:User) WHERE u._email = $email RETURN u._email",
                         new {email = uid});
                     while (await reader.FetchAsync())
                         lst.Add(reader.Current[0].ToString());
@@ -56,7 +51,7 @@ namespace KitchenApp.Model.Database
             }
         }
 
-        public async Task<int> Remove(string uid)
+        public async Task<bool> Remove(string uid)
         {
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
             try
@@ -66,7 +61,7 @@ namespace KitchenApp.Model.Database
                     var lst = new List<string>();
                     var reader = await tx.RunAsync("MATCH(u:User) WHERE u._email = $email detach delete u",
                         new {email = uid});
-                    return reader.ConsumeAsync().Result.Counters.NodesDeleted;
+                    return reader.ConsumeAsync().Result.Counters.NodesDeleted != 0;
                 });
             }
             finally
@@ -74,10 +69,11 @@ namespace KitchenApp.Model.Database
                 await session.CloseAsync();
             }
 
-            return 0;
+            return false;
         }
-
-        public async Task<User> Get(String uid)
+        
+        #nullable enable
+        public async Task<User?> Get(String uid)
         {
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
             try
@@ -96,7 +92,7 @@ namespace KitchenApp.Model.Database
                             user.GetType().GetProperty(key)?.SetValue(user, value, null);
                         }
                     }
-
+                    
                     return user;
                 });
             }
