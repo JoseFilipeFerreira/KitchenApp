@@ -1,0 +1,148 @@
+html{
+
+    font-family: Roboto;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+*,
+:after,
+:before {
+    box-sizing: inherit
+}
+
+body,
+html {
+    min-height: 100%;
+    margin: 0
+}
+
+body {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    background: url("../images/shape1.svg") no-repeat 50% 0, url("../images/shape2.svg") no-repeat 0% 100%, #2D323A;
+    background-size: 100%;
+}
+
+.login-box{
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 30px;
+    padding-right: 30px;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -ms-flex: 1 auto;
+    flex: 1 auto;
+    align-items: center;
+    color: white;
+}
+
+.field {
+    margin: 10px;
+    width: 368px;
+    height: 76px;
+    background-color: #5B5D6B;
+    border-radius: 25px;
+    padding: 20px;
+    font-size: 30px;
+    color: white;
+    outline: none;
+    border: none;
+    transition-duration: 0.2s;
+    text-align: center;
+}
+
+.field:focus{
+    width: 410px;
+    transition-duration: 0.2s;
+}
+
+.logo{
+    margin-bottom: 30px;
+    font-size: 50px;
+    font-weight: bold;
+    background-color: transparent;
+}
+
+.login-text{
+    margin-top: 20px;
+    font-size: 30px;
+    background-color: transparent;
+}
+
+.buttons{
+    display: flex;
+    flex-direction: row;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.login-button {
+    margin: 10px;
+    margin-top: 20px;
+    width: 199px;
+    height: 76px;
+    font-size: 30px;
+    font-weight: bold;
+    border-radius: 35px;
+    outline: none;
+    border: none;
+    background-color: #c72c41;
+    color: white;
+}
+
+.login-button:hover {
+    background-color: #d43f53;
+}
+
+.register-button{
+    margin: 10px;
+    margin-top: 20px;
+    width: 199px;
+    height: 76px;
+    font-size: 30px;
+    font-weight: bold;
+    border-radius: 35px;
+    outline: none;
+    border: none;
+    background-color: #46ACF0;
+    color: white;
+}
+
+.register-button:hover {
+    background-color: #60B7F1;
+}
+
+@media only screen and (max-width: 600px) {
+
+    body{
+        background: url("../images/shape1-600px.svg") 50% 0 no-repeat, url("../images/shape2-600px.svg") 100% 100% no-repeat, #2D323A;
+        background-size: 100%;
+    }
+    .logo{
+        font-size: 40px;
+    }
+    .login-text{
+        font-size: 25px;
+    }
+    .field{
+        width: 250px;
+    }
+    .field:focus{
+        width: 300px;
+    }
+    .login-button{
+        width: 150px;
+    }
+    .register-button{
+        width: 150px;
+    }
+}
