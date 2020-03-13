@@ -4,17 +4,17 @@ namespace KitchenApp.Model
 {
     public class User
     {
-        private string _name { get; set; }
-        private string _email { get; set; }
-        private string _passwd { get; set; }
-        private DateTime _birthDate { get; set; }
+        public string _name { get; set; }
+        public string _email { get; set; }
+        public string _passwd { get; set; }
+        public DateTime _birthdate { get; set; }
 
-        public User(string name, string email, string passwd, DateTime birthDate)
+        public User(string name, string email, string passwd, DateTime birthdate)
         {
             _name = name;
             _email = email;
             _passwd = passwd;
-            _birthDate = birthDate;
+            _birthdate = birthdate;
         }
     }
 }
