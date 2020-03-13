@@ -38,6 +38,7 @@ namespace KitchenApp.Model.Database
             return exists;
         }
 
+        //Updates user if ``CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE``
         public async Task Add(User u)
         {
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
@@ -55,7 +56,7 @@ namespace KitchenApp.Model.Database
             }
         }
 
-        public async Task Remove(string uid)
+        public async Task<int> Remove(string uid)
         {
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
             try
@@ -65,16 +66,15 @@ namespace KitchenApp.Model.Database
                     var lst = new List<string>();
                     var reader = await tx.RunAsync("MATCH(u:User) WHERE u._email = $email detach delete u",
                         new {email = uid});
-                    while (await reader.FetchAsync())
-                        lst.Add(reader.Current[0].ToString());
-
-                    Console.WriteLine(lst.Count);
+                    return reader.ConsumeAsync().Result.Counters.NodesDeleted;
                 });
             }
             finally
             {
                 await session.CloseAsync();
             }
+
+            return 0;
         }
 
         public async Task<User> Get(String uid)
