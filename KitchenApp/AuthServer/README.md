@@ -7,7 +7,7 @@ This service exposes two endpoints:
 
 ## /login endpoint
 
-A user can login through a **GET** type request, with a HTML form, with the fields:
+A user can login through a **POST** type request, with a HTML form, with the fields:
 
 - username - User email
 - passwd - User password
