@@ -10,7 +10,7 @@ namespace AuthServer.Controllers
     [Route("[action]")]
     public class LoginController : ControllerBase
     {
-        [HttpGet]
+        [HttpPost]
         public async void Login()
         {
             var uid = HttpContext.Request.Form["username"].ToString();
