@@ -21,6 +21,7 @@ namespace AuthServer.Controllers
             if (u != null && u.CheckPasswd(passwd))
             {
                 HttpContext.Response.Cookies.Append("token", token, cookieOpts);
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Accepted;
             }
             else
             {
@@ -34,7 +35,7 @@ namespace AuthServer.Controllers
             string token;
             if (!HttpContext.Request.Cookies.TryGetValue("token", out token))
             {
-                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotAcceptable;
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 return;
             }
             token = await JwtBuilder.ValidateJwtAsync(token);
