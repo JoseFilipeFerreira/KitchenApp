@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Neo4j.Driver;
 
-namespace KitchenApp.Model.Database
+namespace KitchenLib.Database
 {
     public class UserStore
     {
@@ -33,7 +33,7 @@ namespace KitchenApp.Model.Database
             return exists;
         }
 
-        //Updates user if ``CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE``
+        //Updates user if ``CREATE CONSTRAINT ON (n:KitchenLib) ASSERT n.emaUseUE``
         public async Task Add(User u)
         {
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
@@ -72,9 +72,9 @@ namespace KitchenApp.Model.Database
             return false;
         }
         
-        #nullable enable
-        public async Task<User?> Get(String uid)
+        public async Task<User> Get(String uid)
         {
+            User u = null;
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
             try
             {
@@ -83,17 +83,15 @@ namespace KitchenApp.Model.Database
                     var lst = new List<string>();
                     var reader = await tx.RunAsync("Match(u:User) Where u._email = $email Return u",
                         new {email=uid});
-                    var user = new User("", "", "", DateTime.Now);
+                    u = new User("", "", "", DateTime.Now);
                     while (await reader.FetchAsync())
                     {
                         var aa = reader.Current[0].As<INode>().Properties;
                         foreach (var (key, value) in aa)
                         {
-                            user.GetType().GetProperty(key)?.SetValue(user, value, null);
+                            u.GetType().GetProperty(key)?.SetValue(u, value, null);
                         }
                     }
-                    
-                    return user;
                 });
             }
             finally
@@ -101,7 +99,7 @@ namespace KitchenApp.Model.Database
                 await session.CloseAsync();
             }
 
-            return null;
+            return u;
         }
     }
 }

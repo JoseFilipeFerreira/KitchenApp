@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Neo4j.Driver" Version="4.0.0" />
+      <ProjectReference Include="..\User\User.csproj" />
     </ItemGroup>
 
 
