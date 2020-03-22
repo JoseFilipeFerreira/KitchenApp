@@ -1,4 +1,4 @@
-#Auth Service
+# Auth Service
 
 This service exposes two endpoints:
 
