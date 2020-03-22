@@ -1,6 +1,6 @@
 using System;
 
-namespace KitchenApp.Model
+namespace KitchenLib
 {
     public class User
     {
@@ -15,6 +15,11 @@ namespace KitchenApp.Model
             _email = email;
             _passwd = passwd;
             _birthdate = birthdate;
+        }
+
+        public bool CheckPasswd(string passwd)
+        {
+            return _passwd.Equals(passwd);
         }
     }
 }

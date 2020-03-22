@@ -1,7 +1,7 @@
 using System;
 using Neo4j.Driver;
 
-namespace KitchenApp.Model.Database
+namespace KitchenLib.Database
 {
     public class Database : IDisposable
     {
