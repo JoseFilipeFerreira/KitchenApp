@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { Login } from './login'
-import { Register } from './register'
+import Login from './login'
+import Register from './register'
 
 class App extends Component {
   render() {
