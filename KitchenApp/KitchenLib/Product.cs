@@ -1,25 +1,33 @@
 using System;
 
-namespace KitchenApp.Model
+namespace KitchenLib
 {
     public class Product
     {
-        private string _name { get; set; }
-        private string _type { get; set; }
-        private DateTime _consume_before { get; set; }
-        private int _quantity { get; set; }
-        private string _owner_uid { get; set; }
+        public string _name { get; set; }
+        public string _category { get; set; }
+        public DateTime _consume_before { get; set; }
+        public uint _quantity { get; set; }
+        public string _units { get; set; }
+        public uint _stock { get; set; }
+        public string _owner_uid { get; set; }
+        public float _price { get; set; }
 
-        public Product(string name, string type, DateTime consume_before, int quantity, string owner_uid)
+        public Product(string name, string category, DateTime consume_before, uint quantity, string owner_uid, float price)
         {
             _name = name;
-            _type = type;
+            _category = category;
             _consume_before = consume_before;
             _quantity = quantity;
             _owner_uid = owner_uid;
+            _price = price;
         }
 
-        public int restock(int quantity)
+        public Product()
+        {
+        }
+
+        public uint restock(uint quantity)
         {
             _quantity += quantity;
             return _quantity;

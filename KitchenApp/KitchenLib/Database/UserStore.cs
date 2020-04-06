@@ -9,7 +9,7 @@ namespace KitchenLib.Database
     {
         public async Task<bool> Exists(string uid)
         {
-            Boolean exists = false;
+            Boolean exists;
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
             //var session = new Database("", "", "").session();
             try
@@ -33,7 +33,7 @@ namespace KitchenLib.Database
             return exists;
         }
 
-        //Updates user if ``CREATE CONSTRAINT ON (n:KitchenLib) ASSERT n.emaUseUE``
+        //Updates user if ``CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE``
         public async Task Add(User u)
         {
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
@@ -41,8 +41,8 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    await tx.RunAsync("CREATE (:User {_name: $name, _passwd: $passwd, _email: $email, _birhdate: $bd})",
-                        new {name = u._name, passwd = u._passwd, email = u._email, bd = u._birthdate});
+                    await tx.RunAsync("CREATE (:User {_name: $name, _passwd: $passwd, _email: $email, _birthday: $bd})",
+                        new {name = u._name, passwd = u._passwd, email = u._email, bd = u._birthday});
                 });
             }
             finally
