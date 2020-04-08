@@ -65,6 +65,11 @@ namespace AuthServer.Controllers
                 StringValues str;
                 if (HttpContext.Request.Form.TryGetValue("email", out str))
                 {
+                    if (us.Exists(str).Result)
+                    {
+                        HttpContext.Response.StatusCode = (int) HttpStatusCode.Conflict;
+                        return null;
+                    }
                     u._email = str.ToString();
                     token = await JwtBuilder.CreateJWTAsync(u, "KitchenAuth", "KicthenAuth", 1);
                     var cookieOpts = new CookieOptions {Secure = true, Expires = DateTimeOffset.Now.AddHours(1)};
@@ -77,7 +82,8 @@ namespace AuthServer.Controllers
                 }
             
                 await us.Add(u);
-            
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.OK;
+                
                 return u;
             }
                         

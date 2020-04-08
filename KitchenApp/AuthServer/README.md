@@ -23,3 +23,18 @@ If no token is provided or a invalid token is provided, the server will reply wi
 (Unauthorized) status code, and remove the cookie if it exists.
 If a valid token is provided, the server will reply with a **202** (Accepted) status code, 
 and the token will be valid for another hour.
+
+## /creds endpoint
+
+A user can edit it's login credentials through a ***POST*** type request, with a
+HTML form, at least one of the fields listed below:
+
+- username - New user email
+- passwd - New user password
+
+The server will reply with a ***200*** (OK) status code, and the JWT
+cookie will be updated, and will be valid for another hour.
+If the provided email is already in use, the server will reply with a 
+***409*** (Conflict) and nothing will be updated. 
+If the JWT is invalid, the server will reply with a ***401*** (Unauthorized)
+and the token will be destroyed.
