@@ -1,4 +1,5 @@
 using System;
+using Neo4j.Driver;
 
 namespace KitchenLib
 {
@@ -7,14 +8,10 @@ namespace KitchenLib
         public string _name { get; set; }
         public string _email { get; set; }
         public string _passwd { get; set; }
-        public DateTime _birthday { get; set; }
+        public LocalDateTime _birthdate { get; set; }
 
-        public User(string name, string email, string passwd, DateTime birthday)
+        public User()
         {
-            _name = name;
-            _email = email;
-            _passwd = passwd;
-            _birthday = birthday;
         }
 
         public bool CheckPasswd(string passwd)

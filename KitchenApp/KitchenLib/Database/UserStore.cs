@@ -32,7 +32,6 @@ namespace KitchenLib.Database
             return exists;
         }
 
-        //Updates user if ``CREATE CONSTRAINT ON (n:User) ASSERT n.email IS UNIQUE``
         public async Task Add(User u)
         {
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
@@ -40,8 +39,10 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    await tx.RunAsync("CREATE (:User {_name: $name, _passwd: $passwd, _email: $email, _birthday: $bd})",
-                        new {name = u._name, passwd = u._passwd, email = u._email, bd = u._birthday});
+                    await tx.RunAsync("Merge (u:User {_email: $email}) " +
+                                      "On Create set u._name = $name, u._passwd = $passwd, u._birthdate = $bd " +
+                                      "On Match set u._name = $name, u._passwd = $passwd, u._birthdate = $bd ",
+                        new {name = u._name, passwd = u._passwd, email = u._email, bd = u._birthdate});
                 });
             }
             finally
@@ -58,7 +59,7 @@ namespace KitchenLib.Database
                 await session.ReadTransactionAsync(async tx =>
                 {
                     var lst = new List<string>();
-                    var reader = await tx.RunAsync("MATCH(u:User) WHERE u._email = $email detach delete u",
+                    var reader = await tx.RunAsync("MATCH(u:User)-[]->(i) WHERE u._email = $email detach delete u, i",
                         new {email = uid});
                     return reader.ConsumeAsync().Result.Counters.NodesDeleted != 0;
                 });
@@ -71,7 +72,7 @@ namespace KitchenLib.Database
             return false;
         }
         
-        public async Task<User> Get(String uid)
+        public async Task<User?> Get(String uid)
         {
             User u = null;
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
@@ -79,13 +80,12 @@ namespace KitchenLib.Database
             {
                 await session.ReadTransactionAsync(async tx =>
                 {
-                    var lst = new List<string>();
                     var reader = await tx.RunAsync("Match(u:User) Where u._email = $email Return u",
                         new {email=uid});
-                    u = new User("", "", "", DateTime.Now);
                     while (await reader.FetchAsync())
                     {
                         var aa = reader.Current[0].As<INode>().Properties;
+                        u = new User();
                         foreach (var (key, value) in aa)
                         {
                             u.GetType().GetProperty(key)?.SetValue(u, value, null);
