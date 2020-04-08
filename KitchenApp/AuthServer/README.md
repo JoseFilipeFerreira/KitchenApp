@@ -1,9 +1,10 @@
 # Auth Service
 
-This service exposes two endpoints:
+This service exposes three endpoints:
 
 - /login
 - /auth
+- /creds
 
 ## /login endpoint
 
