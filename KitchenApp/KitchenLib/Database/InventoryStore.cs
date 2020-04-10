@@ -105,7 +105,7 @@ namespace KitchenLib.Database
                     var inv = new Inventory();
                     while (await reader.FetchAsync())
                     {
-                        var prods = reader.Current["products"].As<IList<IDictionary<string, object>>>();
+                        var prods = reader.Current["products"].As<IList<IDictionary<string, INode>>>();
                         var guests = reader.Current["guests"].As<IList<INode>>();
                         inv._name = reader.Current["name"].As<string>();
                         inv._owner_id = reader.Current["owner_id"].As<string>();
@@ -118,7 +118,7 @@ namespace KitchenLib.Database
                         foreach (var prod in prods)
                         {
                             var u = new Product();
-                            foreach (var (key, value) in prod["prod"].As<INode>().Properties)
+                            foreach (var (key, value) in prod["prod"].Properties)
                             {
                                 u.GetType().GetProperty(key)?.SetValue(u, value, null);
                             }

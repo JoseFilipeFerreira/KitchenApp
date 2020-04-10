@@ -1,0 +1,11 @@
+version: "2"
+services:
+    databases:
+        image: neo4j:latest
+        ports:
+            - "7474:7474"
+            - "7687:7687"
+        environment:
+            - NEO4J_AUTH=appMVC
+    web:
+        image: nginx
