@@ -8,14 +8,16 @@ async function isLoggedIn() {
   if (!token) return false;
 }
 
+const initialState = {
+  email: "",
+  password: "",
+};
+
 class Login extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      email: "",
-      password: "",
-    };
+    this.state = initialState;
   }
 
   changeHandler = (e) => {
@@ -79,6 +81,7 @@ class Login extends Component {
     } else {
       document.loginForm.email.value = "";
       document.loginForm.password.value = "";
+      this.setState(initialState);
     }
   };
 

@@ -3,17 +3,20 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./style.css";
 
+const initialState = {
+  email: "",
+  name: "",
+  phone: "",
+  password: "",
+};
+
 class Register extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      email: "",
-      name: "",
-      phone: "",
-      password: "",
-    };
+    this.state = initialState;
   }
+
 
   changeHandler = (e) => {
     this.setState({ [e.target.name]: e.target.value });
@@ -107,6 +110,13 @@ class Register extends Component {
         .catch((error) => {
           console.log(error);
         });
+    } else {
+      document.loginForm.email.value = "";
+      document.loginForm.password.value = "";
+      document.loginForm.name.value = "";
+      document.loginForm.phone.value = "";
+      this.setState(initialState);
+
     }
   };
 
