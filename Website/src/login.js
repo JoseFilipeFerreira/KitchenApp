@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./style.css";
 
-async function isLoggedIn () {
-  const token = localStorage.get('token')
-  if (!token) return false
+async function isLoggedIn() {
+  const token = localStorage.get("token");
+  if (!token) return false;
 }
 
 class Login extends Component {
@@ -26,7 +26,7 @@ class Login extends Component {
     if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e) && e !== "") {
       return true;
     }
-    if (e === '') {
+    if (e === "") {
       alert("Empty email address");
     } else {
       alert("Invalid Email");
@@ -36,16 +36,16 @@ class Login extends Component {
   };
 
   validatePassword = (e) => {
-    if (8 <= e.length && e.length <= 16 && e !== '') {
+    if (8 <= e.length && e.length <= 16 && e !== "") {
       return true;
     }
-    if (e === '' ) {
+    if (e === "") {
       alert("Empty password");
     } else {
       alert("Invalid password");
     }
     document.loginForm.password.focus();
-    
+
     return false;
   };
 
@@ -68,17 +68,17 @@ class Login extends Component {
         })
         .then((response) => {
           console.log(response);
-          const { token } = response.headers['set-cookie'];
-          console.log(response.headers['set-cookie']);
+          const { token } = response.headers["set-cookie"];
+          console.log(response.headers["set-cookie"]);
           /* save this token inside localStorage */
-          localStorage.setItem('token', token);
+          localStorage.setItem("token", token);
         })
         .catch((error) => {
           console.log(error);
         });
     } else {
       document.loginForm.email.value = "";
-      document.loginForm.password.value = ""
+      document.loginForm.password.value = "";
     }
   };
 
@@ -87,7 +87,7 @@ class Login extends Component {
 
     return (
       <form
-        id='loginForm'
+        id="loginForm"
         name="loginForm"
         className="login-box"
         onSubmit={this.submitHandler}
