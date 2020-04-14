@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>KitchenApp</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="reveal.js/css/reset.css">
+  <link rel="stylesheet" href="reveal.js/css/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="reveal.js/css/theme/white.css" id="theme">
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal.js/css/print/pdf.css' : 'reveal.js/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="reveal.js/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section>
+<section id="kitchenapp" class="title-slide slide level1">
+<h1>KitchenApp</h1>
+<ul>
+<li>José Filipe Ferreira</li>
+<li>João Teixeira</li>
+<li>Maria Silva</li>
+<li>Miguel Solino</li>
+<li>Pedro Oliveira</li>
+</ul>
+</section>
+<section id="objetivos-propostos-na-última-entrega" class="slide level2">
+<h2>Objetivos propostos na última entrega</h2>
+<ul>
+<li>Finalização da implementação das classes básicas do backend</li>
+<li>Continuar a implementaçao das classes básicas do backend ao dos DAOs</li>
+<li>Tornar a página de Login e register funcional</li>
+<li>Estruturar e popular a base de dados Neo4J com recurso a dados de teste</li>
+</ul>
+</section>
+<section id="objetivos-atingidos" class="slide level2">
+<h2>Objetivos atingidos</h2>
+<ul>
+<li>Todos os objetivos propostos na última entrega</li>
+<li>Implementação da API de <a href="https://github.com/JoseFilipeFerreira/LI4-1920/tree/master/KitchenApp/AuthServer">Login</a> e de <a href="https://github.com/JoseFilipeFerreira/LI4-1920/tree/master/KitchenApp/UserService">gestão de Utilizadores</a></li>
+<li>Implementação da página de informação do Utilizador</li>
+<li>Finalização dos DAOs de suporte ao projeto (exceto receitas)</li>
+<li>Inicio da implementação da API de receitas</li>
+</ul>
+</section>
+<section id="objetivos-para-a-próxima-entrega" class="slide level2">
+<h2>Objetivos para a próxima entrega</h2>
+<ul>
+<li>Continuação da implementação da API de receitas</li>
+<li>Implementação da API de lista de favoritos</li>
+<li>Implementação da API de despensas</li>
+<li>Inicio do desenvolvimento da página de informações de uma despensa</li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="reveal.js/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true },
+          { src: 'reveal.js/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
