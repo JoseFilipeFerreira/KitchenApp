@@ -70,7 +70,7 @@ namespace KitchenLib.Database
             return false;
         }
         
-        public async Task<Product> Get(String uid)
+        public async Task<Product> Get(string uid)
         {
             Product u = null;
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
