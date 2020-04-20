@@ -84,7 +84,7 @@ namespace KitchenLib.Database
             return false;
         }
 
-        public async Task<Inventory> Get(string uid)
+        public async Task<Inventory<OwnedProduct>> Get(string uid)
         {
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
             try
@@ -102,10 +102,10 @@ namespace KitchenLib.Database
                         "u._email as owner_id, " +
                         "i.name as name,",
                         new {email = User, name = uid});
-                    var inv = new Inventory();
+                    var inv = new Inventory<OwnedProduct>();
                     while (await reader.FetchAsync())
                     {
-                        var prods = reader.Current["products"].As<IList<IDictionary<string, INode>>>();
+                        var prods = reader.Current["products"].As<IList<IDictionary<string, object>>>();
                         var guests = reader.Current["guests"].As<IList<INode>>();
                         inv._name = reader.Current["name"].As<string>();
                         inv._owner_id = reader.Current["owner_id"].As<string>();
@@ -118,7 +118,7 @@ namespace KitchenLib.Database
                         foreach (var prod in prods)
                         {
                             var u = new OwnedProduct();
-                            foreach (var (key, value) in prod["prod"].Properties)
+                            foreach (var (key, value) in prod["prod"].As<INode>().Properties)
                             {
                                 u.GetType().GetProperty(key)?.SetValue(u, value, null);
                             }

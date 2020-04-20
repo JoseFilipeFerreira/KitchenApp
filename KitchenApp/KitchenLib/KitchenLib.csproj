@@ -9,4 +9,8 @@
       <PackageReference Include="Neo4j.Driver" Version="4.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Database\ShoppingListStore.cs" />
+    </ItemGroup>
+
 </Project>
