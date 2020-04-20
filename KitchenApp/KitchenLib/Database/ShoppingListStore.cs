@@ -6,11 +6,11 @@ using Neo4j.Driver;
 
 namespace KitchenLib.Database
 {
-    public class WishlistStore
+    public class ShoppingListStore
     {
         public string User { get; set; }
 
-        public WishlistStore(string user)
+        public ShoppingListStore(string user)
         {
             User = user;
         }
@@ -19,13 +19,14 @@ namespace KitchenLib.Database
         {
             Boolean exists;
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
+            //var session = new Database("", "", "").session();
             try
             {
                 exists = await session.ReadTransactionAsync(async tx =>
                 {
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
-                        "MATCH(u:User)-[:WSH]->(i:Wishlist) WHERE u._email = $email AND i.name = $name RETURN i.name",
+                        "MATCH(u:User)-[:SHP]->(i:Shoppinglist) WHERE u._email = $email AND i.name = $name RETURN i.name",
                         new {email = User, name = uid});
                     while (await reader.FetchAsync())
                         lst.Add(reader.Current[0].ToString());
@@ -49,8 +50,8 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     await tx.RunAsync("MATCH (u:User) where u._name = $user " +
-                                      "CREATE (i:Wishlist {name: $name}) " +
-                                      "CREATE (u)-[:WSH]->(i)",
+                                      "CREATE (i:Shoppinglist {name: $name}) " +
+                                      "CREATE (u)-[:SHP]->(i)",
                         new {user = User, name});
                 });
             }
@@ -68,7 +69,7 @@ namespace KitchenLib.Database
                 await session.ReadTransactionAsync(async tx =>
                 {
                     var lst = new List<string>();
-                    var reader = await tx.RunAsync("MATCH(u:User)-[:WSH]->(i:Wishlist)" +
+                    var reader = await tx.RunAsync("MATCH(u:User)-[:SHP]->(i:Shoppinglist)" +
                                                    "WHERE u._email = $email AND i._name = $name " +
                                                    "detach delete i",
                         new {email = User, name = uid});
@@ -83,7 +84,7 @@ namespace KitchenLib.Database
             return false;
         }
 
-        public async Task<Inventory<Product>> Get(string uid)
+        public async Task<Inventory<WantedProduct>> Get(string uid)
         {
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
             try
@@ -92,18 +93,19 @@ namespace KitchenLib.Database
                 {
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
-                        "Match(u:User)-[:WSH]->(i:Wishlist)-[c:CONTAIN]->(p:Product) " +
+                        "Match(u:User)-[:SHP]->(i:Shoppinglist)-[c:CONTAIN]->(p:Product) " +
                         "Match(i)-[:SHARED]->(z:User)" +
                         "Where u._email = $email AND i.name = $name " +
-                        "Return [(a)-[c:CONTAIN]->(b) where b: Product] as products, " +
+                        "Return [(a)-[c:CONTAIN]->(b) where b: Product | " +
+                        "{ prod: b, quant: c.quantity }] as products, " +
                         "[(a)-[:Shared]->(b) where b: User | b] as guests " +
                         "u._email as owner_id, " +
                         "i.name as name,",
                         new {email = User, name = uid});
-                    var inv = new Inventory<Product>();
+                    var inv = new Inventory<WantedProduct>();
                     while (await reader.FetchAsync())
                     {
-                        var prods = reader.Current["products"].As<IList<INode>>();
+                        var prods = reader.Current["products"].As<IList<IDictionary<string, object>>>();
                         var guests = reader.Current["guests"].As<IList<INode>>();
                         inv._name = reader.Current["name"].As<string>();
                         inv._owner_id = reader.Current["owner_id"].As<string>();
@@ -115,11 +117,13 @@ namespace KitchenLib.Database
 
                         foreach (var prod in prods)
                         {
-                            var u = new Product();
-                            foreach (var (key, value) in prod.Properties)
+                            var u = new WantedProduct();
+                            foreach (var (key, value) in prod["prod"].As<INode>().Properties)
                             {
                                 u.GetType().GetProperty(key)?.SetValue(u, value, null);
                             }
+
+                            u._stock = prod["quant"].As<uint>();
 
                             inv._products.Append(u);
                         }
@@ -136,16 +140,36 @@ namespace KitchenLib.Database
             return null;
         }
 
-        public async void Add_prod(string uid, string prodName)
+        public async void Add_prod(string uid, string prodName, int quant, DateTime date)
         {
             var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var r = await tx.RunAsync("Match (u:User)-[:WSH]->(i:Wishlist), (p:Product) " +
+                    var r = await tx.RunAsync("Match (u:User)-[:SHP]->(i:Shoppinglist), (p:Product) " +
                                               "where u._email = $email and i.name = $name and p.name = $p_name " +
-                                              "create (i)-[:CONTAIN]->(p)");
+                                              "create (i)-[:CONTAIN {quantity: $quant, expiration_date: $date}]->(p)",
+                        new {date, quant, email = User, name = uid, p_name = prodName});
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+
+        public async void Restock(string uid, string prodName, int quant)
+        {
+            var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.WriteTransactionAsync(async tx =>
+                {
+                    var r = await tx.RunAsync(
+                        "Match (u:User)-[:SHP]->(i:Shoppinglist)-[c:CONTAIN]->(p:Product) " +
+                        "where u._email = $email and i.name = $name and p.name = $p_name " +
+                        "Set c.quantity = $quant", new {name = uid, p_name = prodName, email = User, quant});
                 });
             }
             finally
@@ -162,7 +186,7 @@ namespace KitchenLib.Database
             {
                 await session.ReadTransactionAsync(async tx =>
                 {
-                    var r = await tx.RunAsync("match (u:User)-[:WSH]->(i:Wishlist) " +
+                    var r = await tx.RunAsync("match (u:User)-[:SHP]->(i:Shoppinglist) " +
                                               "where u._email = $email " +
                                               "return i._name");
                     while (await r.FetchAsync())
