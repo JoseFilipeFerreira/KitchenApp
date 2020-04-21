@@ -22,7 +22,7 @@ namespace AuthServer.Controllers
             if (u != null && u.CheckPasswd(passwd))
             {
                 var token = await JwtBuilder.CreateJWTAsync(u, "KitchenAuth", "KicthenAuth", 1);
-                var cookieOpts = new CookieOptions {Secure = true, Expires = DateTimeOffset.Now.AddHours(1)};
+                var cookieOpts = new CookieOptions {Expires = DateTimeOffset.Now.AddHours(1)};
                 HttpContext.Response.Cookies.Append("token", token, cookieOpts);
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Accepted;
             }

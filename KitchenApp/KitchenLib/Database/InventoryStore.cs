@@ -18,7 +18,7 @@ namespace KitchenLib.Database
         public async Task<bool> Exists(string uid)
         {
             Boolean exists;
-            var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             //var session = new Database("", "", "").session();
             try
             {
@@ -44,7 +44,7 @@ namespace KitchenLib.Database
 
         public async Task Add(string name)
         {
-            var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.WriteTransactionAsync(async tx =>
@@ -63,7 +63,7 @@ namespace KitchenLib.Database
 
         public async Task<bool> Remove(string uid)
         {
-            var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.ReadTransactionAsync(async tx =>
@@ -86,7 +86,7 @@ namespace KitchenLib.Database
 
         public async Task<Inventory<OwnedProduct>> Get(string uid)
         {
-            var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.ReadTransactionAsync(async tx =>
@@ -143,7 +143,7 @@ namespace KitchenLib.Database
 
         public async void Add_prod(string uid, string prodName, int quant, DateTime date)
         {
-            var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.WriteTransactionAsync(async tx =>
@@ -162,7 +162,7 @@ namespace KitchenLib.Database
 
         public async void Restock(string uid, string prodName, int quant)
         {
-            var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.WriteTransactionAsync(async tx =>
@@ -182,7 +182,7 @@ namespace KitchenLib.Database
         public async Task<List<string>> GetAll()
         {
             var l = new List<string>();
-            var session = new Database("bolt://localhost:7687", "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.ReadTransactionAsync(async tx =>
