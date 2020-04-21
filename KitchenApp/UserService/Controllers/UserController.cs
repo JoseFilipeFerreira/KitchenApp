@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using AuthServer;
 using KitchenLib;
 using KitchenLib.Database;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +10,7 @@ using Neo4j.Driver;
 namespace UserService.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("[action]")]
     public class UserController : ControllerBase
     {
         //Todo Don't send passwd

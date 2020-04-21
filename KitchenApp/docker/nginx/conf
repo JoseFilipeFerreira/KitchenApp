@@ -1,0 +1,30 @@
+events {}
+
+http {
+    upstream auths {
+        server authservice;
+    }
+
+    upstream users {
+        server userservice;
+    }
+
+    server {
+        server_name kitchen.app;
+
+        location /login {
+            proxy_pass http://auths/login;
+        }
+
+        location /auth {
+            internal;
+            proxy_pass http://auths/auth;
+        }
+
+        location /user/ {
+            auth_request /auth;
+            proxy_pass http://users/;
+        }
+    }
+}
+

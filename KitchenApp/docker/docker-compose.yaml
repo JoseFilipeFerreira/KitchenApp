@@ -1,0 +1,54 @@
+version: "3.8"
+services:
+    authservice:
+        build:
+            dockerfile: docker/auth-docker
+            context: ..
+        depends_on: 
+            - db
+        networks: 
+            legacy:
+                aliases:
+                    - authservice
+        expose: 
+            - "80"
+    userservice:
+        build:
+            dockerfile: docker/user-docker
+            context: ..
+        depends_on: 
+            - db
+        networks:
+            legacy:
+                aliases:
+                    - userservice
+        expose: 
+            - "80"
+    db:
+        image: neo4j:latest
+        environment:
+            - NEO4J_AUTH=neo4j/APPmvc
+        expose: 
+            - "7687"
+            - "7474"
+        ports: 
+            - 7687:7687
+            - 7474:7474
+        networks:
+            legacy:
+                aliases:
+                    - db
+    nginx:
+        image: nginx:latest
+        ports:
+            - 1331:80
+        volumes: 
+            - ./nginx/conf:/etc/nginx/nginx.conf
+        depends_on:
+            - authservice
+            - userservice
+        networks:
+            - legacy
+
+networks: 
+    legacy:
