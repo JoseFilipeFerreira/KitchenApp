@@ -7,9 +7,8 @@ services:
         depends_on: 
             - db
         networks: 
-            legacy:
-                aliases:
-                    - authservice
+            - db
+            - proxy
         expose: 
             - "80"
     userservice:
@@ -19,9 +18,8 @@ services:
         depends_on: 
             - db
         networks:
-            legacy:
-                aliases:
-                    - userservice
+            - db
+            - proxy
         expose: 
             - "80"
     db:
@@ -35,9 +33,7 @@ services:
             - 7687:7687
             - 7474:7474
         networks:
-            legacy:
-                aliases:
-                    - db
+            - db
     nginx:
         image: nginx:latest
         ports:
@@ -48,7 +44,8 @@ services:
             - authservice
             - userservice
         networks:
-            - legacy
+            - proxy
 
 networks: 
-    legacy:
+    db:
+    proxy:
