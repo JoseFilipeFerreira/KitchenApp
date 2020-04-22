@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
@@ -27,17 +26,6 @@ namespace AuthServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddCors();
-
-            var policy = new CorsPolicy();
-
-            policy.Headers.Add("*");    
-            policy.Methods.Add("*");          
-            policy.Origins.Add("*");
-            policy.SupportsCredentials = true;
-
-            services.AddCors(x=>x.AddPolicy("AllPolicy", policy));
-
         }
 
         // This method gets called by the runtime. User this method to configure the HTTP request pipeline.
@@ -52,8 +40,6 @@ namespace AuthServer
 
             app.UseRouting();
 
-            app.UseCors("AllPolicy");
-            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
