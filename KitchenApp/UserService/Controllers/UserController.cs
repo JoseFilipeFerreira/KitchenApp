@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using KitchenLib;
 using KitchenLib.Database;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Neo4j.Driver;
 
@@ -10,6 +11,7 @@ namespace UserService.Controllers
 {
     [ApiController]
     [Route("[action]")]
+    [EnableCors]
     public class UserController : ControllerBase
     {
         //Todo Don't send passwd
