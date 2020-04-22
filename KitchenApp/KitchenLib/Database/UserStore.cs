@@ -7,7 +7,7 @@ namespace KitchenLib.Database
 {
     public class UserStore
     {
-        public async Task<bool> Exists(string uid)
+        public static async Task<bool> Exists(string uid)
         {
             Boolean exists;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
@@ -32,7 +32,7 @@ namespace KitchenLib.Database
             return exists;
         }
 
-        public async Task Add(User u)
+        public static async Task Add(User u)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -40,9 +40,9 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     await tx.RunAsync("Merge (u:User {_email: $email}) " +
-                                      "On Create set u._name = $name, u._passwd = $passwd, u._birthdate = $bd " +
-                                      "On Match set u._name = $name, u._passwd = $passwd, u._birthdate = $bd ",
-                        new {name = u._name, passwd = u._passwd, email = u._email, bd = u._birthdate});
+                                      "On Create set u._name = $name, u._passwd = $passwd, u._birthdate = $bd, u._phone_number = ph " +
+                                      "On Match set u._name = $name, u._passwd = $passwd, u._birthdate = $bd, u._phone_number = ph ",
+                        new {name = u._name, passwd = u._passwd, email = u._email, bd = u._birthdate, ph = u._phone_number});
                 });
             }
             finally
@@ -72,7 +72,7 @@ namespace KitchenLib.Database
             return false;
         }
         
-        public async Task<User?> Get(String uid)
+        public static async Task<User?> Get(string uid)
         {
             User u = null;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
