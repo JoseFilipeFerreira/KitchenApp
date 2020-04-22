@@ -3,15 +3,16 @@ using System.Net;
 using System.Threading.Tasks;
 using KitchenLib;
 using KitchenLib.Database;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using Neo4j.Driver;
 
 namespace AuthServer.Controllers
 {
     [ApiController]
     [Route("[action]")]
+    [EnableCors]
     public class LoginController : ControllerBase
     {
         [HttpPost]
