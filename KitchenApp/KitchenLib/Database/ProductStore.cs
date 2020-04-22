@@ -7,7 +7,7 @@ namespace KitchenLib.Database
 {
     public class ProcuctStore
     {
-        public async Task<bool> Exists(string uid)
+        public static async Task<bool> Exists(string uid)
         {
             Boolean exists;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
@@ -32,7 +32,7 @@ namespace KitchenLib.Database
             return exists;
         }
 
-        public async Task Add(Product u)
+        public static async Task Add(Product u)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -49,7 +49,7 @@ namespace KitchenLib.Database
             }
         }
 
-        public async Task<bool> Remove(string guid)
+        public static async Task<bool> Remove(string guid)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -70,7 +70,7 @@ namespace KitchenLib.Database
             return false;
         }
         
-        public async Task<Product> Get(string uid)
+        public static async Task<Product> Get(string uid)
         {
             Product u = null;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
@@ -99,7 +99,7 @@ namespace KitchenLib.Database
             return u;
         }
 
-        public async Task<List<Product>> GetAll() 
+        public static async Task<List<Product>> GetAll() 
         {
             var l = new List<Product>();
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();

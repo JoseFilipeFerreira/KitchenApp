@@ -6,6 +6,7 @@ using KitchenLib.Database;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Neo4j.Driver;
 
 namespace AuthServer.Controllers
 {
@@ -14,11 +15,9 @@ namespace AuthServer.Controllers
     public class LoginController : ControllerBase
     {
         [HttpPost]
-        public async void Login()
+        public async void Login([FromForm] string username, [FromForm] string passwd)
         {
-            var uid = HttpContext.Request.Form["username"].ToString();
-            var passwd = HttpContext.Request.Form["passwd"].ToString();
-            var u = new UserStore().Get(uid).Result;
+            var u = UserStore.Get(username).Result;
             if (u != null && u.CheckPasswd(passwd))
             {
                 var token = await JwtBuilder.CreateJWTAsync(u, "KitchenAuth", "KicthenAuth", 1);
@@ -52,36 +51,37 @@ namespace AuthServer.Controllers
             HttpContext.Response.Cookies.Append("token", token, cookieOpts);
             HttpContext.Response.StatusCode = (int) HttpStatusCode.Accepted;
         }
+        
+        
 
         [HttpPost]
-        public async Task<User> Creds()
+        public async Task<User> Creds([FromForm] string email = null, [FromForm] string passwd = null)
         {
             string token, user;
             if (HttpContext.Request.Cookies.TryGetValue("token", out token) &&
                 (user = JwtBuilder.UserJwtToken(token).Result) != null)
             {
-                var us = new UserStore();
-                var u = us.Get(user).Result;
-                StringValues str;
-                if (HttpContext.Request.Form.TryGetValue("email", out str))
+                var u = UserStore.Get(user).Result;
+                if (email != null)
                 {
-                    if (us.Exists(str).Result)
+                    if (UserStore.Exists(email).Result)
                     {
                         HttpContext.Response.StatusCode = (int) HttpStatusCode.Conflict;
                         return null;
                     }
-                    u._email = str.ToString();
+
+                    u._email = email;
                     token = await JwtBuilder.CreateJWTAsync(u, "KitchenAuth", "KicthenAuth", 1);
                     var cookieOpts = new CookieOptions {Secure = true, Expires = DateTimeOffset.Now.AddHours(1)};
                     HttpContext.Response.Cookies.Append("token", token, cookieOpts);
                 }
             
-                if (HttpContext.Request.Form.TryGetValue("passwd", out str))
+                if (passwd != null)
                 {
-                    u._passwd = str.ToString();
+                    u._passwd = passwd;
                 }
             
-                await us.Add(u);
+                await UserStore.Add(u);
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.OK;
                 
                 return u;
@@ -90,6 +90,20 @@ namespace AuthServer.Controllers
             HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
             HttpContext.Response.Cookies.Delete("token");
             return null;
+        }
+
+        [HttpPost]
+        public async Task<User> SignUp([FromForm] string name, [FromForm] string passwd, [FromForm] string email,
+            [FromForm] uint phone_number, [FromForm] DateTime birthdate)
+        {
+            if (await UserStore.Exists(email))
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Conflict;
+                return null;
+            }
+            var user = new User(name, email, passwd, new LocalDateTime(birthdate), phone_number);
+            await UserStore.Add(user);
+            return user;
         }
     }
 }

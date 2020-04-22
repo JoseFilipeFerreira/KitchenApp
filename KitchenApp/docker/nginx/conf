@@ -16,6 +16,10 @@ http {
             proxy_pass http://auths/login;
         }
 
+        location /signup {
+            proxy_pass http://auths/signup;
+        }
+
         location /auth {
             internal;
             proxy_pass http://auths/auth;

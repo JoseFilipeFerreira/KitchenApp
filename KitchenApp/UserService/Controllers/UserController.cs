@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using KitchenLib;
 using KitchenLib.Database;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using Neo4j.Driver;
 
 namespace UserService.Controllers
@@ -21,7 +20,9 @@ namespace UserService.Controllers
             if (HttpContext.Request.Cookies.TryGetValue("token", out token) &&
                 (user = JwtBuilder.UserJwtToken(token).Result) != null)
             {
-                return new UserStore().Get(user).Result;
+                var u =  UserStore.Get(user).Result;
+                u._passwd = null;
+                return u;
             }
 
             HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
@@ -29,28 +30,26 @@ namespace UserService.Controllers
             return null;
         }
 
-        //TODO Get better way to update user
         [HttpPost]
-        public async Task<User> Edit()
+        public async Task<User> Edit([FromForm] DateTime birthday = default, [FromForm] string name = null)
         {
             string token, user;
             if (HttpContext.Request.Cookies.TryGetValue("token", out token) &&
                 (user = JwtBuilder.UserJwtToken(token).Result) != null)
             {
                 var us = new UserStore();
-                var u = us.Get(user).Result;
-                StringValues str;
-                if (HttpContext.Request.Form.TryGetValue("birthday", out str))
+                var u = UserStore.Get(user).Result;
+                if (birthday != default)
                 {
-                    u._birthdate = new LocalDateTime(Convert.ToDateTime(str.ToString()));
+                    u._birthdate = new LocalDateTime(birthday);
                 }
 
-                if (HttpContext.Request.Form.TryGetValue("name", out str))
+                if (name != null)
                 {
-                    u._name = str.ToString();
+                    u._name = name;
                 }
 
-                await us.Add(u);
+                await UserStore.Add(u);
 
                 return u;
             }

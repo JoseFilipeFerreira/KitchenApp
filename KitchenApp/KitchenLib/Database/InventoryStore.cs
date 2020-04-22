@@ -8,14 +8,7 @@ namespace KitchenLib.Database
 {
     public class InventoryStore
     {
-        public string User { get; set; }
-
-        public InventoryStore(string user)
-        {
-            User = user;
-        }
-
-        public async Task<bool> Exists(string uid)
+        public static async Task<bool> Exists(string uid, string email)
         {
             Boolean exists;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
@@ -27,7 +20,7 @@ namespace KitchenLib.Database
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
                         "MATCH(u:User)-[:INV]->(i:Inventory) WHERE u._email = $email AND i.name = $name RETURN i.name",
-                        new {email = User, name = uid});
+                        new {email, name = uid});
                     while (await reader.FetchAsync())
                         lst.Add(reader.Current[0].ToString());
 
@@ -42,7 +35,7 @@ namespace KitchenLib.Database
             return exists;
         }
 
-        public async Task Add(string name)
+        public static async Task Add(string name, string user)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -52,7 +45,7 @@ namespace KitchenLib.Database
                     await tx.RunAsync("MATCH (u:User) where u._name = $user " +
                                       "CREATE (i:Inventory {name: $name}) " +
                                       "CREATE (u)-[:INV]->(i)",
-                        new {user = User, name});
+                        new {user, name});
                 });
             }
             finally
@@ -61,7 +54,7 @@ namespace KitchenLib.Database
             }
         }
 
-        public async Task<bool> Remove(string uid)
+        public static async Task<bool> Remove(string uid, string email)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -72,7 +65,7 @@ namespace KitchenLib.Database
                     var reader = await tx.RunAsync("MATCH(u:User)-[:INV]->(i:Inventory)" +
                                                    "WHERE u._email = $email AND i._name = $name " +
                                                    "detach delete i",
-                        new {email = User, name = uid});
+                        new {email, name = uid});
                     return reader.ConsumeAsync().Result.Counters.NodesDeleted != 0;
                 });
             }
@@ -84,7 +77,7 @@ namespace KitchenLib.Database
             return false;
         }
 
-        public async Task<Inventory<OwnedProduct>> Get(string uid)
+        public static async Task<Inventory<OwnedProduct>> Get(string uid, string email)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -101,7 +94,7 @@ namespace KitchenLib.Database
                         "[(a)-[:Shared]->(b) where b: User | b] as guests " +
                         "u._email as owner_id, " +
                         "i.name as name,",
-                        new {email = User, name = uid});
+                        new {email, name = uid});
                     var inv = new Inventory<OwnedProduct>();
                     while (await reader.FetchAsync())
                     {
@@ -141,7 +134,7 @@ namespace KitchenLib.Database
             return null;
         }
 
-        public async void Add_prod(string uid, string prodName, int quant, DateTime date)
+        public static async void Add_prod(string uid, string prodName, int quant, DateTime date, string email)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -151,7 +144,7 @@ namespace KitchenLib.Database
                     var r = await tx.RunAsync("Match (u:User)-[:INV]->(i:Inventory), (p:Product) " +
                                               "where u._email = $email and i.name = $name and p.name = $p_name " +
                                               "create (i)-[:CONTAIN {quantity: $quant, expiration_date: $date}]->(p)",
-                        new {date, quant, email = User, name = uid, p_name = prodName});
+                        new {date, quant, email, name = uid, p_name = prodName});
                 });
             }
             finally
@@ -160,7 +153,7 @@ namespace KitchenLib.Database
             }
         }
 
-        public async void Restock(string uid, string prodName, int quant)
+        public static async void Restock(string uid, string prodName, int quant, string email)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -170,7 +163,7 @@ namespace KitchenLib.Database
                     var r = await tx.RunAsync(
                         "Match (u:User)-[:INV]->(i:Inventory)-[c:CONTAIN]->(p:Product) " +
                         "where u._email = $email and i.name = $name and p.name = $p_name " +
-                        "Set c.quantity = $quant", new {name = uid, p_name = prodName, email = User, quant});
+                        "Set c.quantity = $quant", new {name = uid, p_name = prodName, email, quant});
                 });
             }
             finally
@@ -179,7 +172,7 @@ namespace KitchenLib.Database
             }
         }
 
-        public async Task<List<string>> GetAll()
+        public static async Task<List<string>> GetAll(string email)
         {
             var l = new List<string>();
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
@@ -189,7 +182,7 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("match (u:User)-[:INV]->(i:Inventory) " +
                                               "where u._email = $email " +
-                                              "return i._name");
+                                              "return i._name", new {email});
                     while (await r.FetchAsync())
                     {
                         l.Add(r.Current[0].As<string>());
