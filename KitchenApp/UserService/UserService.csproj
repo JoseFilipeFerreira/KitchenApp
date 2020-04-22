@@ -5,7 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AuthServer\AuthServer.csproj" />
       <ProjectReference Include="..\KitchenLib\KitchenLib.csproj" />
     </ItemGroup>
 
