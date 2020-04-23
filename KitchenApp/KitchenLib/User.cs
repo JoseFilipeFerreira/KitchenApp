@@ -9,13 +9,13 @@ namespace KitchenLib
         public string _email { get; set; }
         public string _passwd { get; set; }
         public LocalDateTime _birthdate { get; set; }
-        public uint _phone_number { get; set; } 
+        public long _phone_number { get; set; } 
 
         public User()
         {
         }
 
-        public User(string name, string email, string passwd, LocalDateTime birthdate, uint phoneNumber)
+        public User(string name, string email, string passwd, LocalDateTime birthdate, long phoneNumber)
         {
             _name = name;
             _email = email;

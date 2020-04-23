@@ -23,7 +23,8 @@ namespace UserService
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("*")
+                    builder.WithOrigins("http://localhost:1331/")
+                        .AllowCredentials()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });

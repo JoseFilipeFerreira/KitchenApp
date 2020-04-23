@@ -30,8 +30,10 @@ namespace AuthServer
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("*")
+                    builder.WithOrigins("http://localhost:1331", "http://localhost:3000")
+                        .AllowCredentials()
                         .AllowAnyHeader()
+                        .WithExposedHeaders("auth")
                         .AllowAnyMethod();
                 });
             });

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using KitchenLib;
 using KitchenLib.Database;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Neo4j.Driver;
 
@@ -22,47 +21,52 @@ namespace AuthServer.Controllers
             if (u != null && u.CheckPasswd(passwd))
             {
                 var token = await JwtBuilder.CreateJWTAsync(u, "KitchenAuth", "KicthenAuth", 1);
-                var cookieOpts = new CookieOptions {Expires = DateTimeOffset.Now.AddHours(1)};
-                HttpContext.Response.Cookies.Append("token", token, cookieOpts);
+                HttpContext.Response.Headers.Add("auth", token);
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Accepted;
             }
             else
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                HttpContext.Response.Headers.Remove("auth");
             }
         }
 
         [HttpGet]
-        public async void Auth()
+        public async void Auth([FromHeader] string auth = null)
         {
-            string token;
-            if (!HttpContext.Request.Cookies.TryGetValue("token", out token))
+            if (auth == null)
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 return;
             }
-            token = await JwtBuilder.ValidateJwtAsync(token);
-            if (token == null)
+            auth = await JwtBuilder.ValidateJwtAsync(auth);
+            if (auth == null)
             {
-                HttpContext.Response.Cookies.Delete("token");
+                HttpContext.Response.Headers.Remove("auth");
+                
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 return;
             }
-            var cookieOpts = new CookieOptions {Secure = true, Expires = DateTimeOffset.Now.AddHours(1)};
-            HttpContext.Response.Cookies.Append("token", token, cookieOpts);
+            HttpContext.Response.Headers.Add("auth", auth);
             HttpContext.Response.StatusCode = (int) HttpStatusCode.Accepted;
         }
         
         
 
         [HttpPost]
-        public async Task<User> Creds([FromForm] string email = null, [FromForm] string passwd = null)
+        public async Task<User> Creds([FromForm] string email = null, [FromForm] string passwd = null, [FromHeader] string token = null)
         {
-            string token, user;
-            if (HttpContext.Request.Cookies.TryGetValue("token", out token) &&
+            string user;
+            if (token != null &&
                 (user = JwtBuilder.UserJwtToken(token).Result) != null)
             {
                 var u = UserStore.Get(user).Result;
+                if (u == null)
+                {
+                    HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                    HttpContext.Response.Headers.Remove("auth");
+                    return null;
+                }
                 if (email != null)
                 {
                     if (UserStore.Exists(email).Result)
@@ -73,8 +77,6 @@ namespace AuthServer.Controllers
 
                     u._email = email;
                     token = await JwtBuilder.CreateJWTAsync(u, "KitchenAuth", "KicthenAuth", 1);
-                    var cookieOpts = new CookieOptions {Secure = true, Expires = DateTimeOffset.Now.AddHours(1)};
-                    HttpContext.Response.Cookies.Append("token", token, cookieOpts);
                 }
             
                 if (passwd != null)
@@ -83,19 +85,21 @@ namespace AuthServer.Controllers
                 }
             
                 await UserStore.Add(u);
+                
+                HttpContext.Response.Headers.Add("auth", token);
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.OK;
                 
                 return u;
             }
                         
             HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
-            HttpContext.Response.Cookies.Delete("token");
+            HttpContext.Response.Headers.Remove("auth");
             return null;
         }
 
         [HttpPost]
         public async Task<User> SignUp([FromForm] string name, [FromForm] string passwd, [FromForm] string email,
-            [FromForm] uint phone_number, [FromForm] DateTime birthdate)
+            [FromForm] long phone_number, [FromForm] DateTime birthdate)
         {
             if (await UserStore.Exists(email))
             {

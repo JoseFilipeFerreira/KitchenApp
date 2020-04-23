@@ -14,33 +14,44 @@ namespace UserService.Controllers
     [EnableCors]
     public class UserController : ControllerBase
     {
-        //Todo Don't send passwd
         [HttpGet]
-        public User Info()
+        public User Info([FromHeader] string auth = null)
         {
-            string token, user;
-            if (HttpContext.Request.Cookies.TryGetValue("token", out token) &&
-                (user = JwtBuilder.UserJwtToken(token).Result) != null)
+            string user;
+            if (auth != null &&
+                (user = JwtBuilder.UserJwtToken(auth).Result) != null)
             {
                 var u =  UserStore.Get(user).Result;
+                if (u == null)
+                {
+                    HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                    HttpContext.Response.Headers.Remove("token");
+                    return null;
+                }
                 u._passwd = null;
+                HttpContext.Response.Headers.Add("auth", auth);
                 return u;
             }
 
             HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-            HttpContext.Response.Cookies.Delete("token");
+            HttpContext.Response.Headers.Remove("token");
             return null;
         }
 
         [HttpPost]
-        public async Task<User> Edit([FromForm] DateTime birthday = default, [FromForm] string name = null)
+        public async Task<User> Edit([FromForm] DateTime birthday = default, [FromForm] string name = null, [FromHeader] string auth = null)
         {
-            string token, user;
-            if (HttpContext.Request.Cookies.TryGetValue("token", out token) &&
-                (user = JwtBuilder.UserJwtToken(token).Result) != null)
+            string user;
+            if (auth != null &&
+                (user = JwtBuilder.UserJwtToken(auth).Result) != null)
             {
-                var us = new UserStore();
                 var u = UserStore.Get(user).Result;
+                if (u == null)
+                {
+                    HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                    HttpContext.Response.Headers.Remove("token");
+                    return null;
+                }                
                 if (birthday != default)
                 {
                     u._birthdate = new LocalDateTime(birthday);
@@ -52,28 +63,29 @@ namespace UserService.Controllers
                 }
 
                 await UserStore.Add(u);
+                HttpContext.Response.Headers.Add("auth", auth);
 
                 return u;
             }
             
             HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-            HttpContext.Response.Cookies.Delete("token");
+            HttpContext.Response.Headers.Remove("token");
             return null;
         }
 
         [HttpDelete]
-        public void Remove()
+        public void Remove([FromHeader] string auth = null)
         {
-            string token, user;
-            if (HttpContext.Request.Cookies.TryGetValue("token", out token) &&
-                (user = JwtBuilder.UserJwtToken(token).Result) != null)
+            string user;
+            if (auth != null &&
+                (user = JwtBuilder.UserJwtToken(auth).Result) != null)
             {
-                new UserStore().Remove(user);
-                HttpContext.Response.Cookies.Delete("token");
+                UserStore.Remove(user);
+                HttpContext.Response.Headers.Remove("token");
                 return;
             }
             HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-            HttpContext.Response.Cookies.Delete("token");
+            HttpContext.Response.Headers.Remove("token");
         }
     }
 }
