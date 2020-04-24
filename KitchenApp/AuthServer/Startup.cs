@@ -26,6 +26,17 @@ namespace AuthServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:1331", "http://localhost:3000")
+                        .AllowCredentials()
+                        .AllowAnyHeader()
+                        .WithExposedHeaders("auth")
+                        .AllowAnyMethod();
+                });
+            });
         }
 
         // This method gets called by the runtime. User this method to configure the HTTP request pipeline.
@@ -39,6 +50,8 @@ namespace AuthServer
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            
+            app.UseCors();
 
             app.UseAuthorization();
 

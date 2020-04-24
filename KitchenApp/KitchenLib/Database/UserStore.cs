@@ -40,8 +40,8 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     await tx.RunAsync("Merge (u:User {_email: $email}) " +
-                                      "On Create set u._name = $name, u._passwd = $passwd, u._birthdate = $bd, u._phone_number = ph " +
-                                      "On Match set u._name = $name, u._passwd = $passwd, u._birthdate = $bd, u._phone_number = ph ",
+                                      "On Create set u._name = $name, u._passwd = $passwd, u._birthdate = $bd, u._phone_number = $ph " +
+                                      "On Match set u._name = $name, u._passwd = $passwd, u._birthdate = $bd, u._phone_number = $ph ",
                         new {name = u._name, passwd = u._passwd, email = u._email, bd = u._birthdate, ph = u._phone_number});
                 });
             }
@@ -51,7 +51,7 @@ namespace KitchenLib.Database
             }
         }
 
-        public async Task<bool> Remove(string uid)
+        public static async Task<bool> Remove(string uid)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
