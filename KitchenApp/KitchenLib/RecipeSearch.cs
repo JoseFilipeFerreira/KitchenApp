@@ -1,53 +1,96 @@
 using System;
+using System.Collections.Generic;
 //Request library
 using System.Net;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace KitchenLib
 {
+    class MinimalRecipe
+    {
+        public string title { get; set; }
+        public string image { get; set; }
+        public uint id { get; set; }
+        
+        public MinimalRecipe(string recipeTitle, string imageURL, uint recipeId)
+        {
+            title = recipeTitle;
+            image = imageURL;
+            id = recipeId;
+        }
+    }
+
     public class RecipeSearch
     {
-        public List<Product> _ingridients{ get; set; }
+        private List<Product> Ingridients;
+        private string API_KEY = "7a98067ae9ea425ca548d96347913e74";
 
-        protected string api = "https://api.spoonacular.com/recipes";
-        protected string endpoint = "/findByIngredients&ingridients";
+        private string apiRecepiesIngridients = "https://api.spoonacular.com/recipes/";
 
         public RecipeSearch(List<Product> ingridients)
         {
-            _ingridients = ingridients;
+            Ingridients = ingridients;
         }
 
-        public RecipeSearch()
+        private static string get_request(string url)
         {
-        }
+            var httpWebRequestQR = (HttpWebRequest)WebRequest.Create(url);
+            httpWebRequestQR.ContentType = "application/json";
+            httpWebRequestQR.Method = "GET";
 
-        protected string get(string options){
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(api + endpoint + options);
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-        
-            using(HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using(Stream stream = response.GetResponseStream())
-            using(StreamReader reader = new StreamReader(stream))
+            var httpResponseQr = (HttpWebResponse)httpWebRequestQR.GetResponse();
+            using (var streamReader = new StreamReader(httpResponseQr.GetResponseStream()))
             {
-                return reader.ReadToEnd();
+                return streamReader.ReadToEnd();
             }
         }
 
         public List<Recipe> GetRecipies(uint number)
         {
-            var call = "&ingredients="
+            var call = "findByIngredients?ingredients=";
 
-            List<string> ingridients_string;
-            for(var p in _ingridients)
-                ingridients_string.Append(p._name);
+            var ingridientsString = new List<string>();
+            foreach (var p in Ingridients)
+                ingridientsString.Append(p._name);
 
-            call += string.Join(",", ingridients_string);
-            call += "&number="
+            call += string.Join(",", ingridientsString);
+            call += "&number=";
             call += number;
 
-            var httpClient = new HttpClient();
-            var content = await httpClient.GetStringAsync(uri);
-            return await Task.Run(() => JsonObject.Parse(content));
+            call += "&apiKey=";
+            call += API_KEY;
+            
+            var minimalList = JsonConvert.DeserializeObject<List<MinimalRecipe>>(get_request(apiRecepiesIngridients + call));
+
+            var recipeList = new List<Recipe>();
+            foreach (var mR in minimalList)
+            {
+                string reply = get_request(apiRecepiesIngridients + mR.id + "/information?includeNutrition=false");
+
+                var parsedObject = JObject.Parse(reply);
+                
+                var instructions = parsedObject["summary"].ToString();
+
+                var RP = new List<RecipeProduct>();
+                foreach (var PP in parsedObject["extendedIngredients"])
+                {
+                    RP.Append(new RecipeProduct(PP["id"].ToString(), PP["name"].ToString(), (uint) PP["measures"]["metric"]["amount"],
+                        PP["measures"]["metric"]["unitShort"].ToString()));
+                }
+
+
+                recipeList.Append(new Recipe(mR.title, mR.image, mR.id, RP, instructions));
+            }
+
+
+            return recipeList;
+
+
 
 
         }
