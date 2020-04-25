@@ -1,12 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenApp", "KitchenApp\KitchenApp.csproj", "{E3CB04EA-B4FB-455E-BC22-099BEB944D39}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KitchenApp", "KitchenApp\KitchenApp.csproj", "{E3CB04EA-B4FB-455E-BC22-099BEB944D39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthServer", "AuthServer\AuthServer.csproj", "{BC9E0C3A-788F-42EE-B17F-210D5B4DA21A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthServer", "AuthServer\AuthServer.csproj", "{BC9E0C3A-788F-42EE-B17F-210D5B4DA21A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenLib", "KitchenLib\KitchenLib.csproj", "{FBEECC57-BFC5-4A32-AFC8-199EE8ADDE49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KitchenLib", "KitchenLib\KitchenLib.csproj", "{FBEECC57-BFC5-4A32-AFC8-199EE8ADDE49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService", "UserService\UserService.csproj", "{E93222FF-5348-493A-A1A1-8CC02F4E5AA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserService", "UserService\UserService.csproj", "{E93222FF-5348-493A-A1A1-8CC02F4E5AA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WishlistService", "WishlistService\WishlistService.csproj", "{BEA37E67-B17F-4F79-9D77-5D0C71515980}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryService", "InventoryService\InventoryService.csproj", "{D63D366C-1709-4AD9-833A-6BF02AACF951}"
 EndProject
@@ -36,5 +41,9 @@ Global
 		{D63D366C-1709-4AD9-833A-6BF02AACF951}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D63D366C-1709-4AD9-833A-6BF02AACF951}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D63D366C-1709-4AD9-833A-6BF02AACF951}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEA37E67-B17F-4F79-9D77-5D0C71515980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEA37E67-B17F-4F79-9D77-5D0C71515980}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEA37E67-B17F-4F79-9D77-5D0C71515980}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEA37E67-B17F-4F79-9D77-5D0C71515980}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
