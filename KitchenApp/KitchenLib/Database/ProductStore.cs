@@ -5,7 +5,7 @@ using Neo4j.Driver;
 
 namespace KitchenLib.Database
 {
-    public class ProcuctStore
+    public class ProductStore
     {
         public static async Task<bool> Exists(string uid)
         {
@@ -39,8 +39,8 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    await tx.RunAsync("CREATE (:Product {_name: $name, _category: $category, _quantity: $quantity, _price: $price, _units = u._units})",
-                        new {name = u._name, category = u._category, quantity = u._quantity, price = u._price, guid = u._guid, units = u._units});
+                    await tx.RunAsync("CREATE (:Product {_guid: $uid, _name: $name, _category: $category, _quantity: $quantity, _price: $price, _units = $u._units})",
+                        new {name = u._name, category = u._category, quantity = u._quantity, price = u._price, guid = u._guid, units = u._units, uid = u._guid});
                 });
             }
             finally

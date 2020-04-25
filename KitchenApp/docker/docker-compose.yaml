@@ -22,6 +22,17 @@ services:
             - proxy
         expose: 
             - "80"
+    inventory:
+        build:
+            dockerfile: docker/inventory-docker
+            context: ..
+        depends_on: 
+            - db
+        networks:
+            - db
+            - proxy
+        expose: 
+            - "80"
     db:
         image: neo4j:latest
         environment:
@@ -43,6 +54,7 @@ services:
         depends_on:
             - authservice
             - userservice
+            - inventory
         networks:
             - proxy
 
