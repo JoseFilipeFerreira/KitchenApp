@@ -25,10 +25,18 @@ namespace WishlistService.Controllers
             HttpContext.Response.Headers.Remove("token");
             return wishL;
         }
-        //Ainda nao
         [HttpPost]
         public void AddProduct(string user, string wishlist, string product) {
-
+            var u = UserStore.Get(user).Result;
+            var wishL = WishlistStore.Get(wishlist, user).Result;
+            //var prod = ProductStore.get(product).Result;
+            if(u == null||wishL == null) {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                HttpContext.Response.Headers.Remove("token");
+                return;
+            }
+            _ = WishlistStore.Add_prod(wishlist,product,u._email);
+            HttpContext.Response.Headers.Remove("token");
         }
 
         [HttpPost]
@@ -43,7 +51,7 @@ namespace WishlistService.Controllers
             HttpContext.Response.Headers.Remove("token");
         }
 
-        //Ainda nao ?
+        //Ainda nao
         [HttpPost]
         public void Edit(string user, string new_name) {
 
@@ -62,10 +70,18 @@ namespace WishlistService.Controllers
             HttpContext.Response.Headers.Remove("token");
         }
 
-        //Ainda nao
         [HttpPost]
         public void RemoveProduct(string user, string wishlist, string product) {
-
+            var u = UserStore.Get(user).Result;
+            var wishL = WishlistStore.Get(wishlist, user).Result;
+            //var prod = ProductStore.get(product).Result;
+            if(u == null||wishL == null) {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                HttpContext.Response.Headers.Remove("token");
+                return;
+            }
+            /*_ = WishlistStore.Remove_Prod(u._email,wishlist,product);*/
+            HttpContext.Response.Headers.Remove("token");
         }
     }
 }
