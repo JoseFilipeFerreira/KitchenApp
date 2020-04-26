@@ -7,6 +7,7 @@ using KitchenLib.Database;
 using Microsoft.AspNetCore.Mvc;
 using Neo4j.Driver;
 
+//TODO Implement a All like endpoint to the shared inventories
 namespace InventoryService.Controllers
 {
     [ApiController]
@@ -17,7 +18,7 @@ namespace InventoryService.Controllers
         public async Task<Inventory<OwnedProduct>> Info([FromHeader] string auth, [FromRoute] string uid)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) != null)
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) != null && UserStore.Exists(user).Result)
             {
                 var u = await InventoryStore.Get(uid, user);
                 if (u == null)
@@ -30,7 +31,7 @@ namespace InventoryService.Controllers
                 return u;
             }
 
-            HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+            HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
             return null;
         }
 
@@ -95,13 +96,14 @@ namespace InventoryService.Controllers
             HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
         }
 
+        //TODO Check if the inventory contains a product
         [HttpPost]
-        public async void RemoveProduct([FromHeader] string auth, [FromForm] string inv, [FromForm] string prod)
+        public async void RemoveProduct([FromHeader] string auth, [FromForm] string uid, [FromForm] string prod)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) != null && await UserStore.Exists(user))
             {
-                if (!ProductStore.Exists(prod).Result || !InventoryStore.Exists(inv, user).Result)
+                if (!ProductStore.Exists(prod).Result || !InventoryStore.Exists(uid, user).Result)
                 {
                     HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
                     HttpContext.Request.Headers.Add("auth", auth);
@@ -109,7 +111,7 @@ namespace InventoryService.Controllers
                 }
 
                 HttpContext.Response.Headers.Add("auth", auth);
-                await InventoryStore.RemoveProd(inv, prod, user);
+                await InventoryStore.RemoveProd(uid, prod, user);
                 return;
             }
 
@@ -138,8 +140,8 @@ namespace InventoryService.Controllers
             }
         }
 
-        [HttpPost]
-        public bool Remove([FromHeader] string auth, [FromForm] string uid)
+        [HttpDelete("{uid}")]
+        public bool Remove([FromHeader] string auth, [FromRoute] string uid)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
