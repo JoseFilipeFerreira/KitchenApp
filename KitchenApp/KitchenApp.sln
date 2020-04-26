@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenLib", "KitchenLib\Ki
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService", "UserService\UserService.csproj", "{E93222FF-5348-493A-A1A1-8CC02F4E5AA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryService", "InventoryService\InventoryService.csproj", "{D63D366C-1709-4AD9-833A-6BF02AACF951}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{E93222FF-5348-493A-A1A1-8CC02F4E5AA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E93222FF-5348-493A-A1A1-8CC02F4E5AA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E93222FF-5348-493A-A1A1-8CC02F4E5AA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D63D366C-1709-4AD9-833A-6BF02AACF951}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D63D366C-1709-4AD9-833A-6BF02AACF951}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D63D366C-1709-4AD9-833A-6BF02AACF951}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D63D366C-1709-4AD9-833A-6BF02AACF951}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

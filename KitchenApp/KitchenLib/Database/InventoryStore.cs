@@ -8,19 +8,18 @@ namespace KitchenLib.Database
 {
     public class InventoryStore
     {
-        public static async Task<bool> Exists(string uid, string email)
+        public static async Task<bool> Exists(string name, string email)
         {
-            Boolean exists;
+            bool exists;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
-            //var session = new Database("", "", "").session();
             try
             {
                 exists = await session.ReadTransactionAsync(async tx =>
                 {
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
-                        "MATCH(u:User)-[:INV]->(i:Inventory) WHERE u._email = $email AND i.name = $name RETURN i.name",
-                        new {email, name = uid});
+                        "MATCH(u:User)-[:INV]->(i:Inventory) WHERE u._email = $email AND i.guid = $name RETURN i.name",
+                        new {email, name});
                     while (await reader.FetchAsync())
                         lst.Add(reader.Current[0].ToString());
 
@@ -35,17 +34,43 @@ namespace KitchenLib.Database
             return exists;
         }
 
-        public static async Task Add(string name, string user)
+        public static async Task<bool> ExistName(string name, string email)
+        {
+            bool exists;
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                exists = await session.ReadTransactionAsync(async tx =>
+                {
+                    var lst = new List<string>();
+                    var reader = await tx.RunAsync(
+                        "MATCH(u:User)-[:INV]->(i:Inventory) WHERE u._email = $email AND i.name = $name RETURN i.name",
+                        new {email, name});
+                    while (await reader.FetchAsync())
+                        lst.Add(reader.Current[0].ToString());
+
+                    return lst.Count != 0;
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return exists;
+        }
+
+        public static async Task Add(Inventory<OwnedProduct> inv, string user)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    await tx.RunAsync("MATCH (u:User) where u._name = $user " +
-                                      "CREATE (i:Inventory {name: $name}) " +
+                    await tx.RunAsync("MATCH (u:User) where u._email = $user " +
+                                      "CREATE (i:Inventory {name: $name, guid: $guid}) " +
                                       "CREATE (u)-[:INV]->(i)",
-                        new {user, name});
+                        new {user, name = inv._name, guid = inv._guid});
                 });
             }
             finally
@@ -54,18 +79,17 @@ namespace KitchenLib.Database
             }
         }
 
-        public static async Task<bool> Remove(string uid, string email)
+        public static async Task<bool> Remove(string guid, string email)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
-                await session.ReadTransactionAsync(async tx =>
+                await session.WriteTransactionAsync(async tx =>
                 {
-                    var lst = new List<string>();
-                    var reader = await tx.RunAsync("MATCH(u:User)-[:INV]->(i:Inventory)" +
-                                                   "WHERE u._email = $email AND i._name = $name " +
+                    var reader = await tx.RunAsync("MATCH(u:User)-[:INV]->(i:Inventory) " +
+                                                   "WHERE u._email = $email AND i.guid = $guid " +
                                                    "detach delete i",
-                        new {email, name = uid});
+                        new {email, guid});
                     return reader.ConsumeAsync().Result.Counters.NodesDeleted != 0;
                 });
             }
@@ -80,27 +104,28 @@ namespace KitchenLib.Database
         public static async Task<Inventory<OwnedProduct>> Get(string uid, string email)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            Inventory<OwnedProduct> inv = null;
             try
             {
                 await session.ReadTransactionAsync(async tx =>
                 {
-                    var lst = new List<string>();
                     var reader = await tx.RunAsync(
-                        "Match(u:User)-[:INV]->(i:Inventory)-[c:CONTAIN]->(p:Product) " +
-                        "Match(i)-[:SHARED]->(z:User)" +
-                        "Where u._email = $email AND i.name = $name " +
-                        "Return [(a)-[c:CONTAIN]->(b) where b: Product | " +
-                        "{ prod: b, quant: c.quantity, expire: c.expiration_date }] as products, " +
-                        "[(a)-[:Shared]->(b) where b: User | b] as guests " +
+                        "Match(u:User)-[:INV]->(i:Inventory) " +
+                        "Optional match (i)-[c:CONTAIN]->(p:Product) " +
+                        "Optional Match(i)-[:SHARED]->(z:User) " +
+                        "Where u._email = $email AND i.guid = $name " +
+                        "Return [(a)-[c:CONTAIN]->(b) where b: Product | { prod: b, quant: c.quantity, expire: c.expiration_date }] as products, " +
+                        "[(a)-[:Shared]->(b) where b: User | b] as guests, " +
                         "u._email as owner_id, " +
-                        "i.name as name,",
+                        "i.name as name, i.guid as guid",
                         new {email, name = uid});
-                    var inv = new Inventory<OwnedProduct>();
                     while (await reader.FetchAsync())
                     {
+                        inv = new Inventory<OwnedProduct>();
                         var prods = reader.Current["products"].As<IList<IDictionary<string, object>>>();
                         var guests = reader.Current["guests"].As<IList<INode>>();
                         inv._name = reader.Current["name"].As<string>();
+                        inv._guid = reader.Current["guid"].As<string>();
                         inv._owner_id = reader.Current["owner_id"].As<string>();
                         inv._guests = new List<string>();
                         foreach (var guest in guests)
@@ -108,6 +133,7 @@ namespace KitchenLib.Database
                             inv._guests.Append(guest["_email"].As<string>());
                         }
 
+                        if (prods == null) continue;
                         foreach (var prod in prods)
                         {
                             var u = new OwnedProduct();
@@ -122,8 +148,6 @@ namespace KitchenLib.Database
                             inv._products.Append(u);
                         }
                     }
-
-                    return inv;
                 });
             }
             finally
@@ -131,10 +155,10 @@ namespace KitchenLib.Database
                 await session.CloseAsync();
             }
 
-            return null;
+            return inv;
         }
 
-        public static async void Add_prod(string uid, string prodName, int quant, DateTime date, string email)
+        public static async Task Add_prod(string uid, string prodName, int quant, DateTime date, string email)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -142,7 +166,7 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     var r = await tx.RunAsync("Match (u:User)-[:INV]->(i:Inventory), (p:Product) " +
-                                              "where u._email = $email and i.name = $name and p.name = $p_name " +
+                                              "where u._email = $email and i.guid = $name and p.name = $p_name " +
                                               "create (i)-[:CONTAIN {quantity: $quant, expiration_date: $date}]->(p)",
                         new {date, quant, email, name = uid, p_name = prodName});
                 });
@@ -153,17 +177,32 @@ namespace KitchenLib.Database
             }
         }
 
-        public static async void Restock(string uid, string prodName, int quant, string email)
+        public static async Task Restock(string uid, string prodName, string email, long? quant = null,
+            LocalDateTime expire = null)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            if (quant == null && expire == null) return;
             try
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var r = await tx.RunAsync(
-                        "Match (u:User)-[:INV]->(i:Inventory)-[c:CONTAIN]->(p:Product) " +
-                        "where u._email = $email and i.name = $name and p.name = $p_name " +
-                        "Set c.quantity = $quant", new {name = uid, p_name = prodName, email, quant});
+                    var query = "Match (u:User)-[:INV]->(i:Inventory)-[c:CONTAIN]->(p:Product) " +
+                                "where u._email = $email and i.guid = $name and p.name = $p_name ";
+                    IDictionary<string, object> dic = new Dictionary<string, object>
+                        {{"name", uid}, {"p_name", prodName}, {"email", email}};
+                    if (quant != null)
+                    {
+                        query += "set c.quantity = $quant ";
+                        dic.Add("quant", quant);
+                    }
+
+                    if (expire != null)
+                    {
+                        query += "set c.expiration_date = $date ";
+                        dic.Add("date", expire);
+                    }
+
+                    var r = await tx.RunAsync(query, dic);
                 });
             }
             finally
@@ -172,9 +211,49 @@ namespace KitchenLib.Database
             }
         }
 
-        public static async Task<List<string>> GetAll(string email)
+        public static async Task RemoveProd(string uid, string prodName, string email)
         {
-            var l = new List<string>();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.WriteTransactionAsync(async tx =>
+                {
+                    var query = "Match (u:User)-[:INV]->(i:Inventory)-[c:CONTAIN]->(p:Product) " +
+                                "where u._email = $email and i.guid = $name and p.name = $p_name " +
+                                "delete c";
+                    IDictionary<string, object> dic = new Dictionary<string, object>
+                        {{"name", uid}, {"p_name", prodName}, {"email", email}};
+
+                    var r = await tx.RunAsync(query, dic);
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+
+        public static async Task Share(string uid, string email, string friend)
+        {
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.WriteTransactionAsync(async tx =>
+                {
+                    var r = await tx.RunAsync("Match (u:User)-[:INV]->(i:Inventory), (z:User) " +
+                                              "where u._email = $email and i.guid = $name and z._email = $friend " +
+                                              "create (i)-[:Shared]->(z)", new {email, name = uid, friend});
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+
+        public static async Task<IDictionary<string, string>> GetAll(string email)
+        {
+            var l = new Dictionary<string, string>();
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
@@ -182,10 +261,10 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("match (u:User)-[:INV]->(i:Inventory) " +
                                               "where u._email = $email " +
-                                              "return i._name", new {email});
+                                              "return i.name as name, i.guid as guid", new {email});
                     while (await r.FetchAsync())
                     {
-                        l.Add(r.Current[0].As<string>());
+                        l.Add(r.Current["name"].As<string>(), r.Current["guid"].As<string>());
                     }
                 });
             }
@@ -195,6 +274,24 @@ namespace KitchenLib.Database
             }
 
             return l;
+        }
+
+        public static async Task EditName(string email, string uid, string new_name)
+        {
+             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+             try
+             {
+                 await session.WriteTransactionAsync(async tx =>
+                 {
+                     var r = await tx.RunAsync("match (u:User)-[:INV]->(i:Inventory) " +
+                                               "where u._email = $email and i.guid = $uid " +
+                                               "set i.name = $new_name", new {email, uid, new_name});
+                });
+             }
+             finally
+             {
+                 await session.CloseAsync();
+             }
         }
     }
 }
