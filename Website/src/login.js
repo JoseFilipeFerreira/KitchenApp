@@ -22,6 +22,7 @@ class Login extends Component {
     if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e) && e !== "") {
       return true;
     }
+
     if (e === '') {
       alert("Empty email address");
     } else {
