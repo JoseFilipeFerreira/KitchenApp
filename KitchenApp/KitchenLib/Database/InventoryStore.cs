@@ -166,9 +166,9 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     var r = await tx.RunAsync("Match (u:User)-[:INV]->(i:Inventory), (p:Product) " +
-                                              "where u._email = $email and i.guid = $name and p.name = $p_name " +
+                                              "where u._email = $email and i.guid = $name and p._guid = $pguid " +
                                               "create (i)-[:CONTAIN {quantity: $quant, expiration_date: $date}]->(p)",
-                        new {date, quant, email, name = uid, p_name = prodName});
+                        new {date, quant, email, name = uid, pguid = prodName});
                 });
             }
             finally
@@ -187,9 +187,9 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     var query = "Match (u:User)-[:INV]->(i:Inventory)-[c:CONTAIN]->(p:Product) " +
-                                "where u._email = $email and i.guid = $name and p.name = $p_name ";
+                                "where u._email = $email and i.guid = $name and p._guid = $pguid ";
                     IDictionary<string, object> dic = new Dictionary<string, object>
-                        {{"name", uid}, {"p_name", prodName}, {"email", email}};
+                        {{"name", uid}, {"pguid", prodName}, {"email", email}};
                     if (quant != null)
                     {
                         query += "set c.quantity = $quant ";
@@ -219,10 +219,10 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     var query = "Match (u:User)-[:INV]->(i:Inventory)-[c:CONTAIN]->(p:Product) " +
-                                "where u._email = $email and i.guid = $name and p.name = $p_name " +
+                                "where u._email = $email and i.guid = $name and p._guid = $pguid " +
                                 "delete c";
                     IDictionary<string, object> dic = new Dictionary<string, object>
-                        {{"name", uid}, {"p_name", prodName}, {"email", email}};
+                        {{"name", uid}, {"pguid", prodName}, {"email", email}};
 
                     var r = await tx.RunAsync(query, dic);
                 });

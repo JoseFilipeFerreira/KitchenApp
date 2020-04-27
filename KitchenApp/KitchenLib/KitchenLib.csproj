@@ -11,8 +11,4 @@
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.5.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Remove="Database\ShoppingListStore.cs" />
-    </ItemGroup>
-
 </Project>
