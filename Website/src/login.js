@@ -3,12 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./style.css";
 
-async function isLoggedIn() {
-  const token = localStorage.get("token");
-  if (!token) return false;
-}
-
 class Login extends Component {
+
   constructor(props) {
     super(props);
 
@@ -26,7 +22,8 @@ class Login extends Component {
     if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e) && e !== "") {
       return true;
     }
-    if (e === "") {
+
+    if (e === '') {
       alert("Empty email address");
     } else {
       alert("Invalid Email");
@@ -36,10 +33,10 @@ class Login extends Component {
   };
 
   validatePassword = (e) => {
-    if (8 <= e.length && e.length <= 16 && e !== "") {
+    if (8 <= e.length && e.length <= 16 && e !== '') {
       return true;
     }
-    if (e === "") {
+    if (e === '') {
       alert("Empty password");
     } else {
       alert("Invalid password");
@@ -51,7 +48,6 @@ class Login extends Component {
 
   submitHandler = (e) => {
     e.preventDefault();
-    console.log(this.state);
 
     const form = new FormData();
 
@@ -63,22 +59,21 @@ class Login extends Component {
       form.append("passwd", passwd);
 
       axios
-        .post("https://jsonplaceholder.typicode.com/posts", form, {
-          headers: { "Content-Type": "multipart/form-data" },
+        .post("http://localhost:1331/login", form, {
+          headers: { "Content-Type": "multipart/form-data" }, withCredentials: true,
         })
         .then((response) => {
-          console.log(response);
-          const { token } = response.headers["set-cookie"];
-          console.log(response.headers["set-cookie"]);
           /* save this token inside localStorage */
-          localStorage.setItem("token", token);
+          const token = response.headers['auth'];
+          localStorage.setItem('auth', token);
+          this.props.history.push('/dashboard');
         })
         .catch((error) => {
-          console.log(error);
+          alert('Email ou password errada.');
         });
     } else {
       document.loginForm.email.value = "";
-      document.loginForm.password.value = "";
+      document.loginForm.password.value = ""
     }
   };
 
@@ -87,7 +82,7 @@ class Login extends Component {
 
     return (
       <form
-        id="loginForm"
+        id='loginForm'
         name="loginForm"
         className="login-box"
         onSubmit={this.submitHandler}
