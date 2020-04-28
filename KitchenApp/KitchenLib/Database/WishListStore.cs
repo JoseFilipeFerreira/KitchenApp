@@ -159,7 +159,7 @@ namespace KitchenLib.Database
             return null;
         }
 
-        public static async void Add_prod(string uid, string prodName, string email)
+        public static async Task Add_prod(string uid, string prodName, string email)
         {
             var session = new Database(uri, "neo4j", "APPmvc").session();
             try
