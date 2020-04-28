@@ -124,7 +124,7 @@ class Register extends Component {
       document.registerForm.name.value = ""
       document.registerForm.password.value = ""
       document.registerForm.phone.value = ""
-      document.registerForm.birthdate.value = ""
+      document.registerForm.birthday.value = ""
     }
   }
 
@@ -163,6 +163,7 @@ class Register extends Component {
           type="text"
           name="birthday"
           value={birthday}
+          placeholder="YYYY/MM/DD"
           onChange={this.changeHandler}
         ></input>
         <div className="login-text">Password</div>

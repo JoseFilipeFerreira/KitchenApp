@@ -1,11 +1,65 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import "./dashboard.css";
 
-class Dashboard extends Component {
+export default class Dashboard extends Component {
+  constructor(props) {
+    super(props);
 
-  removeToken() {
+    this.state = {
+      dashboards: null,
+    };
+  }
+
+  getDashboards = () => {
+    let token = localStorage.getItem('auth');
+    axios
+      .get("http://localhost:1331/inventory/all", {
+        headers: { "auth": token }
+      }, { withCredentials: true })
+      .then((response) => {
+        this.setState({dashboards: response.data});
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    if (localStorage.getItem('auth') != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  createInventory = () => {
+    let name = prompt("Nome para o inventário:");
+    let token = localStorage.getItem('auth');
+    const form = new FormData();
+
+    if (name !== null) {
+      form.append("name", name);
+
+      axios
+        .post("http://localhost:1331/inventory/add", form, {
+          headers: { "Content-Type": "multipart/form-data", "auth": token }, withCredentials: true,
+        })
+        .then((response) => {
+          /* save this token inside localStorage */
+          const token = response.headers['auth'];
+          localStorage.setItem('auth', token);
+          window.location.reload();
+        })
+        .catch((error) => {
+          alert('Email ou password errada.');
+        });
+    }
+  }
+
+  removeToken = () => {
     localStorage.removeItem('auth');
+    this.props.history.push('/');
+    window.location.reload();
   }
 
   collapseBar() {
@@ -16,9 +70,15 @@ class Dashboard extends Component {
     }
   }
 
+  componentDidMount() {
+    this.getDashboards();
+  }
+
   render() {
+    const { dashboards } = this.state;
+    console.log(dashboards);
     return (
-      <Fragment>
+      <div>
         <svg>
           <symbol id="down" viewBox="0 0 16 16">
             <polygon points="3.81 4.38 8 8.57 12.19 4.38 13.71 5.91 8 11.62 2.29 5.91 3.81 4.38" />
@@ -208,23 +268,22 @@ class Dashboard extends Component {
             </div>
           </section>
           <section className="grid">
-            <article></article>
-            <article></article>
-            <article></article>
-            <article></article>
-            <article></article>
-            <article></article>
-            <article></article>
-            <article></article>
+            <article>
+              <input
+                className="login-button"
+                type="button"
+                value="create Inventory"
+                onClick={this.createInventory}
+              ></input>
+            </article>
           </section>
           <footer className="page-footer">
-            <small>Made with <span>❤</span> by <a href="http://www.zuminho.pt/">Grupo 7s</a>
+            <small>Made with <span>❤</span> by <a href="http://www.zuminho.pt/">Grupo 1</a>
             </small>
           </footer>
         </section >
-      </Fragment>
+      </div>
     );
   }
 }
 
-export default Dashboard;

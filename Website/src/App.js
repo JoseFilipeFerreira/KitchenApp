@@ -9,6 +9,7 @@ import Dashboard from './dashboard'
 
 class App extends Component {
 
+
   isAuth = () => {
     let token = localStorage.getItem('auth');
     axios
@@ -16,12 +17,11 @@ class App extends Component {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
-        console.log(response);
+        console.log('Token valido');
       })
       .catch((error) => {
         console.log(error);
       });
-    console.log('teste');
 
     if (localStorage.getItem('auth') != null) {
       return true;
@@ -47,9 +47,8 @@ class App extends Component {
         <React.Fragment>
           <Router>
             <Switch>
-              <Route exact path="/" component={Login} />
-              <Route path="/register" component={Register} />
-              <Route path="/dashboard" component={Dashboard} />
+            <Route exact path="/dashboard" component={Dashboard} />
+              <Route exact path="*" component={Dashboard} />
             </Switch>
           </Router>
         </React.Fragment>
