@@ -280,7 +280,6 @@ body {
 
 .page-content .grid > article {
   display: flex;
-  height: 300px;
   background: var(--page-content-blockColor);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -289,6 +288,51 @@ body {
 .page-content .grid > article:first-child,
 .page-content .grid > article:last-child {
   grid-column: 1 / -1;
+}
+
+.inventories{
+  display: flex;
+  flex-direction: column;
+  font-size: 30px;
+  font-weight: bold;
+  padding: 20px;
+}
+
+.inventories-text {
+  margin-bottom: 10px;
+}
+
+.inventory-entry{
+  background-color: white;
+  font-size: 30px;
+  width: 100%;
+  text-align: left;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.061);
+  border-width: 3px 0px;
+}
+
+.inventory-entry:hover{
+  background-color: rgb(245, 245, 245);
+  cursor: pointer;
+}
+
+.inventory-button{
+  text-align: center;
+}
+
+.create-button{
+  margin: 10px;
+  margin-top: 20px;
+  width: 189px;
+  height: 46px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 35px;
+  outline: none;
+  border: none;
+  background-color: #c72c41;
+  color: white;
 }
 
 
@@ -436,4 +480,3 @@ body {
 .page-footer span {
   color: var(--red);
 }
-

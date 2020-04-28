@@ -19,7 +19,8 @@ export default class Dashboard extends Component {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
-        this.setState({dashboards: response.data});
+        this.setState({ dashboards: response.data });
+        this.showInventoryList();
       })
       .catch((error) => {
         console.log(error);
@@ -56,6 +57,16 @@ export default class Dashboard extends Component {
     }
   }
 
+  showInventoryList = () => {
+    var x;
+    var json = this.state.dashboards;
+    console.log(JSON.stringify(this.state.dashboards))
+    for (x in json) {
+      document.getElementById("inventoryList").innerHTML = '<a href="/dashboard/inventory/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
+        x + '"></input></a>'
+    }
+  }
+
   removeToken = () => {
     localStorage.removeItem('auth');
     this.props.history.push('/');
@@ -76,7 +87,6 @@ export default class Dashboard extends Component {
 
   render() {
     const { dashboards } = this.state;
-    console.log(dashboards);
     return (
       <div>
         <svg>
@@ -268,17 +278,25 @@ export default class Dashboard extends Component {
             </div>
           </section>
           <section className="grid">
-            <article>
-              <input
-                className="login-button"
-                type="button"
-                value="create Inventory"
-                onClick={this.createInventory}
-              ></input>
+            <article className="inventories">
+              <div className="inventories-text">
+                Inventories
+              </div>
+              <div id="inventoryList">
+
+              </div>
+              <div className="inventory-button">
+                <input
+                  className="create-button"
+                  type="button"
+                  value="Create Inventory"
+                  onClick={this.createInventory}
+                ></input>
+              </div>
             </article>
           </section>
           <footer className="page-footer">
-            <small>Made with <span>❤</span> by <a href="http://www.zuminho.pt/">Grupo 1</a>
+            <small>Made with <span>❤</span> by <a href="http://www.uminho.pt/">Grupo 1</a>
             </small>
           </footer>
         </section >
