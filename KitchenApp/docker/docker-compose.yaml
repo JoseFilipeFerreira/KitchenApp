@@ -33,6 +33,17 @@ services:
             - proxy
         expose: 
             - "80"
+    wishlist:
+        build:
+            dockerfile: docker/wishlist-docker
+            context: ..
+        depends_on: 
+            - db
+        networks:
+            - db
+            - proxy
+        expose: 
+            - "80"
     db:
         image: neo4j:latest
         environment:
@@ -55,6 +66,7 @@ services:
             - authservice
             - userservice
             - inventory
+            - wishlist
         networks:
             - proxy
 
