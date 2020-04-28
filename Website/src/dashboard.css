@@ -309,7 +309,7 @@ body {
   text-align: left;
   border-style: solid;
   border-color: rgba(0, 0, 0, 0.061);
-  border-width: 3px 0px;
+  border-width: 3px 0px 0px 0px;
 }
 
 .inventory-entry:hover{
