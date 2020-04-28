@@ -11,6 +11,7 @@ namespace KitchenLib
     {
         private static string symSec =
             "J6k2eVCTXDp5b97u6gNH5GaaqHDxCmzz2wv3PRPFRsuW2UavK8LGPRauC4VSeaetKTMtVmVzAC8fh8Psvp8PFybEvpYnULHfRpM8TA2an7GFehrLLvawVJdSRqh2unCnWehhh2SJMMg5bktRRapA8EGSgQUV8TCafqdSEHNWnGXTjjsMEjUpaxcADDNZLSYPMyPSfp6qe5LMcd5S9bXH97KeeMGyZTS2U8gp3LGk2kH4J4F3fsytfpe9H9qKwgjb";
+
         public static async Task<string> CreateJWTAsync(
             User user,
             string issuer,
@@ -27,40 +28,51 @@ namespace KitchenLib
                 notBefore: DateTime.UtcNow,
                 expires: DateTime.UtcNow.AddHours(hoursValid),
                 signingCredentials:
-                    new SigningCredentials(
-                        new SymmetricSecurityKey(
-                            Encoding.Default.GetBytes(symSec)), 
-                        SecurityAlgorithms.HmacSha256Signature));
-            
+                new SigningCredentials(
+                    new SymmetricSecurityKey(
+                        Encoding.Default.GetBytes(symSec)),
+                    SecurityAlgorithms.HmacSha256Signature));
+
             return tokenHandler.WriteToken(token);
         }
 
         public static async Task<string> ValidateJwtAsync(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = tokenHandler.ReadJwtToken(token);
-            var validate = new TokenValidationParameters()
-                {ValidateAudience = false, ValidateLifetime = true, ValidateIssuer = true, ValidIssuer = "KitchenAuth", IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(symSec))};
             try
             {
+                var jwtToken = tokenHandler.ReadJwtToken(token);
+                var validate = new TokenValidationParameters()
+                {
+                    ValidateAudience = false, ValidateLifetime = true, ValidateIssuer = true,
+                    ValidIssuer = "KitchenAuth",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(symSec))
+                };
                 tokenHandler.ValidateToken(token, validate, out _);
+                return tokenHandler.WriteToken(tokenHandler.CreateJwtSecurityToken(issuer: jwtToken.Issuer,
+                    audience: jwtToken.Audiences.GetEnumerator().Current, subject: new ClaimsIdentity(jwtToken.Claims),
+                    notBefore: DateTime.Now,
+                    expires: DateTime.Now.AddHours(1),
+                    signingCredentials: new SigningCredentials(
+                        new SymmetricSecurityKey(Encoding.Default.GetBytes(symSec)),
+                        SecurityAlgorithms.HmacSha256Signature)));
             }
             catch
             {
                 return null;
             }
-            return tokenHandler.WriteToken(tokenHandler.CreateJwtSecurityToken(issuer: jwtToken.Issuer,
-                audience: jwtToken.Audiences.GetEnumerator().Current, subject: new ClaimsIdentity(jwtToken.Claims), notBefore: DateTime.Now,
-                expires: DateTime.Now.AddHours(1), signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.Default.GetBytes(symSec)),SecurityAlgorithms.HmacSha256Signature)));
         }
-        
+
         //TODO Move this function
         public static async Task<string> UserJwtToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(token);
             var validate = new TokenValidationParameters()
-                {ValidateAudience = false, ValidateLifetime = true, ValidateIssuer = true, ValidIssuer = "KitchenAuth", IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(symSec))};
+            {
+                ValidateAudience = false, ValidateLifetime = true, ValidateIssuer = true, ValidIssuer = "KitchenAuth",
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(symSec))
+            };
             try
             {
                 tokenHandler.ValidateToken(token, validate, out _);
@@ -72,14 +84,14 @@ namespace KitchenLib
 
             return jwtToken.Actor;
         }
-        
+
         public static Task<ClaimsIdentity> CreateClaimsIdentitiesAsync(User user)
         {
             ClaimsIdentity claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim(ClaimTypes.Actor, user._email));
-        //    var roles = Enumerable.Empty<Role>(); // Not a real list.
-        //   foreach (var role in roles)
-        //    { claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.RoleName)); }
+            //    var roles = Enumerable.Empty<Role>(); // Not a real list.
+            //   foreach (var role in roles)
+            //    { claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.RoleName)); }
 
             return Task.FromResult(claimsIdentity);
         }
