@@ -18,20 +18,16 @@ namespace InventoryService.Controllers
         public async Task<Inventory<OwnedProduct>> Info([FromHeader] string auth, [FromRoute] string uid)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) != null && UserStore.Exists(user).Result)
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
             {
-                var u = await InventoryStore.Get(uid, user);
-                if (u == null)
-                {
-                    HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                    return null;
-                }
-
-                HttpContext.Response.Headers.Add("auth", auth);
-                return u;
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                return null;
             }
 
-            HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+            HttpContext.Response.Headers.Add("auth", auth);
+            var u = await InventoryStore.Get(uid, user);
+            if (u != null) return u;
+            HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
             return null;
         }
 
@@ -56,21 +52,20 @@ namespace InventoryService.Controllers
             [FromForm] string uid, [FromForm] DateTime expire)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) != null && UserStore.Exists(user).Result)
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
             {
-                if (!ProductStore.Exists(product).Result || !InventoryStore.Exists(uid, user).Result)
-                {
-                    HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                    HttpContext.Response.Headers.Add("auth", auth);
-                    return;
-                }
-
-                HttpContext.Response.Headers.Add("auth", auth);
-                await InventoryStore.Add_prod(uid, product, quantity, expire, user);
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 return;
             }
 
-            HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+            HttpContext.Response.Headers.Add("auth", auth);
+            if (!ProductStore.Exists(product).Result || !InventoryStore.Exists(uid, user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return;
+            }
+
+            await InventoryStore.Add_prod(uid, product, quantity, expire, user);
         }
 
         [HttpPost]
@@ -78,44 +73,41 @@ namespace InventoryService.Controllers
             [FromForm] string uid, [FromForm] DateTime? expire = null, [FromForm] long? quantity = null)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) != null && await UserStore.Exists(user))
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !await UserStore.Exists(user))
             {
-                if (!ProductStore.Exists(product).Result || !InventoryStore.Exists(uid, user).Result)
-                {
-                    HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                    HttpContext.Request.Headers.Add("auth", auth);
-                    return;
-                }
-
-                var date = expire != null ? new LocalDateTime((DateTime) expire) : null;
-                await InventoryStore.Restock(uid, product, user, quantity, date);
-                HttpContext.Response.Headers.Add("auth", auth);
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 return;
             }
 
-            HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+            HttpContext.Response.Headers.Add("auth", auth);
+            if (!ProductStore.Exists(product).Result || !InventoryStore.Exists(uid, user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return;
+            }
+
+            var date = expire != null ? new LocalDateTime((DateTime) expire) : null;
+            await InventoryStore.Restock(uid, product, user, quantity, date);
         }
 
-        //TODO Check if the inventory contains a product
         [HttpPost]
         public async void RemoveProduct([FromHeader] string auth, [FromForm] string uid, [FromForm] string prod)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) != null && await UserStore.Exists(user))
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !await UserStore.Exists(user))
             {
-                if (!ProductStore.Exists(prod).Result || !InventoryStore.Exists(uid, user).Result)
-                {
-                    HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                    HttpContext.Request.Headers.Add("auth", auth);
-                    return;
-                }
-
-                HttpContext.Response.Headers.Add("auth", auth);
-                await InventoryStore.RemoveProd(uid, prod, user);
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 return;
             }
 
-            HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+            HttpContext.Response.Headers.Add("auth", auth);
+            if (!ProductStore.Exists(prod).Result || !InventoryStore.Exists(uid, user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return;
+            }
+
+            await InventoryStore.RemoveProd(uid, prod, user);
         }
 
         [HttpPost]
@@ -135,8 +127,7 @@ namespace InventoryService.Controllers
             }
             else
             {
-                var inv = new Inventory<OwnedProduct>(name);
-                await InventoryStore.Add(inv, user);
+                await InventoryStore.Add(new Inventory<OwnedProduct>(name), user);
             }
         }
 
@@ -165,14 +156,12 @@ namespace InventoryService.Controllers
                 return;
             }
 
+            HttpContext.Response.Headers.Add("auth", auth);
             if (!InventoryStore.Exists(uid, user).Result || !UserStore.Exists(friend).Result)
             {
-                Console.WriteLine(UserStore.Exists(friend).Result);
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
                 return;
             }
-
-            HttpContext.Response.Headers.Add("auth", auth);
 
             await InventoryStore.Share(uid, user, friend);
         }
@@ -191,11 +180,10 @@ namespace InventoryService.Controllers
             if (await InventoryStore.ExistName(name, user))
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Conflict;
+                return;
             }
-            else
-            {
-                await InventoryStore.EditName(user, uid, name);
-            }
+
+            await InventoryStore.EditName(user, uid, name);
         }
     }
 }
