@@ -31,7 +31,7 @@ namespace UserService.Controllers
                 return null;
             }
 
-            u._passwd = null;
+            u._passwd = "[REDACTED]";
             HttpContext.Response.Headers.Add("auth", auth);
             return u;
         }

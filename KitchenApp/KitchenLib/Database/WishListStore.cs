@@ -9,6 +9,7 @@ namespace KitchenLib.Database
     public class WishlistStore
     {
         private static string uri = "bolt://localhost:7687";
+
         public static async Task<bool> Exists(string uid, string user)
         {
             Boolean exists;
@@ -226,6 +227,32 @@ namespace KitchenLib.Database
                 await session.ReadTransactionAsync(async tx =>
                 {
                     var r = await tx.RunAsync("match (u:User)-[:WSH]->(i:Wishlist) " +
+                                              "where u._email = $email " +
+                                              "return i.name as name, i.guid as guid", new {email});
+                    while (await r.FetchAsync())
+                    {
+                        l.Add(r.Current["name"].As<string>(), r.Current["guid"].As<string>());
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return l;
+        }
+
+
+        public static async Task<IDictionary<string, string>> GetShared(string email)
+        {
+            var l = new Dictionary<string, string>();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var r = await tx.RunAsync("match (u:User)-[:Shared]->(i:Wishlist) " +
                                               "where u._email = $email " +
                                               "return i.name as name, i.guid as guid", new {email});
                     while (await r.FetchAsync())

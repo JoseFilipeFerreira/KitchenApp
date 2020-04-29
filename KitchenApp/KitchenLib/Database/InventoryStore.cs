@@ -276,22 +276,47 @@ namespace KitchenLib.Database
             return l;
         }
 
+        public static async Task<IDictionary<string, string>> GetShared(string email)
+        {
+            var l = new Dictionary<string, string>();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var r = await tx.RunAsync("match (u:User)-[:Shared]->(i:Inventory) " +
+                                              "where u._email = $email " +
+                                              "return i.name as name, i.guid as guid", new {email});
+                    while (await r.FetchAsync())
+                    {
+                        l.Add(r.Current["name"].As<string>(), r.Current["guid"].As<string>());
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return l;
+        }
+
         public static async Task EditName(string email, string uid, string new_name)
         {
-             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
-             try
-             {
-                 await session.WriteTransactionAsync(async tx =>
-                 {
-                     var r = await tx.RunAsync("match (u:User)-[:INV]->(i:Inventory) " +
-                                               "where u._email = $email and i.guid = $uid " +
-                                               "set i.name = $new_name", new {email, uid, new_name});
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.WriteTransactionAsync(async tx =>
+                {
+                    var r = await tx.RunAsync("match (u:User)-[:INV]->(i:Inventory) " +
+                                              "where u._email = $email and i.guid = $uid " +
+                                              "set i.name = $new_name", new {email, uid, new_name});
                 });
-             }
-             finally
-             {
-                 await session.CloseAsync();
-             }
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
         }
     }
 }

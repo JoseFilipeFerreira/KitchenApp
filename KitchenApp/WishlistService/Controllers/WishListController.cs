@@ -163,5 +163,21 @@ namespace WishlistService.Controllers
             var res = await WishlistStore.GetAll(user);
             return res;
         }
+        
+        [HttpGet]
+        public async Task<IDictionary<string, string>> Shared([FromHeader] string auth)
+        {
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+
+            var res = await WishlistStore.GetShared(user);
+            return res;
+        }
     }
 }
