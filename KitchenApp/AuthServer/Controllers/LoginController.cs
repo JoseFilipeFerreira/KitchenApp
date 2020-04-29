@@ -108,7 +108,7 @@ namespace AuthServer.Controllers
             }
             var user = new User(name, email, passwd, new LocalDateTime(birthdate), phone_number);
             await UserStore.Add(user);
-            user._passwd = null;
+            user._passwd = "[REDACTED]";
             return user;
         }
     }
