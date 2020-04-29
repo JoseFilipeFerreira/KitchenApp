@@ -50,11 +50,11 @@ namespace KitchenLib
             return SearchRecipe(GetMinimalRecipies(options));
         }
         
-        public static List<Recipe> SearchRecipe(MinimalRecipe mR)
+        public static Recipe SearchSingleRecipe(MinimalRecipe mR)
         {
             var n = new List<MinimalRecipe>();
             n.Append(mR);
-            return SearchRecipe(mR);
+            return SearchRecipe(n)[0];
         }
 
         public static List<Recipe> SearchRecipe(List<MinimalRecipe> minimalList)
