@@ -14,7 +14,6 @@ namespace KitchenLib
 
     public class RecipeSearch
     {
-
         public static List<Recipe> SearchRecipe(uint number, List<Product> ingridients)
         {
             var options = "number=" + number;
@@ -59,11 +58,12 @@ namespace KitchenLib
 
         public static List<Recipe> SearchRecipe(List<MinimalRecipe> minimalList)
         {
+            var API_KEY = "7a98067ae9ea425ca548d96347913e74";
             var url = "https://api.spoonacular.com/recipes/informationBulk?ids=";
 
             var recipeString = minimalList.Select(s => s.id.ToString()).ToList();
             url += string.Join(",", recipeString);
-            url += "&apiKey=7a98067ae9ea425ca548d96347913e74";
+            url += "&apiKey=" + API_KEY;
 
             return JsonConvert.DeserializeObject<List<Recipe>>(get_request(url));
         }
@@ -83,7 +83,8 @@ namespace KitchenLib
         
         private static List<MinimalRecipe> GetMinimalRecipies(string options)
         {
-            string url = "https://api.spoonacular.com/recipes/complexSearch?" + options + "&apiKey=7a98067ae9ea425ca548d96347913e74";
+            var API_KEY = "7a98067ae9ea425ca548d96347913e74";
+            string url = "https://api.spoonacular.com/recipes/complexSearch?" + options + "&apiKey=" + API_KEY;
             return JsonConvert.DeserializeObject<RootMinimalRecipes>(get_request(url)).results;
         }
     }
