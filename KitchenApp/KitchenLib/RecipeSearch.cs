@@ -84,8 +84,6 @@ namespace KitchenLib
         private static List<MinimalRecipe> GetMinimalRecipies(string options)
         {
             string url = "https://api.spoonacular.com/recipes/complexSearch?" + options + "&apiKey=7a98067ae9ea425ca548d96347913e74";
-            Console.WriteLine(url);
-            Console.WriteLine(get_request(url));
             return JsonConvert.DeserializeObject<RootMinimalRecipes>(get_request(url)).results;
         }
     }
