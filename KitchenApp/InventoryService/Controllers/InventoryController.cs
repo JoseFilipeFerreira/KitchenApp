@@ -47,6 +47,23 @@ namespace InventoryService.Controllers
             return res;
         }
 
+        
+        [HttpGet]
+        public async Task<IDictionary<string, string>> Shared([FromHeader] string auth)
+        {
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+
+            var res = await InventoryStore.GetShared(user);
+            return res;
+        }
+        
         [HttpPost]
         public async void AddProduct([FromHeader] string auth, [FromForm] string product, [FromForm] int quantity,
             [FromForm] string uid, [FromForm] DateTime expire)
