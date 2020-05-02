@@ -3,24 +3,31 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 
-export default class Dashboard extends Component {
+export default class UserInfo extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      dashboards: null,
+      email: null,
+      name: null,
+      phone: null,
+      passwd: null,
+      birthdate: null
     };
   }
 
   getDashboards = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("http://localhost:1331/inventory/all", {
+      .get("http://localhost:1331/user/info", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
-        this.setState({ dashboards: response.data });
-        this.showInventoryList();
+        let json = response.data;
+        console.log(json);
+        this.setState({ email: json['_email'], name: json['_name'], phone: json['_phone_number'], birthdate: json['_birthdate'] });
+        console.log(this.state);
+        this.showBirthdate();
       })
       .catch((error) => {
         console.log(error);
@@ -57,13 +64,8 @@ export default class Dashboard extends Component {
     }
   }
 
-  showInventoryList = () => {
-    var x;
-    var json = this.state.dashboards;
-    for (x in json) {
-      document.getElementById("inventoryList").innerHTML += '<a href="/dashboard/inventory/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
-        x + '"></input></a>'
-    }
+  showBirthdate = () => {
+    document.getElementById("birthdate-info").innerHTML = this.state.birthdate['year'] + '/'+ this.state.birthdate['month'] + '/' + this.state.birthdate['day']
   }
 
   removeToken = () => {
@@ -175,7 +177,7 @@ export default class Dashboard extends Component {
                   <svg>
                     <use href="#collection"></use>
                   </svg>
-                  <span>Inventories</span>
+                  <span>Invetories</span>
                 </a>
               </li>
               <li>
@@ -222,7 +224,7 @@ export default class Dashboard extends Component {
                 <h3>Settings</h3>
               </li>
               <li>
-                <a href="/dashboard/userinfo">
+                <a href="#0">
                   <svg>
                     <use href="#users"></use>
                   </svg>
@@ -274,18 +276,17 @@ export default class Dashboard extends Component {
           <section className="grid">
             <article className="inventories">
               <div className="inventories-text">
-                Inventories
-              </div>
-              <div id="inventoryList">
-
-              </div>
-              <div className="inventory-button">
-                <input
-                  className="create-button"
-                  type="button"
-                  value="Create Inventory"
-                  onClick={this.createInventory}
-                ></input>
+                User Information
+                <div>
+                    <div className="info-text"><span role="img" aria-label="jsx-a11y/aria-proptypes">👤</span>  Name:</div>
+                    <div className="info-field">{this.state.name}  <span role="img" aria-label="jsx-a11y/aria-proptypes"> 📝</span></div>
+                    <div className="info-text"><span role="img" aria-label="jsx-a11y/aria-proptypes">✉️</span>  Email:</div>
+                    <div className="info-field">{this.state.email}  <span role="img" aria-label="jsx-a11y/aria-proptypes"> 📝</span></div>
+                    <div className="info-text"><span role="img" aria-label="jsx-a11y/aria-proptypes">📱</span> Phone:</div>
+                    <div className="info-field">{this.state.phone}</div>
+                    <div className="info-text"><span role="img" aria-label="jsx-a11y/aria-proptypes">📅</span>  Birthdate:</div>
+                    <div id="birthdate-info" className="info-field"></div>
+                </div>
               </div>
             </article>
           </section>

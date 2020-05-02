@@ -4,6 +4,7 @@ import axios from "axios";
 import Login from './login'
 import Register from './register'
 import Dashboard from './dashboard'
+import UserInfo from "./userinfo";
 
 
 
@@ -47,7 +48,8 @@ class App extends Component {
         <React.Fragment>
           <Router>
             <Switch>
-            <Route exact path="/dashboard" component={Dashboard} />
+              <Route exact path="/dashboard" component={Dashboard} />
+              <Route exact path="/dashboard/userinfo" component={UserInfo} />
               <Route exact path="*" component={Dashboard} />
             </Switch>
           </Router>
