@@ -67,6 +67,7 @@ class Login extends Component {
           const token = response.headers['auth'];
           localStorage.setItem('auth', token);
           this.props.history.push('/dashboard');
+          window.location.reload();
         })
         .catch((error) => {
           alert('Email ou password errada.');
