@@ -60,7 +60,6 @@ export default class Dashboard extends Component {
   showInventoryList = () => {
     var x;
     var json = this.state.dashboards;
-    console.log(JSON.stringify(this.state.dashboards))
     for (x in json) {
       document.getElementById("inventoryList").innerHTML += '<a href="/dashboard/inventory/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
         x + '"></input></a>'
