@@ -10,7 +10,8 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.0"
+    "react-scripts": "3.4.0",
+    "sweetalert2": "^9.10.12"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -34,6 +35,6 @@
     ]
   },
   "devDependencies": {
-    "node-sass": "^4.13.1"
+    "node-sass": "^4.14.1"
   }
 }

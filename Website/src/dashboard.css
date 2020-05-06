@@ -344,6 +344,11 @@ body {
 .info-field{
   font-size: 18px;
   color: rgb(111, 109, 121);
+  display: flex;
+}
+
+.edit-button{
+  cursor: pointer;
 }
 
 
