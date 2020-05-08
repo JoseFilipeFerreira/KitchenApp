@@ -14,9 +14,7 @@ export default class UserInfo extends Component {
       phone: null,
       passwd: null,
       birthdate: null,
-      email_new: null,
       name_new: null,
-      phone_new: null,
       birthdate_new: null,
     };
   }
@@ -25,22 +23,15 @@ export default class UserInfo extends Component {
     if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e) && e !== "") {
       return true;
     }
-    if (e === '') {
-      alert("Empty email address");
-    } else {
-      alert("Invalid Email");
-    }
     return false;
   };
 
   validateBirthday = (e) => {
-    if (/^([12]\d{3}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01]))$/.test(e) && e !== "") {
+    if (
+      /^([12]\d{3}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01]))$/.test(e) &&
+      e !== ""
+    ) {
       return true;
-    }
-    if (e === '') {
-      alert("Empty birthday date");
-    } else {
-      alert("Invalid birthday (YYYY/MM/DD)");
     }
     return false;
   };
@@ -49,22 +40,12 @@ export default class UserInfo extends Component {
     if (/^\w[a-zA-Z ]+$/.test(e) && e !== "") {
       return true;
     }
-    if (e === '') {
-      alert("Empty name");
-    } else {
-      alert("You have entered an invalid name!");
-    }
     return false;
   };
 
   validatePhone = (e) => {
     if (/^9\d{8}$/.test(e) && e !== "") {
       return true;
-    }
-    if (e === '') {
-      alert("Empty phone number");
-    } else {
-      alert("You have entered an invalid phone number!");
     }
     return false;
   };
@@ -128,65 +109,100 @@ export default class UserInfo extends Component {
   };
 
   async askName() {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
     const { value: name } = await Swal.fire({
-      title: 'Enter new name',
-      input: 'text',
-      inputPlaceholder: 'Enter your name',
+      title: "Enter new name",
+      input: "text",
+      inputPlaceholder: "Enter your name",
       inputValidator: (value) => {
         if (!value || !this.validateName(value)) {
-          return 'Invalid Name'
+          return "Invalid Name";
         } else {
-          this.setState({name_new: value})
+          form.append("name", value);
+
+          axios
+            .post("http://localhost:1331/user/edit", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+              window.location.reload();
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error)
+            });
         }
-      }
-    })
-  };
+      },
+    });
+  }
 
   async askEmail() {
     const { value: email } = await Swal.fire({
-      title: 'Enter new email',
-      input: 'email',
-      inputPlaceholder: 'Enter your email',
+      title: "Enter new email",
+      input: "email",
+      inputPlaceholder: "Enter your email",
       inputValidator: (value) => {
         if (!value) {
-          return 'Invalid email'
+          return "Invalid email";
         } else {
-          this.setState({email_new: value})
+          this.setState({ email_new: value });
         }
-      }
-    })
-  };
+      },
+    });
+  }
 
   async askPhone() {
     const { value: phone } = await Swal.fire({
-      title: 'Enter new phone',
-      input: 'text',
-      inputPlaceholder: 'Enter your phone',
+      title: "Enter new phone",
+      input: "text",
+      inputPlaceholder: "Enter your phone",
       inputValidator: (value) => {
         if (!value || !this.validatePhone(value)) {
-          return 'Invalid phone'
+          return "Invalid phone";
         } else {
-          this.setState({phone_new: value})
+          this.setState({ phone_new: value });
         }
-      }
-    })
-  };
+      },
+    });
+  }
 
   async askBirthdate() {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
     const { value: birthdate } = await Swal.fire({
-      title: 'Enter new birthdate',
-      input: 'text',
-      inputPlaceholder: 'Enter your birthdate',
+      title: "Enter new birthdate",
+      input: "text",
+      inputPlaceholder: "Enter your birthdate",
       inputValidator: (value) => {
         if (!value || !this.validateBirthday(value)) {
-          return 'Invalid Birthdate'
+          return "Invalid Birthdate";
         } else {
-          this.setState({birthdate_new: value})
+          form.append("birthday", value);
+
+          axios
+            .post("http://localhost:1331/user/edit", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+              window.location.reload();
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error)
+            });
         }
-      }
-    })
-    
-  };
+      },
+    });
+  }
 
   showBirthdate = () => {
     document.getElementById("birthdate-info").innerHTML =
@@ -436,7 +452,9 @@ export default class UserInfo extends Component {
                       className="edit-button"
                       role="img"
                       aria-label="jsx-a11y/aria-proptypes"
-                      onClick={() => {this.askName()}}
+                      onClick={() => {
+                        this.askName();
+                      }}
                     >
                       📝
                     </span>
@@ -447,34 +465,14 @@ export default class UserInfo extends Component {
                     </span>
                     Email:
                   </div>
-                  <div className="info-field">
-                    {this.state.email}
-                    <span
-                      className="edit-button"
-                      role="img"
-                      aria-label="jsx-a11y/aria-proptypes"
-                      onClick={() => {this.askEmail()}}
-                    >
-                      📝
-                    </span>
-                  </div>
+                  <div className="info-field">{this.state.email}</div>
                   <div className="info-text">
                     <span role="img" aria-label="jsx-a11y/aria-proptypes">
                       📱
                     </span>
                     Phone:
                   </div>
-                  <div className="info-field">
-                    {this.state.phone}
-                    <span
-                      className="edit-button"
-                      role="img"
-                      aria-label="jsx-a11y/aria-proptypes"
-                      onClick={() => {this.askPhone()}}
-                    >
-                      📝
-                    </span>
-                  </div>
+                  <div className="info-field">{this.state.phone}</div>
                   <div className="info-text">
                     <span role="img" aria-label="jsx-a11y/aria-proptypes">
                       📅
@@ -482,17 +480,18 @@ export default class UserInfo extends Component {
                     Birthdate:
                   </div>
                   <div className="info-field">
-                  <div id="birthdate-info" className="info-field">
-                  </div>
-                  <span
+                    <div id="birthdate-info" className="info-field"></div>
+                    <span
                       className="edit-button"
                       role="img"
                       aria-label="jsx-a11y/aria-proptypes"
-                      onClick={() => {this.askBirthdate()}}
+                      onClick={() => {
+                        this.askBirthdate();
+                      }}
                     >
                       📝
                     </span>
-                    </div>
+                  </div>
                 </div>
               </div>
             </article>
