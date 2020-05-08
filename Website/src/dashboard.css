@@ -335,6 +335,22 @@ body {
   color: white;
 }
 
+.info-text{
+  margin-top: 18px;
+  font-size: 25px;
+  color: rgb(79, 78, 87);
+}
+
+.info-field{
+  font-size: 18px;
+  color: rgb(111, 109, 121);
+  display: flex;
+}
+
+.edit-button{
+  cursor: pointer;
+}
+
 
 /* MQ RULES
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

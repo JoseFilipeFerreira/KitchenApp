@@ -9,6 +9,7 @@ export default class Dashboard extends Component {
 
     this.state = {
       dashboards: null,
+      name: null,
     };
   }
 
@@ -32,6 +33,33 @@ export default class Dashboard extends Component {
       return false;
     }
   }
+
+  getInfo = () => {
+    let token = localStorage.getItem("auth");
+    axios
+      .get(
+        "http://localhost:1331/user/info",
+        {
+          headers: { auth: token },
+        },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        let json = response.data;
+        this.setState({
+          name: json["_name"],
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    if (localStorage.getItem("auth") != null) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   createInventory = () => {
     let name = prompt("Nome para o inventário:");
@@ -82,6 +110,7 @@ export default class Dashboard extends Component {
 
   componentDidMount() {
     this.getDashboards();
+    this.getInfo();
   }
 
   render() {
@@ -95,6 +124,9 @@ export default class Dashboard extends Component {
           <symbol id="users" viewBox="0 0 16 16">
             <path
               d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0ZM8,15a7,7,0,0,1-5.19-2.32,2.71,2.71,0,0,1,1.7-1,13.11,13.11,0,0,0,1.29-.28,2.32,2.32,0,0,0,.94-.34,1.17,1.17,0,0,0-.27-.7h0A3.61,3.61,0,0,1,5.15,7.49,3.18,3.18,0,0,1,8,4.07a3.18,3.18,0,0,1,2.86,3.42,3.6,3.6,0,0,1-1.32,2.88h0a1.13,1.13,0,0,0-.27.69,2.68,2.68,0,0,0,.93.31,10.81,10.81,0,0,0,1.28.23,2.63,2.63,0,0,1,1.78,1A7,7,0,0,1,8,15Z" />
+          </symbol>
+          <symbol id="signout" viewBox="0 0 512 512">
+            <path d="M497 273L329 441c-15 15-41 4.5-41-17v-96H152c-13.3 0-24-10.7-24-24v-96c0-13.3 10.7-24 24-24h136V88c0-21.4 25.9-32 41-17l168 168c9.3 9.4 9.3 24.6 0 34zM192 436v-40c0-6.6-5.4-12-12-12H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h84c6.6 0 12-5.4 12-12V76c0-6.6-5.4-12-12-12H96c-53 0-96 43-96 96v192c0 53 43 96 96 96h84c6.6 0 12-5.4 12-12z"></path>
           </symbol>
           <symbol id="collection" viewBox="0 0 16 16">
             <rect width="7" height="7" />
@@ -172,7 +204,7 @@ export default class Dashboard extends Component {
                   <svg>
                     <use href="#collection"></use>
                   </svg>
-                  <span>Invetories</span>
+                  <span>Inventories</span>
                 </a>
               </li>
               <li>
@@ -219,25 +251,17 @@ export default class Dashboard extends Component {
                 <h3>Settings</h3>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/userinfo">
                   <svg>
-                    <use href="#options"></use>
+                    <use href="#users"></use>
                   </svg>
-                  <span>To-do</span>
-                </a>
-              </li >
-              <li>
-                <a href="#0">
-                  <svg>
-                    <use href="#options"></use>
-                  </svg>
-                  <span>To-do</span>
+                  <span>Account</span>
                 </a>
               </li >
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
-                    <use href="#options"></use>
+                    <use href="#signout"></use>
                   </svg>
                   <span>Logout</span>
                 </Link>
@@ -267,7 +291,7 @@ export default class Dashboard extends Component {
             */
             }
             <div className="admin-profile">
-              <span className="greeting">Hello User</span>
+              <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
                 <span className="badge">1</span>
                 <svg>
