@@ -38,7 +38,7 @@ namespace UserService.Controllers
 
         [HttpPost]
         public async Task<User> Edit([FromHeader] string auth, [FromForm] DateTime birthday = default,
-            [FromForm] string name = null)
+            [FromForm] string name = null, [FromForm] long? phone_number = null)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null)
@@ -62,6 +62,11 @@ namespace UserService.Controllers
             if (name != null)
             {
                 u._name = name;
+            }
+
+            if (phone_number != null)
+            {
+                u._phone_number = (long) phone_number;
             }
 
             await UserStore.Add(u);
