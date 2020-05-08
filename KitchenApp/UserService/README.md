@@ -23,6 +23,7 @@ HTML form, at least one of the fields listed below:
 
 - birthday - New user birthday
 - name - New user name
+- phone_number - New user phone number
 
 The updated user info will be returned in the response body.
 If the JWT is invalid, the server will reply with a **404** (Not Found)
