@@ -50,7 +50,7 @@ export default class UserInfo extends Component {
     return false;
   };
 
-  getDashboards = () => {
+  getInfo = () => {
     let token = localStorage.getItem("auth");
     axios
       .get(
@@ -62,14 +62,12 @@ export default class UserInfo extends Component {
       )
       .then((response) => {
         let json = response.data;
-        console.log(json);
         this.setState({
           email: json["_email"],
           name: json["_name"],
           phone: json["_phone_number"],
           birthdate: json["_birthdate"],
         });
-        console.log(this.state);
         this.showBirthdate();
       })
       .catch((error) => {
@@ -131,10 +129,9 @@ export default class UserInfo extends Component {
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
               window.location.reload();
-              console.log(response);
             })
             .catch((error) => {
-              console.log(error)
+              console.log(error);
             });
         }
       },
@@ -157,6 +154,8 @@ export default class UserInfo extends Component {
   }
 
   async askPhone() {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
     const { value: phone } = await Swal.fire({
       title: "Enter new phone",
       input: "text",
@@ -165,7 +164,22 @@ export default class UserInfo extends Component {
         if (!value || !this.validatePhone(value)) {
           return "Invalid phone";
         } else {
-          this.setState({ phone_new: value });
+          form.append("phone_number", value);
+
+          axios
+            .post("http://localhost:1331/user/edit", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+              window.location.reload();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         }
       },
     });
@@ -194,10 +208,9 @@ export default class UserInfo extends Component {
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
               window.location.reload();
-              console.log(response);
             })
             .catch((error) => {
-              console.log(error)
+              console.log(error);
             });
         }
       },
@@ -229,7 +242,7 @@ export default class UserInfo extends Component {
   }
 
   componentDidMount() {
-    this.getDashboards();
+    this.getInfo();
   }
 
   render() {
@@ -426,7 +439,7 @@ export default class UserInfo extends Component {
             </form>
             */}
             <div className="admin-profile">
-              <span className="greeting">Hello User</span>
+              <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
                 <span className="badge">1</span>
                 <svg>
@@ -472,7 +485,19 @@ export default class UserInfo extends Component {
                     </span>
                     Phone:
                   </div>
-                  <div className="info-field">{this.state.phone}</div>
+                  <div className="info-field">
+                    {this.state.phone}
+                    <span
+                      className="edit-button"
+                      role="img"
+                      aria-label="jsx-a11y/aria-proptypes"
+                      onClick={() => {
+                        this.askPhone();
+                      }}
+                    >
+                      📝
+                    </span>
+                  </div>
                   <div className="info-text">
                     <span role="img" aria-label="jsx-a11y/aria-proptypes">
                       📅

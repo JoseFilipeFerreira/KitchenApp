@@ -9,6 +9,7 @@ export default class Dashboard extends Component {
 
     this.state = {
       dashboards: null,
+      name: null,
     };
   }
 
@@ -32,6 +33,33 @@ export default class Dashboard extends Component {
       return false;
     }
   }
+
+  getInfo = () => {
+    let token = localStorage.getItem("auth");
+    axios
+      .get(
+        "http://localhost:1331/user/info",
+        {
+          headers: { auth: token },
+        },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        let json = response.data;
+        this.setState({
+          name: json["_name"],
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    if (localStorage.getItem("auth") != null) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   createInventory = () => {
     let name = prompt("Nome para o inventário:");
@@ -82,6 +110,7 @@ export default class Dashboard extends Component {
 
   componentDidMount() {
     this.getDashboards();
+    this.getInfo();
   }
 
   render() {
@@ -262,7 +291,7 @@ export default class Dashboard extends Component {
             */
             }
             <div className="admin-profile">
-              <span className="greeting">Hello User</span>
+              <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
                 <span className="badge">1</span>
                 <svg>
