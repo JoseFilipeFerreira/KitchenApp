@@ -111,9 +111,9 @@ namespace KitchenLib.Database
                 {
                     var reader = await tx.RunAsync(
                         "Match(u:User)-[]->(i:Inventory) " +
+                        "Where u._email = $email AND i.guid = $name " +
                         "Optional match (i)-[c:CONTAIN]->(p:Product) " +
                         "Optional Match(i)-[:SHARED]->(z:User) " +
-                        "Where u._email = $email AND i.guid = $name " +
                         "Return [(a)-[c:CONTAIN]->(b) where b: Product | { prod: b, quant: c.quantity, expire: c.expiration_date }] as products, " +
                         "[(a)-[:Shared]->(b) where b: User | b] as guests, " +
                         "u._email as owner_id, " +
