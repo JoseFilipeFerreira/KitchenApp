@@ -44,6 +44,18 @@ services:
             - proxy
         expose: 
             - "80"
+    shopping:
+        build:
+            dockerfile: docker/shopping-docker
+            context: ..
+        depends_on: 
+            - db
+        networks:
+            - db
+            - proxy
+        expose: 
+            - "80"
+ 
     db:
         image: neo4j:latest
         environment:
@@ -67,6 +79,7 @@ services:
             - userservice
             - inventory
             - wishlist
+            - shopping
         networks:
             - proxy
 
