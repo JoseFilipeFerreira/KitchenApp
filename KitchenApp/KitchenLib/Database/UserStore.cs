@@ -42,7 +42,11 @@ namespace KitchenLib.Database
                     await tx.RunAsync("Merge (u:User {_email: $email}) " +
                                       "On Create set u._name = $name, u._passwd = $passwd, u._birthdate = $bd, u._phone_number = $ph " +
                                       "On Match set u._name = $name, u._passwd = $passwd, u._birthdate = $bd, u._phone_number = $ph ",
-                        new {name = u._name, passwd = u._passwd, email = u._email, bd = u._birthdate, ph = u._phone_number});
+                        new
+                        {
+                            name = u._name, passwd = u._passwd, email = u._email, bd = u._birthdate,
+                            ph = u._phone_number
+                        });
                 });
             }
             finally
@@ -71,7 +75,7 @@ namespace KitchenLib.Database
 
             return false;
         }
-        
+
         public static async Task<User?> Get(string uid)
         {
             User u = null;
@@ -81,7 +85,7 @@ namespace KitchenLib.Database
                 await session.ReadTransactionAsync(async tx =>
                 {
                     var reader = await tx.RunAsync("Match(u:User) Where u._email = $email Return u",
-                        new {email=uid});
+                        new {email = uid});
                     while (await reader.FetchAsync())
                     {
                         var aa = reader.Current[0].As<INode>().Properties;
@@ -99,6 +103,115 @@ namespace KitchenLib.Database
             }
 
             return u;
+        }
+
+        public static async Task AddFriend(string uid, string friend)
+        {
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.WriteTransactionAsync(async tx =>
+                {
+                    var reader = await tx.RunAsync("Match(u:User), (z:User) " +
+                                                   "Where u._email = $email and z._email = $friend" +
+                                                   "create (u)-[:FRND {pending: true}]->(z)",
+                        new {email = uid, friend});
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+
+        public static async Task FriendshipRuined(string uid, string friend)
+        {
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.WriteTransactionAsync(async tx =>
+                {
+                    var reader = await tx.RunAsync("Match(u:User)-[f:FRND]-(z:User) " +
+                                                   "Where u._email = $email and z._email = $friend" +
+                                                   "delete f",
+                        new {email = uid, friend});
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+ 
+        public static async Task AcceptFriend(string uid, string friend)
+        {
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.WriteTransactionAsync(async tx =>
+                {
+                    var reader = await tx.RunAsync("Match(u:User)-[f:FRND]-(z:User) " +
+                                                   "Where u._email = $email and z._email = $friend" +
+                                                   "set f.pending = false",
+                        new {email = uid, friend});
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+  
+        public static async Task<IDictionary<string, string>> GetPendingFriends(string uid)
+        {
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            var pendings = new Dictionary<string, string>();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var reader = await tx.RunAsync("Match(u:User)-[f:FRND]-(z:User) " +
+                                                   "Where u._email = $email and f.pending = true " +
+                                                   "return z._email as email, z._name as name",
+                        new {email = uid});
+                    while (await reader.FetchAsync())
+                    {
+                        pendings.Add(reader.Current["email"].As<string>(), reader.Current["name"].As<string>());
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return pendings;
+        }
+          
+        public static async Task<IDictionary<string, string>> GetFriends(string uid)
+        {
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            var pendings = new Dictionary<string, string>();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var reader = await tx.RunAsync("Match(u:User)-[f:FRND]-(z:User) " +
+                                                   "Where u._email = $email and f.pending = false " +
+                                                   "return z._email as email, z._name as name",
+                        new {email = uid});
+                    while (await reader.FetchAsync())
+                    {
+                        pendings.Add(reader.Current["email"].As<string>(), reader.Current["name"].As<string>());
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return pendings;
         }
     }
 }

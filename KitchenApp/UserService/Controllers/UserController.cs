@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using KitchenLib;
@@ -10,11 +11,11 @@ using Neo4j.Driver;
 namespace UserService.Controllers
 {
     [ApiController]
-    [Route("[action]")]
     [EnableCors]
     public class UserController : ControllerBase
     {
         [HttpGet]
+        [Route("[action]")]
         public User Info([FromHeader] string auth)
         {
             string user;
@@ -37,6 +38,7 @@ namespace UserService.Controllers
         }
 
         [HttpPost]
+        [Route("[action]")]
         public async Task<User> Edit([FromHeader] string auth, [FromForm] DateTime birthday = default,
             [FromForm] string name = null, [FromForm] long? phone_number = null)
         {
@@ -76,6 +78,7 @@ namespace UserService.Controllers
         }
 
         [HttpDelete]
+        [Route("[action]")]
         public void Remove([FromHeader] string auth)
         {
             string user;
@@ -87,5 +90,6 @@ namespace UserService.Controllers
 
             HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
         }
+
     }
 }
