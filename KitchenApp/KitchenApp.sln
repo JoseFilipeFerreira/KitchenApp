@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WishlistService", "Wishlist
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryService", "InventoryService\InventoryService.csproj", "{D63D366C-1709-4AD9-833A-6BF02AACF951}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppinglistService", "ShoppinglistService\ShoppinglistService.csproj", "{3B385F84-5834-4A75-8A54-AB73EC7EEA69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,5 +47,9 @@ Global
 		{BEA37E67-B17F-4F79-9D77-5D0C71515980}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEA37E67-B17F-4F79-9D77-5D0C71515980}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEA37E67-B17F-4F79-9D77-5D0C71515980}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B385F84-5834-4A75-8A54-AB73EC7EEA69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B385F84-5834-4A75-8A54-AB73EC7EEA69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B385F84-5834-4A75-8A54-AB73EC7EEA69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B385F84-5834-4A75-8A54-AB73EC7EEA69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
