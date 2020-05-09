@@ -356,7 +356,7 @@ export default class UserInfo extends Component {
                   <svg>
                     <use href="#collection"></use>
                   </svg>
-                  <span>To-do</span>
+                  <span>Whislists</span>
                 </a>
               </li>
               <li>
@@ -364,31 +364,7 @@ export default class UserInfo extends Component {
                   <svg>
                     <use href="#collection"></use>
                   </svg>
-                  <span>To-do</span>
-                </a>
-              </li>
-              <li>
-                <a href="#0">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>To-do</span>
-                </a>
-              </li>
-              <li>
-                <a href="#0">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>To-do</span>
-                </a>
-              </li>
-              <li>
-                <a href="#0">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>To-do</span>
+                  <span>Shopping lists</span>
                 </a>
               </li>
               <li className="menu-heading">
@@ -402,6 +378,14 @@ export default class UserInfo extends Component {
                   <span>Account</span>
                 </a>
               </li>
+              <li>
+                <a href="#0">
+                  <svg>
+                    <use href="#users"></use>
+                  </svg>
+                  <span>Friends</span>
+                </a>
+              </li >
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
@@ -441,7 +425,6 @@ export default class UserInfo extends Component {
             <div className="admin-profile">
               <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
-                <span className="badge">1</span>
                 <svg>
                   <use href="#users"></use>
                 </svg>
