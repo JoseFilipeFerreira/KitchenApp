@@ -20,7 +20,7 @@ namespace KitchenLib.Database
                 {
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
-                        "MATCH(u:User)-[:WSH]->(i:Wishlist) WHERE u._email = $email AND i.guid = $guid RETURN i.name",
+                        "MATCH(u:User)-[]->(i:Wishlist) WHERE u._email = $email AND i.guid = $guid RETURN i.name",
                         new {email = user, name = uid});
                     while (await reader.FetchAsync())
                         lst.Add(reader.Current[0].ToString());
@@ -113,9 +113,9 @@ namespace KitchenLib.Database
                 {
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
-                        "Match(u:User)-[:WSH]->(i:Wishlist) " +
+                        "Match(u:User)-[]->(i:Wishlist) " +
                         "Optional match (i)-[c:CONTAIN]->(p:Product) " +
-                        "Optional Match(i)-[:SHARED]->(z:User) " +
+                        "Optional Match(i)-[:SHARED]-(z:User) " +
                         "Where u._email = $email AND i.guid = $name " +
                         "Return [(a)-[c:CONTAIN]->(b) where b: Product] as products, " +
                         "[(a)-[:Shared]->(b) where b: User | b] as guests " +
@@ -167,7 +167,7 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var r = await tx.RunAsync("Match (u:User)-[:WSH]->(i:Wishlist), (p:Product) " +
+                    var r = await tx.RunAsync("Match (u:User)-[]->(i:Wishlist), (p:Product) " +
                                               "where u._email = $email and i.guid = $uid and p._guid = $prodName " +
                                               "create (i)-[:CONTAIN]->(p)", new {email, uid, prodName});
                 });
@@ -185,7 +185,7 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var query = "Match (u:User)-[:WSH]->(i:Wishlist)-[c:CONTAIN]->(p:Product) " +
+                    var query = "Match (u:User)-[]->(i:Wishlist)-[c:CONTAIN]->(p:Product) " +
                                 "where u._email = $email and i.guid = $name and p._guid = $pguid " +
                                 "delete c";
                     IDictionary<string, object> dic = new Dictionary<string, object>
