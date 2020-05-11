@@ -16,58 +16,77 @@ namespace UserService.Controllers
         public IDictionary<string, string> Get([FromHeader] string auth)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) != null) return UserStore.GetFriends(user).Result;
-            HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-            return null;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return null;
+            }
 
+            HttpContext.Response.Headers.Add("auth", auth);
+
+            return UserStore.GetFriends(user).Result;
         }
 
         [HttpGet]
         public IDictionary<string, string> Pending([FromHeader] string auth)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) != null) return UserStore.GetPendingFriends(user).Result;
-            HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-            return null;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+            return UserStore.GetPendingFriends(user).Result;
         }
 
         [HttpPost]
-        public void Add([FromHeader] string auth, [FromForm] string friend)
+        public async void Add([FromHeader] string auth, [FromForm] string friend)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(friend).Result)
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(friend).Result ||
+                !UserStore.Exists(user).Result)
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
                 return;
             }
 
-            UserStore.AddFriend(user, friend);
+            HttpContext.Response.Headers.Add("auth", auth);
+
+            await UserStore.AddFriend(user, friend);
         }
 
         [HttpDelete]
-        public void Remove([FromHeader] string auth, [FromForm] string friend)
+        public async void Remove([FromHeader] string auth, [FromForm] string friend)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(friend).Result)
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(friend).Result ||
+                !UserStore.Exists(user).Result)
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
                 return;
             }
 
-            UserStore.FriendshipRuined(user, friend);
+            HttpContext.Response.Headers.Add("auth", auth);
+
+            await UserStore.FriendshipRuined(user, friend);
         }
 
         [HttpPost]
-        public void Accept([FromHeader] string auth, [FromForm] string friend)
+        public async void Accept([FromHeader] string auth, [FromForm] string friend)
         {
-             string user;
-             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(friend).Result)
-             {
-                 HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                 return;
-             }
- 
-             UserStore.AcceptFriend(user, friend);           
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(friend).Result ||
+                !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+
+            await UserStore.AcceptFriend(user, friend);
         }
     }
 }

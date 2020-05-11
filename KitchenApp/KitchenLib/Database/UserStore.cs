@@ -112,8 +112,9 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var reader = await tx.RunAsync("Match(u:User), (z:User) " +
-                                                   "Where u._email = $email and z._email = $friend" +
+                    var reader = await tx.RunAsync("Match(u:User) " +
+                                                   "Match(z:User) " +
+                                                   "Where u._email = $email and z._email = $friend " +
                                                    "create (u)-[:FRND {pending: true}]->(z)",
                         new {email = uid, friend});
                 });
@@ -132,7 +133,7 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     var reader = await tx.RunAsync("Match(u:User)-[f:FRND]-(z:User) " +
-                                                   "Where u._email = $email and z._email = $friend" +
+                                                   "Where u._email = $email and z._email = $friend " +
                                                    "delete f",
                         new {email = uid, friend});
                 });
@@ -150,8 +151,8 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var reader = await tx.RunAsync("Match(u:User)-[f:FRND]-(z:User) " +
-                                                   "Where u._email = $email and z._email = $friend" +
+                    var reader = await tx.RunAsync("Match(u:User)<-[f:FRND]-(z:User) " +
+                                                   "Where u._email = $email and z._email = $friend " +
                                                    "set f.pending = false",
                         new {email = uid, friend});
                 });
