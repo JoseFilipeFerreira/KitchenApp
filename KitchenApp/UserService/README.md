@@ -1,12 +1,12 @@
 # User Service
 
-## Endpoints
+## User Info related Endpoints
 
 This service exposes three endpoints:
 
-- /user/info
-- /user/edit
-- /user/delete
+- /info
+- /edit
+- /delete
 
 ### /info endpoint
 
@@ -36,3 +36,45 @@ the database. It's irreversible. You can use this endpoint through a
 **DELETE** type request. After removing the user, its JWT will be destroyed
 also. If the JWT is invalid, the server will respond with a **404** (Not
 found) status code, and the existent JWT deleted.
+
+## Friends Info Endpoints
+
+Friends info and managment can be found in the `/friends`, and here are exposed 
+five endpoints, being
+
+- /get
+- /pending
+- /add
+- /remove
+- /accept
+
+All endpoints recive the JWT in an header named auth, to identify the logged in
+user, and return in the same header a revalidated token.
+
+### /get
+
+This endpoint, through a **GET** request, returns a dictionary of all the friends a user has, 
+the key of the dictionary being the friend's email, and the value the corresponding name.
+
+### /pending
+
+This endpoint is similar to the `/get` endpoint, the difference being that it
+returns the info about pending friend requests.
+
+### /add
+
+This endpoint allows the user to send a friend request to another existent user,
+via a **POST** request, providing the other user's email through a form,
+containing the `friend` field.
+
+### /remove
+
+This endpoint removes a friend, or a pending request, through a **DELETE**
+request, and providing the friend's email to whom the friendship shall be
+terminated, in a **HTML** form, with the email in the field `friend`. 
+
+### /accept
+
+This endpoint is meant to accept a pending request, through a **POST**
+request, and providing the friend's email to whom the friendship shall be
+accepted, in a **HTML** form, with the email in the field `friend`. 
