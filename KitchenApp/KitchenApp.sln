@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryService", "Invento
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppinglistService", "ShoppinglistService\ShoppinglistService.csproj", "{3B385F84-5834-4A75-8A54-AB73EC7EEA69}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductService", "ProductService\ProductService.csproj", "{0A5F17BA-BEC2-493E-8A4E-DD92CB4DBC8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,5 +53,9 @@ Global
 		{3B385F84-5834-4A75-8A54-AB73EC7EEA69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B385F84-5834-4A75-8A54-AB73EC7EEA69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B385F84-5834-4A75-8A54-AB73EC7EEA69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A5F17BA-BEC2-493E-8A4E-DD92CB4DBC8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A5F17BA-BEC2-493E-8A4E-DD92CB4DBC8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A5F17BA-BEC2-493E-8A4E-DD92CB4DBC8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A5F17BA-BEC2-493E-8A4E-DD92CB4DBC8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
