@@ -11,8 +11,8 @@ using Neo4j.Driver;
 namespace UserService.Controllers
 {
     [ApiController]
-    [EnableCors]
     [Route("[action]")]
+    [EnableCors]
     public class UserController : ControllerBase
     {
         [HttpGet]
