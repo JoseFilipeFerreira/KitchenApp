@@ -252,7 +252,7 @@ namespace KitchenLib.Database
             {
                 await session.ReadTransactionAsync(async tx =>
                 {
-                    var r = await tx.RunAsync("match (u:User)-[:Shared]->(i:Wishlist) " +
+                    var r = await tx.RunAsync("match (u:User)<-[:Shared]-(i:Wishlist) " +
                                               "where u._email = $email " +
                                               "return i.name as name, i.guid as guid", new {email});
                     while (await r.FetchAsync())
