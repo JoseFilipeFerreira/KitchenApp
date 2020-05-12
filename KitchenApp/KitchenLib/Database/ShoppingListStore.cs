@@ -131,7 +131,7 @@ namespace KitchenLib.Database
                         inv._guests = new List<string>();
                         foreach (var guest in guests)
                         {
-                            inv._guests.Append(guest["_email"].As<string>());
+                            inv._guests.Add(guest["_email"].As<string>());
                         }
 
                         if (prods == null) continue;

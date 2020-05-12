@@ -46,7 +46,6 @@ namespace ProductService.Controllers
             return p;
         }
 
-        //WIP
         [HttpPost]
         public async Task<Product> Edit([FromHeader] string auth, [FromHeader] string uid,
             [FromHeader] string name = null,
