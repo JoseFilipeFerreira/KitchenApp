@@ -22,7 +22,7 @@ services:
             - proxy
         expose: 
             - "80"
-    product:
+    products:
         build:
             dockerfile: docker/product-docker
             context: ..

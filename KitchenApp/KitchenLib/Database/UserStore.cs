@@ -115,7 +115,9 @@ namespace KitchenLib.Database
                     var reader = await tx.RunAsync("Match(u:User) " +
                                                    "Match(z:User) " +
                                                    "Where u._email = $email and z._email = $friend " +
-                                                   "create (u)-[:FRND {pending: true}]->(z)",
+                                                   "Optional match (u)-[f:FRND]-(z) " +
+                                                   "with u, z, f, case when f is null then [1] else [] end as arr " +
+                                                   "foreach(x in arr | create (u)-[:FRND {pending: true}]->(z))",
                         new {email = uid, friend});
                 });
             }
@@ -171,7 +173,7 @@ namespace KitchenLib.Database
             {
                 await session.ReadTransactionAsync(async tx =>
                 {
-                    var reader = await tx.RunAsync("Match(u:User)-[f:FRND]-(z:User) " +
+                    var reader = await tx.RunAsync("Optional Match(u:User)-[f:FRND]-(z:User) " +
                                                    "Where u._email = $email and f.pending = true " +
                                                    "return z._email as email, z._name as name",
                         new {email = uid});
