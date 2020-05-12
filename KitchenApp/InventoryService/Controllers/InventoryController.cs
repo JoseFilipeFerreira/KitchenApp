@@ -138,7 +138,7 @@ namespace InventoryService.Controllers
             }
 
             HttpContext.Response.Headers.Add("auth", auth);
-            if (await InventoryStore.ExistName(name, user))
+            if (InventoryStore.ExistName(name, user).Result)
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Conflict;
             }

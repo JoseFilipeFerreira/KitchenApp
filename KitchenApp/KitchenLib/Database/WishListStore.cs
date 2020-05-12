@@ -8,8 +8,6 @@ namespace KitchenLib.Database
 {
     public class WishlistStore
     {
-        private static string uri = "bolt://localhost:7687";
-
         public static async Task<bool> Exists(string uid, string user)
         {
             Boolean exists;
@@ -69,7 +67,7 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    await tx.RunAsync("MATCH (u:User) where u._name = $user " +
+                    await tx.RunAsync("MATCH (u:User) where u._email = $user " +
                                       "CREATE (i:Wishlist {name: $name, guid: $guid}) " +
                                       "CREATE (u)-[:WSH]->(i)",
                         new {user, name = inv._name, guid = inv._guid});
