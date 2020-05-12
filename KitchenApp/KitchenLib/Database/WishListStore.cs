@@ -70,7 +70,7 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     await tx.RunAsync("MATCH (u:User) where u._name = $user " +
-                                      "CREATE (i:Wishlist {name: $name, guid = $guid}) " +
+                                      "CREATE (i:Wishlist {name: $name, guid: $guid}) " +
                                       "CREATE (u)-[:WSH]->(i)",
                         new {user, name = inv._name, guid = inv._guid});
                 });
