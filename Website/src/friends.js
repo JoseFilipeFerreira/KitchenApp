@@ -3,27 +3,29 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
+import 'sweetalert2/src/sweetalert2.scss'
 
-export default class Dashboard extends Component {
+
+export default class Friends extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      dashboards: null,
-      shared: null,
-      name: null,
+      friends: null,
+      requests: null,
     };
   }
 
-  getDashboards = () => {
+  getFriends = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("http://localhost:1331/inventory/all", {
+      .get("http://localhost:1331/user/friends/get", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
-        this.setState({ dashboards: response.data });
-        this.showInventoryList();
+        this.setState({ friends: response.data });
+        console.log(response)
+        this.showFriendsList();
       })
       .catch((error) => {
         console.log(error);
@@ -36,15 +38,16 @@ export default class Dashboard extends Component {
     }
   }
 
-  getShared = () => {
+  getRequests = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("http://localhost:1331/inventory/shared", {
+      .get("http://localhost:1331/user/friends/pending", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
-        this.setState({ shared: response.data });
-        this.showSharedList();
+        this.setState({ requests: response.data });
+        console.log(response)
+        this.showRequestsList();
       })
       .catch((error) => {
         console.log(error);
@@ -84,21 +87,21 @@ export default class Dashboard extends Component {
     }
   };
 
-  createInventory = async () => {
+  addFriend = async () => {
     let token = localStorage.getItem('auth');
     const form = new FormData();
     const { value: name } = await Swal.fire({
-      title: "Enter inventory name",
-      input: "text",
-      inputPlaceholder: "Enter inventory name",
+      title: "Enter user email",
+      input: "email",
+      inputPlaceholder: "Enter email",
       inputValidator: (value) => {
         if (!value) {
           return "Invalid Name";
         } else {
-          form.append("name", value);
+          form.append("friend", value);
 
           axios
-            .post("http://localhost:1331/inventory/add", form, {
+            .post("http://localhost:1331/user/friends/add", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -106,7 +109,6 @@ export default class Dashboard extends Component {
               /* save this token inside localStorage */
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
-              window.location.reload();
             })
             .catch((error) => {
               console.log(error);
@@ -116,23 +118,176 @@ export default class Dashboard extends Component {
     });
   }
 
-  showInventoryList = () => {
+  removeFriend = async () => {
+    let token = localStorage.getItem('auth');
+    const form = new FormData();
+    const { value: name } = await Swal.fire({
+      title: "Enter user email",
+      input: "email",
+      inputPlaceholder: "Enter email",
+      inputValidator: (value) => {
+        if (!value) {
+          return "Invalid Name";
+        } else {
+          form.append("friend", value);
+
+          axios
+            .delete("http://localhost:1331/user/friends/remove", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      },
+    });
+  }
+
+  showRequestsList = () => {
     var x;
-    var json = this.state.dashboards;
+    var json = this.state.requests;
+    var button;
     for (x in json) {
-      document.getElementById("inventoryList").innerHTML += '<a href="/dashboard/inventory/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
-        x + '"></input></a>'
+      button = document.createElement('input')
+      button.setAttribute('type','button')
+      button.onclick = e => {this.answerRequest(x)}
+      button.className = 'inventory-entry'
+      button.value = json[x] + ' | ' + x
+      document.getElementById("requestList").append(button)
     }
   }
 
-  showSharedList = () => {
+  showFriendsList = () => {
     var x;
-    var json = this.state.shared;
+    var json = this.state.friends;
+    var button;
     for (x in json) {
-      document.getElementById("sharedList").innerHTML += '<a href="/dashboard/inventory/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
-        x + '"></input></a>'
+      button = document.createElement('input')
+      button.setAttribute('type','button')
+      button.onclick = e => {this.editFriend(x)}
+      button.className = 'inventory-entry'
+      button.value = json[x] + ' | ' + x
+      document.getElementById("friendList").append(button)
     }
   }
+
+  answerRequest = (email) => {
+    let token = localStorage.getItem('auth');
+    const form = new FormData();
+
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false
+    })
+    
+    swalWithBootstrapButtons.fire({
+      title: 'Friend request',
+      text: "New friend request",
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Accept',
+      cancelButtonText: 'Reject',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.value) {
+
+        form.append("friend", email);
+
+          axios
+            .post("http://localhost:1331/user/friends/accept", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+
+        swalWithBootstrapButtons.fire(
+          'Accepted!',
+          'New user added to friend list',
+          'success'
+        )
+
+      } else if (
+        /* Read more about handling dismissals below */
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        form.append("friend", email);
+
+          axios
+            .delete("http://localhost:1331/user/friends/remove", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        swalWithBootstrapButtons.fire(
+          'Rejected',
+          'Friend request removed',
+          'error'
+        )
+      }
+    })
+  }
+
+  editFriend = async (email) => {
+    let token = localStorage.getItem('auth');
+    const form = new FormData();
+    Swal.fire({
+      title: 'Edit Friend',
+      text: "Do you want to delete this friend?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.value) {
+        form.append("friend", email);
+
+          axios
+            .delete("http://localhost:1331/user/friends/remove", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+
+        Swal.fire(
+          'Deleted!',
+          'Friend has been deleted.',
+          'success'
+        )
+      }
+    })
+  }
+  
 
   removeToken = () => {
     localStorage.removeItem('auth');
@@ -149,8 +304,8 @@ export default class Dashboard extends Component {
   }
 
   componentDidMount() {
-    this.getDashboards();
-    this.getShared();
+    this.getFriends();
+    this.getRequests();
     this.getInfo();
   }
 
@@ -249,7 +404,7 @@ export default class Dashboard extends Component {
                 </a>
               </li>
               <li>
-                <a href="/dashboard/wishlists">
+                <a href="#0">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
@@ -257,7 +412,7 @@ export default class Dashboard extends Component {
                 </a>
               </li>
               <li>
-                <a href="/dashboard/shoppinglists">
+                <a href="#0">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
@@ -333,28 +488,28 @@ export default class Dashboard extends Component {
             </div>
           </section>
           <section className="grid">
+          <article className="inventories">
+              <div className="inventories-text">
+                Friend Requests
+              </div>
+              <div id="requestList">
+
+              </div>
+            </article>
             <article className="inventories">
               <div className="inventories-text">
-                Inventories
+                Friends
               </div>
-              <div id="inventoryList">
+              <div id="friendList">
 
               </div>
               <div className="inventory-button">
                 <input
                   className="create-button"
                   type="button"
-                  value="Create Inventory"
-                  onClick={this.createInventory}
+                  value="Add Friend"
+                  onClick={this.addFriend}
                 ></input>
-              </div>
-            </article>
-            <article className="inventories">
-              <div className="inventories-text">
-                Shared Inventories
-              </div>
-              <div id="sharedList">
-
               </div>
             </article>
           </section>

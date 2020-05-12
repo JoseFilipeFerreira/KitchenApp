@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
+import Swal from "sweetalert2";
 
 export default class Inventory extends Component {
   constructor(props) {
@@ -60,6 +61,7 @@ export default class Inventory extends Component {
       })
       .catch((error) => {
         console.log(error);
+        this.props.history.push("/dashboard");
       });
 
     if (localStorage.getItem("auth") != null) {
@@ -80,28 +82,79 @@ export default class Inventory extends Component {
   };
 
   addProduct = () => {
-    let name = prompt("Nome para o inventário:");
-    let token = localStorage.getItem("auth");
+  };
+
+  removeProduct = () => {
+  };
+
+  editProduct = () => {
+  };
+
+  editInventory = async () => {
+    let token = localStorage.getItem('auth');
+    let uid = this.state.inventory_id
     const form = new FormData();
+    const { value: name } = await Swal.fire({
+      title: "Enter new name",
+      input: "text",
+      inputPlaceholder: "Enter your name",
+      inputValidator: (value) => {
+        if (!value) {
+          return "Invalid Name";
+        } else {
+          form.append("uid", uid);
+          form.append("name", value);
 
-    if (name !== null) {
-      form.append("name", name);
+          axios
+            .post("http://localhost:1331/inventory/edit", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+              window.location.reload();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      },
+    });
+  };
 
-      axios
-        .post("http://localhost:1331/inventory/add", form, {
-          headers: { "Content-Type": "multipart/form-data", auth: token },
-          withCredentials: true,
-        })
-        .then((response) => {
-          /* save this token inside localStorage */
-          const token = response.headers["auth"];
-          localStorage.setItem("auth", token);
-          window.location.reload();
-        })
-        .catch((error) => {
-          alert("Email ou password errada.");
-        });
-    }
+  shareInventory= async () => {
+    let token = localStorage.getItem('auth');
+    let uid = this.state.inventory_id
+    const form = new FormData();
+    const { value: name } = await Swal.fire({
+      title: "Enter user email",
+      input: "email",
+      inputPlaceholder: "Enter email",
+      inputValidator: (value) => {
+        if (!value) {
+          return "Invalid Name";
+        } else {
+          form.append("uid", uid);
+          form.append("friend", value);
+
+          axios
+            .post("http://localhost:1331/inventory/share", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      },
+    });
   };
 
   showInventoryList = () => {
@@ -243,7 +296,7 @@ export default class Inventory extends Component {
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/wishlists">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
@@ -251,13 +304,13 @@ export default class Inventory extends Component {
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/shoppinglists">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
-                  <span>Shopping lists</span>
+                  <span>Shopping Lists</span>
                 </a>
-              </li>
+              </li >
               <li className="menu-heading">
                 <h3>Settings</h3>
               </li>
@@ -270,7 +323,7 @@ export default class Inventory extends Component {
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/friends">
                   <svg>
                     <use href="#users"></use>
                   </svg>
@@ -337,19 +390,25 @@ export default class Inventory extends Component {
                   className="create-button"
                   type="button"
                   value="Remove product"
-                  onClick={this.addProduct}
+                  onClick={this.removeProduct}
                 ></input>
                 <input
                   className="create-button"
                   type="button"
                   value="Edit product"
-                  onClick={this.addProduct}
+                  onClick={this.editProduct}
                 ></input>
                 <input
                   className="create-button"
                   type="button"
                   value="Edit inventory"
-                  onClick={this.addProduct}
+                  onClick={this.editInventory}
+                ></input>
+                <input
+                  className="create-button"
+                  type="button"
+                  value="Share inventory"
+                  onClick={this.shareInventory}
                 ></input>
               </div>
             </article>

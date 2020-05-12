@@ -352,21 +352,21 @@ export default class UserInfo extends Component {
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/wishlists">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
-                  <span>Whislists</span>
+                  <span>Wishlists</span>
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/shoppinglists">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
-                  <span>Shopping lists</span>
+                  <span>Shopping Lists</span>
                 </a>
-              </li>
+              </li >
               <li className="menu-heading">
                 <h3>Settings</h3>
               </li>
@@ -379,7 +379,7 @@ export default class UserInfo extends Component {
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/friends">
                   <svg>
                     <use href="#users"></use>
                   </svg>

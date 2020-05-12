@@ -335,6 +335,10 @@ body {
   color: white;
 }
 
+.create-button:hover {
+  background-color: #d43f53;
+}
+
 .info-text{
   margin-top: 18px;
   font-size: 25px;
