@@ -146,7 +146,7 @@ namespace ShoppinglistService.Controllers
             }
         }
 
-        [HttpDelete("{uid}")]
+        [HttpPost("{uid}")]
         public bool Remove([FromHeader] string auth, [FromRoute] string uid)
         {
             string user;

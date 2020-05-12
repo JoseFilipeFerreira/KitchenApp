@@ -57,7 +57,7 @@ namespace UserService.Controllers
             await UserStore.AddFriend(user, friend);
         }
 
-        [HttpDelete]
+        [HttpPost]
         public async void Remove([FromHeader] string auth, [FromForm] string friend)
         {
             string user;

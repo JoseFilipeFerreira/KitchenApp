@@ -63,7 +63,7 @@ namespace ProductService.Controllers
             return null;
         }
 
-        [HttpDelete]
+        [HttpPost]
         [Route("{prod}")]
         public async void Remove([FromHeader] string auth, [FromRoute] string prod)
         {
