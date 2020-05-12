@@ -7,13 +7,13 @@ namespace KitchenLib
         public string _guid { get; set; }
         public string _name { get; set; }
         public string _category { get; set; }
-        public uint _quantity { get; set; }
+        public long _quantity { get; set; }
         public string _units { get; set; }
-        public float _price { get; set; }
+        public double _price { get; set; }
         
         public Product() {}
 
-        public Product(string name, string category, uint quantity, string units, float price)
+        public Product(string name, string category, long quantity, string units, double price)
         {
             _guid = Guid.NewGuid().ToString();
             _name = name;

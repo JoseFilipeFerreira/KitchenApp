@@ -135,6 +135,7 @@ namespace KitchenLib.Database
                         }
 
                         if (prods == null) continue;
+                        inv._products = new List<WantedProduct>();
                         foreach (var prod in prods)
                         {
                             var u = new WantedProduct();
@@ -144,8 +145,8 @@ namespace KitchenLib.Database
                             }
 
                             u._stock = prod["quant"].As<uint>();
-
-                            inv._products.Append(u);
+                            
+                            inv._products.Add(u);
                         }
                     }
 

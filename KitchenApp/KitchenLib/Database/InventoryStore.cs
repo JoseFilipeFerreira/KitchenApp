@@ -114,7 +114,7 @@ namespace KitchenLib.Database
                         "Where u._email = $email AND i.guid = $name " +
                         "Optional match (i)-[c:CONTAIN]->(p:Product) " +
                         "Optional Match(i)-[:SHARED]->(z:User) " +
-                        "Return [(a)-[c:CONTAIN]->(b) where b: Product | { prod: b, quant: c.quantity, expire: c.expiration_date }] as products, " +
+                        "Return [(i)-[c]->(p) | { prod: p, quant: c.quantity, expire: c.expiration_date }] as products, " +
                         "[(a)-[:Shared]->(b) where b: User | b] as guests, " +
                         "u._email as owner_id, " +
                         "i.name as name, i.guid as guid",
@@ -134,6 +134,7 @@ namespace KitchenLib.Database
                         }
 
                         if (prods == null) continue;
+                        inv._products = new List<OwnedProduct>();
                         foreach (var prod in prods)
                         {
                             var u = new OwnedProduct();
@@ -143,9 +144,9 @@ namespace KitchenLib.Database
                             }
 
                             u._consume_before = prod["expire"].As<DateTime>();
-                            u._stock = prod["quant"].As<uint>();
+                            u._stock = prod["quant"].As<long>();
 
-                            inv._products.Append(u);
+                            inv._products.Add(u);
                         }
                     }
                 });

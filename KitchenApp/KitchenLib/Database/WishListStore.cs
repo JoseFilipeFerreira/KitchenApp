@@ -137,6 +137,7 @@ namespace KitchenLib.Database
                         }
 
                         if (prods == null) continue;
+                        inv._products = new List<Product>();
                         foreach (var prod in prods)
                         {
                             var u = new Product();
@@ -145,7 +146,7 @@ namespace KitchenLib.Database
                                 u.GetType().GetProperty(key)?.SetValue(u, value, null);
                             }
 
-                            inv._products.Append(u);
+                            inv._products.Add(u);
                         }
                     }
 
