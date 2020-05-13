@@ -141,7 +141,10 @@ namespace KitchenLib.Database
             {
                 await session.ReadTransactionAsync(async tx =>
                 {
-                    var reader = await tx.RunAsync("Match(p:Product) where p._name =~ '$regex' return p", new {regex});
+                    var reader =
+                        await tx.RunAsync(
+                            "Match(p:Product) where p._name =~ '(?i)$regex' or toLower(p._name) starts with toLower($regex) return p",
+                            new {regex});
                     while (await reader.FetchAsync())
                     {
                         var u = new Product();

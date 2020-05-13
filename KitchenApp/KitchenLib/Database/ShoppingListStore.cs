@@ -255,7 +255,7 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("Match (u:User)-[:SHP]->(i:Shoppinglist), (z:User) " +
                                               "where u._email = $email and i.guid = $name and z._email = $friend " +
-                                              "create (i)-[:Shared]->(z)", new {email, name = uid, friend});
+                                              "create (i)<-[:Shared]-(z)", new {email, name = uid, friend});
                 });
             }
             finally
