@@ -1,0 +1,224 @@
+
+% example for dissertation.sty
+\documentclass[
+  % Replace oneside by twoside if you are printing your thesis on both sides
+  % of the paper, leave as is for single sided prints or for viewing on screen.
+  oneside,
+  %twoside,
+  11pt, a4paper,
+  footinclude=true,
+  headinclude=true,
+  cleardoublepage=empty
+]{scrbook}
+
+\usepackage{dissertation}
+
+
+
+% ACRONYMS -----------------------------------------------------
+
+%import the necessary package with some options
+\usepackage[acronym,nonumberlist,nomain]{glossaries}
+
+%enable the following to avoid links from the acronym usage to the list
+%\glsdisablehyper
+
+%displays the first use of an acronym in italic
+\defglsdisplayfirst[\acronymtype]{\emph{#1#4}}
+
+%the style of the Glossary
+\glossarystyle{listgroup}
+
+% set the name for the acronym entries page
+\renewcommand{\glossaryname}{Acronyms}
+
+%this shall be the last thing in the acronym configuration!!
+\makeglossaries
+
+
+% here are the acronym entries
+\newacronym{mei}{MEI}{Mestrado em Engenharia Informática}
+
+    
+% these could go in an acronyms.tex file, and loaded with:
+% \loadglsentries[\acronymtype]{Parts/Definitions/acronyms}
+% when using this, you may want to remove 'nomain' from the package options
+
+%% **MORE INFO** %%
+
+%to add the acronyms list add the following where you want to print it:
+%\printglossary[type=\acronymtype]
+%\clearpage
+%\thispagestyle{empty}
+
+%to use an acronym:
+%\gls{qps}
+
+% compile the thesis in command line with the following command sequence:
+% pdlatex dissertation.tex
+% makeglossaries dissertation
+% bibtex dissertation
+% pdlatex dissertation.tex
+% pdlatex dissertation.tex
+
+% ----------------------------------------------------------------
+
+% Title
+\titleA{Title1}
+\titleB{Title2} % (if any)
+
+% Author
+\author{Aluno 1}
+
+% Supervisor(s)
+\supervisor{Orientador}
+\cosupervisor{Coorientador}
+
+% Date
+\date{\myear} % change to text if date is not today
+
+% Keywords
+%\keywords{master thesis}
+
+% Glossaries & Acronyms
+%\makeglossaries  %  either use this ...
+%\makeindex	   % ... or this
+
+% Define Acronyms
+%\input{sec/acronyms}
+%\glsaddall[types={\acronymtype}]
+
+\ummetadata % add metadata to the document (author, publisher, ...)
+
+\begin{document}
+	% Cover page ---------------------------------------
+	\umfrontcover	
+	\umtitlepage
+	
+	% Add acknowledgements ----------------------------
+	\chapter*{Acknowledgements}
+	Write acknowledgements here
+
+
+	% Add abstracts (en,pt) ---------------------------
+	
+	\cleardoublepage
+	\chapter*{Resumo}
+	\input{abstract/abstractEN.tex}
+	
+	\cleardoublepage
+	\chapter*{Resumo}
+	\input{abstract/abstractPT.tex}
+	
+	
+	% Summary Lists ------------------------------------
+	\tableofcontents
+	\listoffigures
+	\listoftables
+	%\lstlistoflistings
+	%\listofabbreviations
+	\printglossary[type=\acronymtype]
+	\clearpage
+	\thispagestyle{empty}
+
+	
+	\pagenumbering{arabic}
+	
+% CHAPTER - Introdução -------------------------------------------------------------------------------
+	\chapter{Introduction}
+	    \input{introduction/intro.tex}
+        \section{Context}
+        \input{introduction/context.tex}
+        \section{Motivation}
+        \input{introduction/motiv.tex}
+        \section{Goals}
+        \input{introduction/goals.tex}
+        \section{Structure}
+        \input{introduction/structure.tex}
+		
+
+% CHAPTER - Estado da Arte ---------------------------------------------------------------------------
+	\chapter{Literature Review}
+		State of the art review; related work
+        \input{literaturereview/introduction.tex}
+        \input{literaturereview/section1.tex}
+        \section{Section 1}
+
+        
+        \section{Basics/Background/Related work}
+
+
+
+	% CHAPTER - Problem and Challenges ---------------
+	\chapter{Methods}
+	         The problem and its challenges.
+
+	\section{Proposed Approach - solution}
+	In this section, it is presented various ways to display an image.
+     \subsection{System Architecture}
+     A block diagram of the planned system / approach
+
+	Here we have an example of inserting an image between the text paragraphs.
+	
+	% CHAPTER - Contribution -------------------------
+	\chapter{Development}
+		
+	\section{Decisions}
+    \section{Implementation}
+    \section{Outcomes}
+    Main result(s) and their scientific evidence
+	\section{Summary}
+
+
+	% CHAPTER - Application -------------------------
+	\chapter{Case Studies / Experiments}
+		Application of main result (examples and case studies)
+	\section{Experiment setup}
+    \section{Results}
+    \section{Discussion}
+	\section{Summary}
+
+	% CHAPTER - Conclusion/Future Work --------------
+	\chapter{Conclusion}
+		Conclusions and future work.
+	\section{Conclusions}
+	\section{Prospect for future work}
+			
+	\bookmarksetup{startatroot} % Ends last part.
+	\addtocontents{toc}{\bigskip} % Making the table of contents look good.
+	%\cleardoublepage
+
+	%- Bibliography (needs bibtex) -%
+	\bibliography{dissertation}
+
+	% Index of terms (needs  makeindex) -------------
+	%\printindex
+	
+	
+	% APPENDIX --------------------------------------
+	\umappendix{Appendix}
+	
+	% Add appendix chapters
+	\chapter{Support material}
+	Auxiliary results which are not main-stream; or
+
+	%\chapter{Details of results}
+	Details of results whose length would compromise readability of main text; or
+
+	%\chapter{Listings}
+	Specifications and Code Listings: should this be the case; or
+
+	%\chapter{Tooling}
+	Tooling: Should this be the case.
+
+	%Anyone using \Latex\ should consider having a look at \TUG,
+	%the \tug{\TeX\ Users Group}
+
+
+	% Back Cover -------------------------------------------
+	\umbackcover{
+	NB: place here information about funding, FCT project, etc in which the work is framed. Leave empty otherwise.
+	}
+
+
+\end{document}
