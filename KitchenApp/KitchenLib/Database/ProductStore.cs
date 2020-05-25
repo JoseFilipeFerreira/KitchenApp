@@ -74,6 +74,73 @@ namespace KitchenLib.Database
             return false;
         }
 
+        public static async Task<Product> Edit(string uid,
+            string name = null,
+            string category = null,
+            uint? quantity = null, string units = null, float? price = null)
+        {
+            Product p = null;
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            if (name == null && category == null && quantity == null && units == null && price == null) return null;
+            try
+            {
+                await session.WriteTransactionAsync(async tx =>
+                {
+                    var query = "Match (p:Product) " +
+                                "where p._guid = $pguid ";
+                    IDictionary<string, object> dic = new Dictionary<string, object>
+                        {{"pguid", uid}};
+                    if (name != null)
+                    {
+                        query += "set p._name = $name ";
+                        dic.Add("name", name);
+                    }
+
+                    if (category != null)
+                    {
+                        query += "set p._category = $category ";
+                        dic.Add("category", category);
+                    }
+
+                    if (quantity != null)
+                    {
+                        query += "set p._quantity = $quantity ";
+                        dic.Add("quantity", quantity);
+                    }
+
+                    if (units != null)
+                    {
+                        query += "set p._units = $units ";
+                        dic.Add("units", units);
+                    }
+
+                    if (price != null)
+                    {
+                        query += "set p._price = $price ";
+                        dic.Add("price", price);
+                    }
+
+                    query += "return p";
+                    var reader = await tx.RunAsync(query, dic);
+                    p = new Product();
+                    while (await reader.FetchAsync())
+                    {
+                        var aa = reader.Current[0].As<INode>().Properties;
+                        foreach (var (key, value) in aa)
+                        {
+                            p.GetType().GetProperty(key)?.SetValue(p, value, null);
+                        }
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return p;
+        }
+
         public static async Task<Product> Get(string uid)
         {
             Product u = null;

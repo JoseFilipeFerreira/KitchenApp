@@ -30,8 +30,8 @@ namespace ProductService.Controllers
         }
 
         [HttpPost]
-        public async Task<Product> Add([FromHeader] string auth, [FromHeader] string name, [FromHeader] string category,
-            [FromHeader] uint quantity, [FromHeader] string units, [FromHeader] float price)
+        public async Task<Product> Add([FromHeader] string auth, [FromForm] string name, [FromForm] string category,
+            [FromForm] long quantity, [FromForm] string units, [FromForm] double price)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
@@ -47,10 +47,10 @@ namespace ProductService.Controllers
         }
 
         [HttpPost]
-        public async Task<Product> Edit([FromHeader] string auth, [FromHeader] string uid,
-            [FromHeader] string name = null,
-            [FromHeader] string category = null,
-            [FromHeader] uint? quantity = null, [FromHeader] string units = null, [FromHeader] float? price = null)
+        public async Task<Product> Edit([FromHeader] string auth, [FromForm] string uid,
+            [FromForm] string name = null,
+            [FromForm] string category = null,
+            [FromForm] uint? quantity = null, [FromForm] string units = null, [FromForm] float? price = null)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
@@ -60,22 +60,22 @@ namespace ProductService.Controllers
             }
 
             HttpContext.Response.Headers.Add("auth", auth);
-            return null;
+            return await ProductStore.Edit(uid, name, category, quantity, units, price);
         }
 
         [HttpPost]
         [Route("{prod}")]
-        public async void Remove([FromHeader] string auth, [FromRoute] string prod)
+        public async Task<bool> Remove([FromHeader] string auth, [FromRoute] string prod)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
-                return;
+                return false;
             }
 
             HttpContext.Response.Headers.Add("auth", auth);
-            await ProductStore.Remove("prod");
+            return await ProductStore.Remove("prod");
         }
 
         [HttpPost]
