@@ -45,7 +45,8 @@ namespace ProductService.Controllers
             await ProductStore.Add(p);
             return p;
         }
-
+        
+/*
         [HttpPost]
         public async Task<Product> Edit([FromHeader] string auth, [FromForm] string uid,
             [FromForm] string name = null,
@@ -77,7 +78,9 @@ namespace ProductService.Controllers
             HttpContext.Response.Headers.Add("auth", auth);
             return await ProductStore.Remove("prod");
         }
+*/
 
+        
         [HttpPost]
         public async Task<List<Product>> Search([FromHeader] string auth, [FromForm] string regex)
         {
