@@ -25,7 +25,7 @@ namespace ProductService.Controllers
             HttpContext.Response.Headers.Add("auth", auth);
             var product = ProductStore.Get(prod).Result;
             if (product != null) return product;
-            HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+            HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
             return null;
         }
 
@@ -41,6 +41,7 @@ namespace ProductService.Controllers
             }
 
             HttpContext.Response.Headers.Add("auth", auth);
+            //TODO Check products with same name
             var p = new Product(name, category, quantity, units, price);
             await ProductStore.Add(p);
             return p;
