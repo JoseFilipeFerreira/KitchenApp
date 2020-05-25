@@ -320,9 +320,9 @@ namespace KitchenLib.Database
             }
         }
 
-        public static async Task<Dictionary<string, string>> expire_warning(string email)
+        public static async Task<Dictionary<string, IDictionary<string, string>>> expire_warning(string email)
         {
-            var l = new Dictionary<string, string>();
+            var l = new Dictionary<string, IDictionary<string, string>>();
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
@@ -330,10 +330,13 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("match (u:User)-[:INV]->(i)-[c:CONTAIN]->(p:Product) " +
                                               "where u._email = $email and date(c.expiration_date) <= date() + duration(\"P1M\") " +
-                                              "return i.name as iname, p._name as pname", new {email});
+                                              "return i.name as iname, p._name as pname, i.guid as iguid", new {email});
                     while (await r.FetchAsync())
                     {
-                        l.Add(r.Current["pname"].As<string>(), r.Current["iname"].As<string>());
+                        l.Add(r.Current["pname"].As<string>(), new Dictionary<string, string>
+                        {
+                            {"name", r.Current["iname"].As<string>()}, {"guid", r.Current["iguid"].As<string>()}
+                        });
                     }
                 });
             }

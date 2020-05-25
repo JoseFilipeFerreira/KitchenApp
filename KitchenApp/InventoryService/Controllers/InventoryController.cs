@@ -204,7 +204,7 @@ namespace InventoryService.Controllers
         }
 
         [HttpGet]
-        public async Task<Dictionary<string, string>> Expired([FromHeader] string auth)
+        public async Task<Dictionary<string, IDictionary<string, string>>> Expired([FromHeader] string auth)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
