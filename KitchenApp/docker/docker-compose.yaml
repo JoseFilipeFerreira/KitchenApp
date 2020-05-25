@@ -4,6 +4,7 @@ services:
         build:
             dockerfile: docker/auth-docker
             context: ..
+        restart: on-failure
         depends_on: 
             - db
         networks: 
@@ -20,8 +21,21 @@ services:
         networks:
             - db
             - proxy
+        restart: on-failure
         expose: 
             - "80"
+    products:
+        build:
+            dockerfile: docker/product-docker
+            context: ..
+        depends_on: 
+            - db
+        networks:
+            - db
+            - proxy
+        expose: 
+            - "80"
+        restart: on-failure
     inventory:
         build:
             dockerfile: docker/inventory-docker
@@ -33,6 +47,7 @@ services:
             - proxy
         expose: 
             - "80"
+        restart: on-failure
     wishlist:
         build:
             dockerfile: docker/wishlist-docker
@@ -44,6 +59,7 @@ services:
             - proxy
         expose: 
             - "80"
+        restart: on-failure
     shopping:
         build:
             dockerfile: docker/shopping-docker
@@ -55,11 +71,15 @@ services:
             - proxy
         expose: 
             - "80"
- 
+        restart: on-failure
     db:
-        image: neo4j:latest
+        build:
+            dockerfile: db-docker
+            context: .
         environment:
             - NEO4J_AUTH=neo4j/APPmvc
+        volumes:
+            - ./db/products.cypher:/var/lib/neo4j/data/products.cypher
         expose: 
             - "7687"
             - "7474"
@@ -68,6 +88,7 @@ services:
             - 7474:7474
         networks:
             - db
+        restart: on-failure
     nginx:
         image: nginx:latest
         ports:
@@ -82,6 +103,7 @@ services:
             - shopping
         networks:
             - proxy
+        restart: on-failure
 
 networks: 
     db:

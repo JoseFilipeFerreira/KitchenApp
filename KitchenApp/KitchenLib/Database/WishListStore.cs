@@ -8,12 +8,10 @@ namespace KitchenLib.Database
 {
     public class WishlistStore
     {
-        private static string uri = "bolt://localhost:7687";
-
         public static async Task<bool> Exists(string uid, string user)
         {
             Boolean exists;
-            var session = new Database(uri, "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 exists = await session.ReadTransactionAsync(async tx =>
@@ -64,13 +62,13 @@ namespace KitchenLib.Database
 
         public static async Task Add(Inventory<Product> inv, string user)
         {
-            var session = new Database(uri, "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    await tx.RunAsync("MATCH (u:User) where u._name = $user " +
-                                      "CREATE (i:Wishlist {name: $name, guid = $guid}) " +
+                    await tx.RunAsync("MATCH (u:User) where u._email = $user " +
+                                      "CREATE (i:Wishlist {name: $name, guid: $guid}) " +
                                       "CREATE (u)-[:WSH]->(i)",
                         new {user, name = inv._name, guid = inv._guid});
                 });
@@ -83,7 +81,7 @@ namespace KitchenLib.Database
 
         public static async Task<bool> Remove(string uid, string email)
         {
-            var session = new Database(uri, "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.ReadTransactionAsync(async tx =>
@@ -106,7 +104,7 @@ namespace KitchenLib.Database
 
         public static async Task<Inventory<Product>> Get(string uid, string email)
         {
-            var session = new Database(uri, "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.ReadTransactionAsync(async tx =>
@@ -133,10 +131,11 @@ namespace KitchenLib.Database
                         inv._guests = new List<string>();
                         foreach (var guest in guests)
                         {
-                            inv._guests.Append(guest["_email"].As<string>());
+                            inv._guests.Add(guest["_email"].As<string>());
                         }
 
                         if (prods == null) continue;
+                        inv._products = new List<Product>();
                         foreach (var prod in prods)
                         {
                             var u = new Product();
@@ -145,7 +144,7 @@ namespace KitchenLib.Database
                                 u.GetType().GetProperty(key)?.SetValue(u, value, null);
                             }
 
-                            inv._products.Append(u);
+                            inv._products.Add(u);
                         }
                     }
 
@@ -162,7 +161,7 @@ namespace KitchenLib.Database
 
         public static async Task Add_prod(string uid, string prodName, string email)
         {
-            var session = new Database(uri, "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.WriteTransactionAsync(async tx =>
@@ -209,7 +208,7 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("Match (u:User)-[:WSH]->(i:Wishlist), (z:User) " +
                                               "where u._email = $email and i.guid = $name and z._email = $friend " +
-                                              "create (i)-[:Shared]->(z)", new {email, name = uid, friend});
+                                              "create (i)<-[:Shared]-(z)", new {email, name = uid, friend});
                 });
             }
             finally

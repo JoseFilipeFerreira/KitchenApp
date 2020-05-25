@@ -114,7 +114,7 @@ namespace KitchenLib.Database
                         "Where u._email = $email AND i.guid = $name " +
                         "Optional match (i)-[c:CONTAIN]->(p:Product) " +
                         "Optional Match(i)-[:SHARED]->(z:User) " +
-                        "Return [(a)-[c:CONTAIN]->(b) where b: Product | { prod: b, quant: c.quantity, expire: c.expiration_date }] as products, " +
+                        "Return [(i)-[c]->(p) | { prod: p, quant: c.quantity, expire: c.expiration_date }] as products, " +
                         "[(a)-[:Shared]->(b) where b: User | b] as guests, " +
                         "u._email as owner_id, " +
                         "i.name as name, i.guid as guid",
@@ -130,10 +130,11 @@ namespace KitchenLib.Database
                         inv._guests = new List<string>();
                         foreach (var guest in guests)
                         {
-                            inv._guests.Append(guest["_email"].As<string>());
+                            inv._guests.Add(guest["_email"].As<string>());
                         }
 
                         if (prods == null) continue;
+                        inv._products = new List<OwnedProduct>();
                         foreach (var prod in prods)
                         {
                             var u = new OwnedProduct();
@@ -143,9 +144,9 @@ namespace KitchenLib.Database
                             }
 
                             u._consume_before = prod["expire"].As<DateTime>();
-                            u._stock = prod["quant"].As<uint>();
+                            u._stock = prod["quant"].As<long>();
 
-                            inv._products.Append(u);
+                            inv._products.Add(u);
                         }
                     }
                 });
@@ -242,7 +243,7 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("Match (u:User)-[:INV]->(i:Inventory), (z:User) " +
                                               "where u._email = $email and i.guid = $name and z._email = $friend " +
-                                              "create (i)-[:Shared]->(z)", new {email, name = uid, friend});
+                                              "create (i)<-[:Shared]-(z)", new {email, name = uid, friend});
                 });
             }
             finally

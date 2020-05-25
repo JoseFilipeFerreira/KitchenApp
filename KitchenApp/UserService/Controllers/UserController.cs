@@ -76,7 +76,7 @@ namespace UserService.Controllers
             return u;
         }
 
-        [HttpDelete]
+        [HttpPost]
         public void Remove([FromHeader] string auth)
         {
             string user;
