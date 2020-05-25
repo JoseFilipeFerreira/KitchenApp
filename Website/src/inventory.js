@@ -12,6 +12,8 @@ export default class Inventory extends Component {
       inventory_id: null,
       inventory_name: null,
       name: null,
+      categories: null,
+      items: null,
     };
   }
 
@@ -53,11 +55,13 @@ export default class Inventory extends Component {
         { withCredentials: true }
       )
       .then((response) => {
-        console.log(response.data)
+        console.log(response.data);
         let json = response.data;
         this.setState({
           inventory_name: json["_name"],
+          items: json["_products"]
         });
+        this.showItems()
       })
       .catch((error) => {
         console.log(error);
@@ -76,23 +80,199 @@ export default class Inventory extends Component {
     let regex = /[/]dashboard[/]inventory[/](.*)/;
     let id = url.match(regex)[1];
     if (id != null) {
-        console.log(id)
-      this.setState({ inventory_id: id }, () => {this.getInventoryInfo()});
+      console.log(id);
+      this.setState({ inventory_id: id }, () => {
+        this.getInventoryInfo();
+      });
     }
   };
 
-  addProduct = () => {
+  addProductMenu = () => {
+    let token = localStorage.getItem("auth");
+    axios
+      .get(
+        "http://localhost:1331/product/getall",
+        {
+          headers: { auth: token },
+        },
+        { withCredentials: true }
+      )
+      .then(async (response) => {
+        console.log(response.data);
+        let json = response.data;
+        const token = response.headers["auth"];
+        localStorage.setItem("auth", token);
+        var r = [];
+        let i = 0;
+        var p = "";
+        for (p in json) {
+          r[i++] = json[p]["_category"];
+        }
+        var categories = Array.from(new Set(r));
+        let sc = [];
+        for (i = 0; i < categories.length; i++) {
+          sc[i] = categories[i];
+        }
+        this.setState({
+          categories: sc,
+        });
+
+        this.showCategories(json, this.state.categories);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  removeProduct = () => {
+  addProduct = async (product) => {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
+    const { value: formValues } = await Swal.fire({
+      title: "Add Product",
+      html:
+        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">' +
+        '<input id="swal-input2" placeholder="Expire date (YYYY/MM/DD)" class="swal2-input">',
+      focusConfirm: false,
+      preConfirm: () => {
+        let quantity = document.getElementById("swal-input1").value;
+        let expire = document.getElementById("swal-input2").value;
+        return [quantity, expire];
+      },
+    });
+
+    form.append("product", product["_guid"]);
+    form.append("quantity", formValues[0]);
+    form.append("expire", formValues[1]);
+    form.append("uid", this.state.inventory_id);
+
+    axios
+      .post("http://localhost:1331/inventory/addproduct", form, {
+        headers: { "Content-Type": "multipart/form-data", auth: token },
+        withCredentials: true,
+      })
+      .then((response) => {
+        /* save this token inside localStorage */
+        const token = response.headers["auth"];
+        localStorage.setItem("auth", token);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  editProduct = () => {
+  showCategories = async (json, categories) => {
+    const { value: category } = await Swal.fire({
+      title: "Select category",
+      input: "select",
+      inputOptions: categories,
+      inputPlaceholder: "Select a category",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          if (value) {
+            resolve();
+          } else {
+            resolve("You need to select one");
+          }
+        });
+      },
+    });
+
+    if (category) {
+      this.showProducts(json, categories[category]);
+    }
   };
+
+  showProducts = async (json, category) => {
+    var products = [];
+    var ids = [];
+    let i = 0;
+    var p = "";
+    for (p in json) {
+      if (json[p]["_category"] === category) products[i] = json[p]["_name"];
+      ids[i++] = json[p]["_guid"];
+    }
+    await Swal.fire({
+      title: "Select product",
+      input: "select",
+      inputOptions: products,
+      inputPlaceholder: "Select a category",
+      showCancelButton: true,
+      cancelButtonText: "Back",
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          if (value) {
+            resolve();
+          } else {
+            resolve("You need to select one");
+          }
+        });
+      },
+    }).then((result) => {
+      if (!result.value) {
+        this.showCategories(json, this.state.categories);
+      } else {
+        this.addProduct(json[result.value]);
+      }
+    });
+  };
+
+  removeProduct = async () => {
+    var p = "";
+    const form = new FormData();
+    var products = [], ids = [];
+    let i = 0;
+    for (p in this.state.items) {
+      let product = this.state.items[p]
+      products[i] = product["_name"];
+      ids[i++] = product["_guid"];
+    }
+    const { value: product } = await Swal.fire({
+      title: "Select product",
+      input: "select",
+      inputOptions: products,
+      inputPlaceholder: "Select a product",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          if (value) {
+            resolve();
+          } else {
+            resolve("You need to select one");
+          }
+        });
+      },
+    });
+
+    if (product) {
+      let prod = this.state.items[product];
+      let token = localStorage.getItem("auth");
+      form.append("uid", this.state.inventory_id);
+      form.append("prod", prod["_guid"]);
+
+      axios
+            .post("http://localhost:1331/inventory/removeproduct", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+              window.location.reload();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+    }
+  };
+
+  editProduct = () => {};
 
   editInventory = async () => {
-    let token = localStorage.getItem('auth');
-    let uid = this.state.inventory_id
+    let token = localStorage.getItem("auth");
+    let uid = this.state.inventory_id;
     const form = new FormData();
     const { value: name } = await Swal.fire({
       title: "Enter new name",
@@ -124,9 +304,9 @@ export default class Inventory extends Component {
     });
   };
 
-  shareInventory= async () => {
-    let token = localStorage.getItem('auth');
-    let uid = this.state.inventory_id
+  shareInventory = async () => {
+    let token = localStorage.getItem("auth");
+    let uid = this.state.inventory_id;
     const form = new FormData();
     const { value: name } = await Swal.fire({
       title: "Enter user email",
@@ -157,15 +337,17 @@ export default class Inventory extends Component {
     });
   };
 
-  showInventoryList = () => {
+  showItems = () => {
     var x;
-    var json = this.state.dashboards;
+    var json = this.state.items;
     for (x in json) {
+      let product = json[x];
+      console.log(product)
       document.getElementById("inventoryList").innerHTML +=
-        '<a href="/dashboard/inventory/' +
-        json[x] +
-        '"><input class="inventory-entry" type="button" value="' +
-        x +
+        '<input class="inventory-entry" type="button" value="' +
+        product["_name"] + ' | Qnt: ' +
+        product["_stock"] + ' | Expire: ' +
+        product["_consume_before"].substring(0,10) + 
         '"></input></a>';
     }
   };
@@ -310,7 +492,7 @@ export default class Inventory extends Component {
                   </svg>
                   <span>Shopping Lists</span>
                 </a>
-              </li >
+              </li>
               <li className="menu-heading">
                 <h3>Settings</h3>
               </li>
@@ -329,7 +511,7 @@ export default class Inventory extends Component {
                   </svg>
                   <span>Friends</span>
                 </a>
-              </li >
+              </li>
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
@@ -377,14 +559,16 @@ export default class Inventory extends Component {
           </section>
           <section className="grid">
             <article className="inventories">
-              <div className="inventories-text">{this.state.inventory_name}</div>
+              <div className="inventories-text">
+                {this.state.inventory_name}
+              </div>
               <div id="inventoryList"></div>
               <div className="inventory-button">
                 <input
                   className="create-button"
                   type="button"
                   value="Add product"
-                  onClick={this.addProduct}
+                  onClick={this.addProductMenu}
                 ></input>
                 <input
                   className="create-button"
