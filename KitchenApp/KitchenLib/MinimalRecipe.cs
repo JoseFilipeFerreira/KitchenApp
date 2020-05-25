@@ -1,3 +1,5 @@
+using System;
+
 namespace KitchenLib
 {
     public class MinimalRecipe
@@ -6,5 +8,11 @@ namespace KitchenLib
         public string image { get; set; }
         public uint id { get; set; }
 
+        public MinimalRecipe(Recipe recipe)
+        {
+            title = recipe.title;
+            image = recipe.image;
+            id = recipe.id;
+        }
     }
 }
