@@ -319,5 +319,30 @@ namespace KitchenLib.Database
                 await session.CloseAsync();
             }
         }
+
+        public static async Task<Dictionary<string, string>> expire_warning(string email)
+        {
+            var l = new Dictionary<string, string>();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var r = await tx.RunAsync("match (u:User)-[:INV]->(i)-[c:CONTAIN]->(p:Product) " +
+                                              "where u._email = $email and date(c.expiration_date) <= date() + duration(\"P1M\") " +
+                                              "return i.name as iname, p._name as pname", new {email});
+                    while (await r.FetchAsync())
+                    {
+                        l.Add(r.Current["pname"].As<string>(), r.Current["iname"].As<string>());
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return l;
+        }
     }
 }
