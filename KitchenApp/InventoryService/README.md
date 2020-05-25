@@ -12,6 +12,7 @@
 - /remove
 - /share
 - /shared
+- /expired
 
 ### /info endpoint
 
@@ -107,3 +108,10 @@ of all the logged in user shared inventories. If the user present in the token i
 it will be returned a **401** (Unauthorized) status code.
 
 
+### /expired endpoint
+
+Making a **GET** request to this endpoint, alongside with the JWT auth header,
+will return, in the request body, a dictionary containing the product name that
+will expire in less then a month, and the inventory name that contains it, 
+searching through all the user's inventories. If the user present in the token 
+isn't valid it will be returned a **401** (Unauthorized) status code.
