@@ -81,6 +81,17 @@ namespace KitchenLib
 
             return JsonConvert.DeserializeObject<List<Recipe>>(get_request(url));
         }
+        
+        public static List<Recipe> SearchRecipe(List<long> minimalListID)
+        {
+            var API_KEY = "7a98067ae9ea425ca548d96347913e74";
+            var url = "https://api.spoonacular.com/recipes/informationBulk?ids=";
+            
+            url += string.Join(",", minimalListID);
+            url += "&apiKey=" + API_KEY;
+
+            return JsonConvert.DeserializeObject<List<Recipe>>(get_request(url));
+        }
 
         
         
