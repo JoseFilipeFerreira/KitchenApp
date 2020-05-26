@@ -45,7 +45,7 @@ namespace RecipeService.Controllers
             }
 
             HttpContext.Response.Headers.Add("auth", auth);
-            await RecipeStore.star(id, user);
+            await RecipeStore.Star(id, user);
         }
         
         [HttpPost]
@@ -59,7 +59,21 @@ namespace RecipeService.Controllers
             }
 
             HttpContext.Response.Headers.Add("auth", auth);
-            await RecipeStore.unstar(id, user);
+            await RecipeStore.Unstar(id, user);
+        }
+
+        [HttpGet]
+        public async Task<List<MinimalRecipe>> Stared([FromHeader] string auth)
+        {
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+            return await RecipeStore.GetStared(user);
         }
     }
 }

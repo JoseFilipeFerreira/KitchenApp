@@ -59,8 +59,8 @@ namespace KitchenLib.Database
 
             return u;
         }
-        
-        public static async Task<MinimalRecipe> Add(MinimalRecipe r)
+
+        public static async Task Add(MinimalRecipe r)
         {
             MinimalRecipe u = null;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
@@ -69,7 +69,7 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     var reader = await tx.RunAsync("CREATE (i:Recipe {title: $title, id: $id, image: $image}) " +
-                                      "return i",
+                                                   "return i",
                         new {r.id, r.image, r.title});
                     u = new MinimalRecipe();
                     while (await reader.FetchAsync())
@@ -86,11 +86,9 @@ namespace KitchenLib.Database
             {
                 await session.CloseAsync();
             }
-
-            return u;
         }
 
-        public static async Task star(string id, string user)
+        public static async Task Star(string id, string user)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -112,7 +110,41 @@ namespace KitchenLib.Database
             }
         }
 
-        public static async Task unstar(string id, string user)
+        public static async Task<List<MinimalRecipe>> GetStared(string user)
+        {
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            var lst = new List<MinimalRecipe>();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var reader = await tx.RunAsync("Match(u:User)-[:REC]->(z:Recipe) " +
+                                                   "where u._email = user " +
+                                                   "return z",
+                        new {email = user});
+                    while (await reader.FetchAsync())
+                    {
+                        var r = new MinimalRecipe();
+
+                        var aa = reader.Current[0].As<INode>().Properties;
+                        foreach (var (key, value) in aa)
+                        {
+                            r.GetType().GetProperty(key)?.SetValue(r, value, null);
+                        }
+
+                        lst.Add(r);
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return lst;
+        }
+
+        public static async Task Unstar(string id, string user)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
