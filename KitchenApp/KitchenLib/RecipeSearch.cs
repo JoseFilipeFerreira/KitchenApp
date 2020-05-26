@@ -97,15 +97,13 @@ namespace KitchenLib
         
         private static string get_request(string url)
         {
-            var httpWebRequestQR = (HttpWebRequest)WebRequest.Create(url);
-            httpWebRequestQR.ContentType = "application/json";
-            httpWebRequestQR.Method = "GET";
+            var httpWebRequestQr = (HttpWebRequest)WebRequest.Create(url);
+            httpWebRequestQr.ContentType = "application/json";
+            httpWebRequestQr.Method = "GET";
 
-            var httpResponseQr = (HttpWebResponse)httpWebRequestQR.GetResponse();
-            using (var streamReader = new StreamReader(httpResponseQr.GetResponseStream()))
-            {
-                return streamReader.ReadToEnd();
-            }
+            var httpResponseQr = (HttpWebResponse)httpWebRequestQr.GetResponse();
+            using var streamReader = new StreamReader(httpResponseQr.GetResponseStream());
+            return streamReader.ReadToEnd();
         }
         
         // 1 point base + 0.01 points per recipe

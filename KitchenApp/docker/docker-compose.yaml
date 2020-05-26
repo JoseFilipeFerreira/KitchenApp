@@ -4,7 +4,7 @@ services:
         build:
             dockerfile: docker/auth-docker
             context: ..
-        restart: on-failure
+        restart: always
         depends_on: 
             - db
         networks: 
@@ -21,7 +21,7 @@ services:
         networks:
             - db
             - proxy
-        restart: on-failure
+        restart: always
         expose: 
             - "80"
     products:
@@ -35,7 +35,7 @@ services:
             - proxy
         expose: 
             - "80"
-        restart: on-failure
+        restart: always
     inventory:
         build:
             dockerfile: docker/inventory-docker
@@ -47,7 +47,19 @@ services:
             - proxy
         expose: 
             - "80"
-        restart: on-failure
+        restart: always
+    recipe:
+        build:
+            dockerfile: docker/recipe-docker
+            context: ..
+        depends_on: 
+            - db
+        networks:
+            - db
+            - proxy
+        expose: 
+            - "80"
+        restart: always
     wishlist:
         build:
             dockerfile: docker/wishlist-docker
@@ -59,7 +71,7 @@ services:
             - proxy
         expose: 
             - "80"
-        restart: on-failure
+        restart: always
     shopping:
         build:
             dockerfile: docker/shopping-docker
@@ -71,7 +83,7 @@ services:
             - proxy
         expose: 
             - "80"
-        restart: on-failure
+        restart: always
     db:
         build:
             dockerfile: db-docker
@@ -88,7 +100,7 @@ services:
             - 7474:7474
         networks:
             - db
-        restart: on-failure
+        restart: always
     nginx:
         image: nginx:latest
         ports:
@@ -103,7 +115,7 @@ services:
             - shopping
         networks:
             - proxy
-        restart: on-failure
+        restart: always
 
 networks: 
     db:
