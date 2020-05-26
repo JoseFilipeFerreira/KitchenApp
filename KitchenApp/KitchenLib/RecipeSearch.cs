@@ -14,6 +14,7 @@ namespace KitchenLib
 
     public class RecipeSearch
     {
+        // 1 point base + 0.01 points per recipe
         public static List<MinimalRecipe> SearchMinimalRecipe(uint number, List<Product> ingridients)
         {
             var options = "number=" + number;
@@ -26,11 +27,13 @@ namespace KitchenLib
             return GetMinimalRecipies(options);
         }
         
+        // 2 point 1st recipe + 0.51 point per recipe
         public static List<Recipe> SearchRecipe(uint number, List<Product> ingridients)
         {
             return SearchRecipe(SearchMinimalRecipe(number, ingridients));
         }
         
+        // 1 point base + 0.01 points per recipe
         public static List<MinimalRecipe> SearchMinimalRecipe(uint number, string recipeName)
         {
             var options = "number=" + number;
@@ -39,11 +42,13 @@ namespace KitchenLib
             return GetMinimalRecipies(options);
         }
         
+        // 2 point 1st recipe + 0.51 point per recipe
         public static List<Recipe> SearchRecipe(uint number, string recipeName)
         {
             return SearchRecipe(SearchMinimalRecipe(number, recipeName));
         }
         
+        // 1 point base + 0.01 points per recipe
         public static List<MinimalRecipe> SearchMinimalRecipe(uint number, string recipeName, List<Product> ingridients)
         {
             var options = "number=" + number;
@@ -58,11 +63,13 @@ namespace KitchenLib
             return GetMinimalRecipies(options);
         }
         
+        // 2 point 1st recipe + 0.51 point per recipe
         public static List<Recipe> SearchRecipe(uint number, string recipeName, List<Product> ingridients)
         {
             return SearchRecipe(SearchMinimalRecipe(number, recipeName, ingridients));
         }
         
+        // 1 point
         public static Recipe SearchSingleRecipe(MinimalRecipe mR)
         {
             var n = new List<MinimalRecipe>();
@@ -70,6 +77,7 @@ namespace KitchenLib
             return SearchRecipe(n)[0];
         }
         
+        // 1 point 1st recipe + 0.5 point per recipe
         public static List<Recipe> SearchRecipe(List<long> minimalListID)
         {
             var API_KEY = "7a98067ae9ea425ca548d96347913e74";
@@ -81,11 +89,12 @@ namespace KitchenLib
             return JsonConvert.DeserializeObject<List<Recipe>>(get_request(url));
         }
         
+        // 1 point 1st recipe + 0.5 point per recipe
         public static List<Recipe> SearchRecipe(List<MinimalRecipe> minimalList)
         {
             return SearchRecipe(minimalList.Select(s => (long)s.id).ToList());
         }
-
+        
         private static string get_request(string url)
         {
             var httpWebRequestQR = (HttpWebRequest)WebRequest.Create(url);
@@ -99,6 +108,7 @@ namespace KitchenLib
             }
         }
         
+        // 1 point base + 0.01 points per recipe
         private static List<MinimalRecipe> GetMinimalRecipies(string options)
         {
             var API_KEY = "7a98067ae9ea425ca548d96347913e74";
