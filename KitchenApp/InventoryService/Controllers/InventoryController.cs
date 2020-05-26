@@ -202,5 +202,19 @@ namespace InventoryService.Controllers
 
             await InventoryStore.EditName(user, uid, name);
         }
+
+        [HttpGet]
+        public async Task<Dictionary<string, IDictionary<string, string>>> Expired([FromHeader] string auth)
+        {
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+            return await InventoryStore.expire_warning(user);
+        }
     }
 }

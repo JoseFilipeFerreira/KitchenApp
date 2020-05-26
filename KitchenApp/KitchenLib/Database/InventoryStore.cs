@@ -112,10 +112,8 @@ namespace KitchenLib.Database
                     var reader = await tx.RunAsync(
                         "Match(u:User)-[]->(i:Inventory) " +
                         "Where u._email = $email AND i.guid = $name " +
-                        "Optional match (i)-[c:CONTAIN]->(p:Product) " +
-                        "Optional Match(i)-[:SHARED]->(z:User) " +
-                        "Return [(i)-[c]->(p) | { prod: p, quant: c.quantity, expire: c.expiration_date }] as products, " +
-                        "[(a)-[:Shared]->(b) where b: User | b] as guests, " +
+                        "Return [(i)-[c]->(p) where p: Product| { prod: p, quant: c.quantity, expire: c.expiration_date }] as products, " +
+                        "[(i)-[:Shared]-(b) where b: User | b] as guests, " +
                         "u._email as owner_id, " +
                         "i.name as name, i.guid as guid",
                         new {email, name = uid});
@@ -318,6 +316,34 @@ namespace KitchenLib.Database
             {
                 await session.CloseAsync();
             }
+        }
+
+        public static async Task<Dictionary<string, IDictionary<string, string>>> expire_warning(string email)
+        {
+            var l = new Dictionary<string, IDictionary<string, string>>();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var r = await tx.RunAsync("match (u:User)-[:INV]->(i)-[c:CONTAIN]->(p:Product) " +
+                                              "where u._email = $email and date(c.expiration_date) <= date() + duration(\"P1M\") " +
+                                              "return i.name as iname, p._name as pname, i.guid as iguid", new {email});
+                    while (await r.FetchAsync())
+                    {
+                        l.Add(r.Current["pname"].As<string>(), new Dictionary<string, string>
+                        {
+                            {"name", r.Current["iname"].As<string>()}, {"guid", r.Current["iguid"].As<string>()}
+                        });
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return l;
         }
     }
 }
