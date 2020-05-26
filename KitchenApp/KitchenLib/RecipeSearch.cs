@@ -14,7 +14,7 @@ namespace KitchenLib
 
     public class RecipeSearch
     {
-        public static List<Recipe> SearchRecipe(uint number, List<Product> ingridients)
+        public static List<MinimalRecipe> SearchMinimalRecipe(uint number, List<Product> ingridients)
         {
             var options = "number=" + number;
 
@@ -23,19 +23,28 @@ namespace KitchenLib
             var ingridientsString = ingridients.Select(s => s._name).ToList();
             options += string.Join(",", ingridientsString);
             
-            return SearchRecipe(GetMinimalRecipies(options));
+            return GetMinimalRecipies(options);
+        }
+        
+        public static List<Recipe> SearchRecipe(uint number, List<Product> ingridients)
+        {
+            return SearchRecipe(SearchMinimalRecipe(number, ingridients));
+        }
+        
+        public static List<MinimalRecipe> SearchMinimalRecipe(uint number, string recipeName)
+        {
+            var options = "number=" + number;
+            options += "&query=" + recipeName;
+
+            return GetMinimalRecipies(options);
         }
         
         public static List<Recipe> SearchRecipe(uint number, string recipeName)
         {
-            var options = "number=" + number;
-            options += "&query=" + recipeName;
-
-            return SearchRecipe(GetMinimalRecipies(options));
-            
+            return SearchRecipe(SearchMinimalRecipe(number, recipeName));
         }
         
-        public static List<Recipe> SearchRecipe(uint number, string recipeName, List<Product> ingridients)
+        public static List<MinimalRecipe> SearchMinimalRecipe(uint number, string recipeName, List<Product> ingridients)
         {
             var options = "number=" + number;
             
@@ -46,7 +55,12 @@ namespace KitchenLib
             var ingridientsString = ingridients.Select(s => s._name).ToList();
             options += string.Join(",", ingridientsString);
             
-            return SearchRecipe(GetMinimalRecipies(options));
+            return GetMinimalRecipies(options);
+        }
+        
+        public static List<Recipe> SearchRecipe(uint number, string recipeName, List<Product> ingridients)
+        {
+            return SearchRecipe(SearchMinimalRecipe(number, recipeName, ingridients));
         }
         
         public static Recipe SearchSingleRecipe(MinimalRecipe mR)
@@ -68,6 +82,8 @@ namespace KitchenLib
             return JsonConvert.DeserializeObject<List<Recipe>>(get_request(url));
         }
 
+        
+        
         private static string get_request(string url)
         {
             var httpWebRequestQR = (HttpWebRequest)WebRequest.Create(url);
