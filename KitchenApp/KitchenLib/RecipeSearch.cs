@@ -69,18 +69,6 @@ namespace KitchenLib
             n.Append(mR);
             return SearchRecipe(n)[0];
         }
-
-        public static List<Recipe> SearchRecipe(List<MinimalRecipe> minimalList)
-        {
-            var API_KEY = "7a98067ae9ea425ca548d96347913e74";
-            var url = "https://api.spoonacular.com/recipes/informationBulk?ids=";
-
-            var recipeString = minimalList.Select(s => s.id.ToString()).ToList();
-            url += string.Join(",", recipeString);
-            url += "&apiKey=" + API_KEY;
-
-            return JsonConvert.DeserializeObject<List<Recipe>>(get_request(url));
-        }
         
         public static List<Recipe> SearchRecipe(List<long> minimalListID)
         {
@@ -92,9 +80,12 @@ namespace KitchenLib
 
             return JsonConvert.DeserializeObject<List<Recipe>>(get_request(url));
         }
+        
+        public static List<Recipe> SearchRecipe(List<MinimalRecipe> minimalList)
+        {
+            return SearchRecipe(minimalList.Select(s => (long)s.id).ToList());
+        }
 
-        
-        
         private static string get_request(string url)
         {
             var httpWebRequestQR = (HttpWebRequest)WebRequest.Create(url);
