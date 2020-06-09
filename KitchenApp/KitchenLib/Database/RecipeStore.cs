@@ -62,13 +62,13 @@ namespace KitchenLib.Database
 
         public static async Task Add(MinimalRecipe r)
         {
-            MinimalRecipe u = null;
+            MinimalRecipe u;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var reader = await tx.RunAsync("CREATE (i:Recipe {title: $title, id: $id, image: $image}) " +
+                    var reader = await tx.RunAsync("Merge (i:Recipe {title: $title, id: $id, image: $image}) " +
                                                    "return i",
                         new {r.id, r.image, r.title});
                     u = new MinimalRecipe();
@@ -88,7 +88,7 @@ namespace KitchenLib.Database
             }
         }
 
-        public static async Task Star(string id, string user)
+        public static async Task Star(long id, string user)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -119,9 +119,9 @@ namespace KitchenLib.Database
                 await session.ReadTransactionAsync(async tx =>
                 {
                     var reader = await tx.RunAsync("Match(u:User)-[:REC]->(z:Recipe) " +
-                                                   "where u._email = user " +
+                                                   "where u._email = $user " +
                                                    "return z",
-                        new {email = user});
+                        new {user});
                     while (await reader.FetchAsync())
                     {
                         var r = new MinimalRecipe();
@@ -144,7 +144,7 @@ namespace KitchenLib.Database
             return lst;
         }
 
-        public static async Task Unstar(string id, string user)
+        public static async Task Unstar(long id, string user)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
@@ -152,9 +152,9 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     var reader = await tx.RunAsync("Match(u:User)-[r:REC]->(z:Recipe) " +
-                                                   "where u._email = user and z.id = id " +
+                                                   "where u._email = $user and z.id = $id " +
                                                    "delete r",
-                        new {email = user, id});
+                        new {user, id});
                 });
             }
             finally

@@ -7,7 +7,6 @@ using KitchenLib.Database;
 using Microsoft.AspNetCore.Mvc;
 using Neo4j.Driver;
 
-//TODO Implement a All like endpoint to the shared inventories
 namespace InventoryService.Controllers
 {
     [ApiController]

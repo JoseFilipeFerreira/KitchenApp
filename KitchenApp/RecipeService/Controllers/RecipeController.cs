@@ -25,7 +25,7 @@ namespace RecipeService.Controllers
             }
 
             HttpContext.Response.Headers.Add("auth", auth);
-            var list = RecipeSearch.SearchRecipe(50, keys);
+            var list = RecipeSearch.SearchRecipe(10, keys);
             foreach (var v in list)
             {
                 await RecipeStore.Add(new MinimalRecipe(v));
@@ -33,9 +33,37 @@ namespace RecipeService.Controllers
 
             return list;
         }
+        
+        [HttpPost]
+        public async Task<List<MinimalRecipe>> SearchProd([FromHeader] string auth, [FromForm] string keys, [FromForm] string inventory)
+        {
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+            var inv = InventoryStore.Get(inventory, user).Result;
+            if (inv == null)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return null;
+            }
+
+            var r = new List<Product>(inv._products);
+            var list = RecipeSearch.SearchMinimalRecipe(10, r);
+            foreach (var v in list)
+            {
+                await RecipeStore.Add(v);
+            }
+
+            return list;
+        }
 
         [HttpPost]
-        public async void Star([FromHeader] string auth, [FromForm] string id)
+        public async void Star([FromHeader] string auth, [FromForm] long id)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
@@ -49,7 +77,7 @@ namespace RecipeService.Controllers
         }
         
         [HttpPost]
-        public async void Unstar([FromHeader] string auth, [FromForm] string id)
+        public async void Unstar([FromHeader] string auth, [FromForm] long id)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
