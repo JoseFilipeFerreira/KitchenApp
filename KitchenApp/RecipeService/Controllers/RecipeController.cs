@@ -51,9 +51,8 @@ namespace RecipeService.Controllers
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
                 return null;
             }
-
             var r = new List<Product>(inv._products);
-            var list = RecipeSearch.SearchMinimalRecipe(10, r);
+            var list = RecipeSearch.SearchMinimalRecipe(10, keys, r);
             foreach (var v in list)
             {
                 await RecipeStore.Add(v);
