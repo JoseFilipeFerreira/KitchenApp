@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using KitchenLib;
 using KitchenLib.Database;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace RecipeService.Controllers
 {
@@ -35,7 +33,7 @@ namespace RecipeService.Controllers
         }
         
         [HttpPost]
-        public async Task<List<MinimalRecipe>> SearchProd([FromHeader] string auth, [FromForm] string keys, [FromForm] string inventory)
+        public async Task<List<Recipe>> Search([FromHeader] string auth, [FromForm] string keys, [FromForm] string inventory)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
@@ -52,10 +50,10 @@ namespace RecipeService.Controllers
                 return null;
             }
             var r = new List<Product>(inv._products);
-            var list = RecipeSearch.SearchMinimalRecipe(10, keys, r);
+            var list = RecipeSearch.SearchRecipe(10, keys, r);
             foreach (var v in list)
             {
-                await RecipeStore.Add(v);
+                await RecipeStore.Add(new MinimalRecipe(v));
             }
 
             return list;
@@ -101,6 +99,20 @@ namespace RecipeService.Controllers
 
             HttpContext.Response.Headers.Add("auth", auth);
             return await RecipeStore.GetStared(user);
+        }
+
+        [HttpGet("{id}")]
+        public List<Recipe> Get([FromHeader] string auth, [FromRoute] long id)
+        {
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+            return RecipeSearch.SearchRecipe(new List<long>{id});
         }
     }
 }
