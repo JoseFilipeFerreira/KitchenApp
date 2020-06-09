@@ -32,7 +32,8 @@ by a **POST** request, with form data containing the following fields:
 Through this endpoint the user can search existing products, making a **POST**
 request, containing form data with a field named `regex`. This search will match
 with a product if its name starts with the given string, or if it matches the
-given regex pattern.
+given regex pattern. If a field called `category`, containing a category name,
+is provided, the search will only contain products that belong to that category.
 
 The search result will be sent in the response body.
 

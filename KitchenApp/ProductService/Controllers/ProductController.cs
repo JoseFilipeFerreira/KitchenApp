@@ -96,6 +96,20 @@ namespace ProductService.Controllers
             return await ProductStore.Search(regex);
         }
         
+        [HttpPost]
+        public async Task<List<Product>> Search([FromHeader] string auth, [FromForm] string regex, [FromForm] string category)
+        {
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+            return await ProductStore.Search(regex, category);
+        }
+        
         [HttpGet]
         public async Task<List<Product>> GetAll([FromHeader] string auth)
         {
