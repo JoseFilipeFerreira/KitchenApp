@@ -6,13 +6,22 @@ namespace KitchenLib
     {
         public string title { get; set; }
         public string image { get; set; }
-        public uint id { get; set; }
+        public long id { get; set; }
 
         public MinimalRecipe(Recipe recipe)
         {
             title = recipe.title;
             image = recipe.image;
             id = recipe.id;
+        }
+
+        public MinimalRecipe()
+        {
+        }
+
+        public Recipe ToRecipe()
+        {
+            return RecipeSearch.SearchSingleRecipe(this);
         }
     }
 }

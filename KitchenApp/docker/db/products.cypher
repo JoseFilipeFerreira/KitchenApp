@@ -1,3 +1,5 @@
+//MERGE CONSTRAINT ON (n:User) ASSERT n._email IS UNIQUE;
+//MERGE CONSTRAINT ON (n:Recipe) ASSERT n.id IS UNIQUE;
 MERGE (:Product {_guid: '3aad5074-8222-41b6-87fa-7499159bcffa', _name: 'Angelica', _category: 'Herbs and Spices', _quantity: 1, _price: 5.33, _units: 'units'});
 MERGE (:Product {_guid: '09ad0369-2665-4c3d-a1a8-aeeedff66616', _name: 'Savoy cabbage', _category: 'Vegetables', _quantity: 6, _price: 10.28, _units: 'units'});
 MERGE (:Product {_guid: '091578b2-48d6-4c65-a43a-bb2ae0aa3f4e', _name: 'Silver linden', _category: 'Herbs and Spices', _quantity: 4, _price: 6.72, _units: 'units'});

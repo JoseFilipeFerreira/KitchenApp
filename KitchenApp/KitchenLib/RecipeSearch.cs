@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace KitchenLib
 {
-    class RootMinimalRecipes
+    internal class RootMinimalRecipes
     {
         public List<MinimalRecipe> results { get; set; }
     }
@@ -72,14 +72,17 @@ namespace KitchenLib
         // 1 point
         public static Recipe SearchSingleRecipe(MinimalRecipe mR)
         {
-            var n = new List<MinimalRecipe>();
-            n.Append(mR);
+            var n = new List<MinimalRecipe> {mR};
             return SearchRecipe(n)[0];
         }
         
         // 1 point 1st recipe + 0.5 point per recipe
         public static List<Recipe> SearchRecipe(List<long> minimalListID)
         {
+            if (!minimalListID.Any())
+            {
+                return new List<Recipe>();
+            }
             var API_KEY = "7a98067ae9ea425ca548d96347913e74";
             var url = "https://api.spoonacular.com/recipes/informationBulk?ids=";
             
@@ -97,22 +100,21 @@ namespace KitchenLib
         
         private static string get_request(string url)
         {
-            var httpWebRequestQR = (HttpWebRequest)WebRequest.Create(url);
-            httpWebRequestQR.ContentType = "application/json";
-            httpWebRequestQR.Method = "GET";
+            var httpWebRequestQr = (HttpWebRequest)WebRequest.Create(url);
+            httpWebRequestQr.ContentType = "application/json";
+            httpWebRequestQr.Method = "GET";
+            Console.WriteLine(url);
 
-            var httpResponseQr = (HttpWebResponse)httpWebRequestQR.GetResponse();
-            using (var streamReader = new StreamReader(httpResponseQr.GetResponseStream()))
-            {
-                return streamReader.ReadToEnd();
-            }
+            var httpResponseQr = (HttpWebResponse)httpWebRequestQr.GetResponse();
+            using var streamReader = new StreamReader(httpResponseQr.GetResponseStream());
+            return streamReader.ReadToEnd();
         }
         
         // 1 point base + 0.01 points per recipe
         private static List<MinimalRecipe> GetMinimalRecipies(string options)
         {
             var API_KEY = "7a98067ae9ea425ca548d96347913e74";
-            string url = "https://api.spoonacular.com/recipes/complexSearch?" + options + "&apiKey=" + API_KEY;
+            var url = "https://api.spoonacular.com/recipes/complexSearch?" + options + "&apiKey=" + API_KEY;
             return JsonConvert.DeserializeObject<RootMinimalRecipes>(get_request(url)).results;
         }
     }
