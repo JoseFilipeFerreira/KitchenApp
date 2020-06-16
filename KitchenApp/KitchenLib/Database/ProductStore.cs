@@ -232,5 +232,64 @@ namespace KitchenLib.Database
 
             return l;
         }
+        
+        public static async Task<List<Product>> Search(string regex, string category)
+        {
+            var l = new List<Product>();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var reader =
+                        await tx.RunAsync(
+                            "Match(p:Product) where p._category = $category and p._name =~ '(?i)$regex' or toLower(p._name) starts with toLower($regex) return p",
+                            new {regex, category});
+                    while (await reader.FetchAsync())
+                    {
+                        var u = new Product();
+                        var curr = reader.Current[0].As<INode>().Properties;
+                        foreach (var (key, value) in curr)
+                        {
+                            u.GetType().GetProperty(key)?.SetValue(u, value, null);
+                        }
+
+                        l.Add(u);
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return l;
+        }
+
+        public static async Task<List<string>> Categories()
+        {
+            var l = new List<string>();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var reader =
+                        await tx.RunAsync(
+                            "Match(p:Product) return distinct p._category");
+                    while (await reader.FetchAsync())
+                    {
+                        var curr = reader.Current[0].As<string>();
+                        l.Add(curr);
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return l;
+        }
     }
 }
