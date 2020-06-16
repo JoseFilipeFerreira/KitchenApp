@@ -119,18 +119,22 @@ export default class Dashboard extends Component {
   showInventoryList = () => {
     var x;
     var json = this.state.dashboards;
+    
     for (x in json) {
-      document.getElementById("inventoryList").innerHTML += '<a href="/dashboard/inventory/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
-        x + '"></input></a>'
+      document.getElementById("inventoryList").innerHTML += '<tr>'
+      document.getElementById("inventoryList").innerHTML += '<td><a href="/dashboard/inventory/' + json[x] + '">' + x + '</td>'
+      document.getElementById("inventoryList").innerHTML += '</tr>'
     }
+    
   }
 
   showSharedList = () => {
     var x;
     var json = this.state.shared;
     for (x in json) {
-      document.getElementById("sharedList").innerHTML += '<a href="/dashboard/inventory/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
-        x + '"></input></a>'
+      document.getElementById("sharedList").innerHTML += '<tr>'
+      document.getElementById("sharedList").innerHTML += '<td><a href="/dashboard/inventory/' + json[x] + '">' + x + '</td>'
+      document.getElementById("sharedList").innerHTML += '</tr>'
     }
   }
 
@@ -337,9 +341,8 @@ export default class Dashboard extends Component {
               <div className="inventories-text">
                 Inventories
               </div>
-              <div id="inventoryList">
-
-              </div>
+              <table id="inventoryList">
+              </table>
               <div className="inventory-button">
                 <input
                   className="create-button"
@@ -353,9 +356,9 @@ export default class Dashboard extends Component {
               <div className="inventories-text">
                 Shared Inventories
               </div>
-              <div id="sharedList">
+              <table id="sharedList">
 
-              </div>
+              </table>
             </article>
           </section>
           <footer className="page-footer">
