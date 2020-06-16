@@ -322,6 +322,7 @@ body {
 }
 
 #inventoryList {
+  margin-top: 20px;
   border-collapse: collapse;
 }
 
@@ -335,13 +336,17 @@ body {
 
 #inventoryList tr:nth-child(even){background-color: #f2f2f2;}
 
-#inventoryList td:hover {background-color: #ddd;}
+
+#inventoryList tr:hover {background-color: #ddd;}
 
 #inventoryList th {
   text-align: left;
+  font-weight: bold;
+  color: var(--page-header-bgColor);
 }
 
 #sharedList {
+  margin-top: 20px;
   border-collapse: collapse;
 }
 
@@ -355,10 +360,13 @@ body {
 
 #sharedList tr:nth-child(even){background-color: #f2f2f2;}
 
-#sharedList td:hover {background-color: #ddd;}
+
+#sharedList tr:hover {background-color: #ddd;}
 
 #sharedList th {
   text-align: left;
+  font-weight: bold;
+  color: var(--page-header-bgColor);
 }
 
 .create-button{

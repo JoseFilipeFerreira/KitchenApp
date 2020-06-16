@@ -59,9 +59,9 @@ export default class Inventory extends Component {
         let json = response.data;
         this.setState({
           inventory_name: json["_name"],
-          items: json["_products"]
+          items: json["_products"],
         });
-        this.showItems()
+        this.showItems();
       })
       .catch((error) => {
         console.log(error);
@@ -140,25 +140,27 @@ export default class Inventory extends Component {
       },
     });
 
-    form.append("product", product["_guid"]);
-    form.append("quantity", formValues[0]);
-    form.append("expire", formValues[1]);
-    form.append("uid", this.state.inventory_id);
+    if (formValues != null && formValues[0] != null && formValues[1] != null) {
+      form.append("product", product["_guid"]);
+      form.append("quantity", formValues[0]);
+      form.append("expire", formValues[1]);
+      form.append("uid", this.state.inventory_id);
 
-    axios
-      .post("http://localhost:1331/inventory/addproduct", form, {
-        headers: { "Content-Type": "multipart/form-data", auth: token },
-        withCredentials: true,
-      })
-      .then((response) => {
-        /* save this token inside localStorage */
-        const token = response.headers["auth"];
-        localStorage.setItem("auth", token);
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      axios
+        .post("http://localhost:1331/inventory/addproduct", form, {
+          headers: { "Content-Type": "multipart/form-data", auth: token },
+          withCredentials: true,
+        })
+        .then((response) => {
+          /* save this token inside localStorage */
+          const token = response.headers["auth"];
+          localStorage.setItem("auth", token);
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   showCategories = async (json, categories) => {
@@ -221,10 +223,11 @@ export default class Inventory extends Component {
   removeProduct = async () => {
     var p = "";
     const form = new FormData();
-    var products = [], ids = [];
+    var products = [],
+      ids = [];
     let i = 0;
     for (p in this.state.items) {
-      let product = this.state.items[p]
+      let product = this.state.items[p];
       products[i] = product["_name"];
       ids[i++] = product["_guid"];
     }
@@ -252,19 +255,19 @@ export default class Inventory extends Component {
       form.append("prod", prod["_guid"]);
 
       axios
-            .post("http://localhost:1331/inventory/removeproduct", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-              window.location.reload();
-            })
-            .catch((error) => {
-              console.log(error);
-            });
+        .post("http://localhost:1331/inventory/removeproduct", form, {
+          headers: { "Content-Type": "multipart/form-data", auth: token },
+          withCredentials: true,
+        })
+        .then((response) => {
+          /* save this token inside localStorage */
+          const token = response.headers["auth"];
+          localStorage.setItem("auth", token);
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
@@ -340,15 +343,24 @@ export default class Inventory extends Component {
   showItems = () => {
     var x;
     var json = this.state.items;
+    json.sort(function(a, b){
+      return a._name.localeCompare(b._name);
+    });
     for (x in json) {
       let product = json[x];
-      console.log(product)
+      console.log(product);
+      document.getElementById("inventoryList").innerHTML += "<tr>";
       document.getElementById("inventoryList").innerHTML +=
-        '<input class="inventory-entry" type="button" value="' +
-        product["_name"] + ' | Qnt: ' +
-        product["_stock"] + ' | Expire: ' +
-        product["_consume_before"].substring(0,10) + 
-        '"></input></a>';
+        "<td>" +
+        product["_name"] +
+        "</td>" +
+        "<td>" +
+        product["_stock"] +
+        "</td>" +
+        "<td>" +
+        product["_consume_before"].substring(0, 10) +
+        "</td>";
+      document.getElementById("inventoryList").innerHTML += "</tr>";
     }
   };
 
@@ -562,7 +574,13 @@ export default class Inventory extends Component {
               <div className="inventories-text">
                 {this.state.inventory_name}
               </div>
-              <div id="inventoryList"></div>
+              <table id="inventoryList">
+                <tr>
+                  <th>Name</th>
+                  <th>Quantity</th>
+                  <th>Expire</th>
+                </tr>
+              </table>
               <div className="inventory-button">
                 <input
                   className="create-button"
