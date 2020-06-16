@@ -4,64 +4,43 @@ import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
 
-export default class Dashboard extends Component {
+export default class Recipes extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      dashboards: null,
-      shared: null,
+      search: "",
+      recipes: null,
       name: null,
     };
   }
 
-  getDashboards = () => {
-    let token = localStorage.getItem("auth");
-    axios
-      .get(
-        "http://localhost:1331/inventory/all",
-        {
-          headers: { auth: token },
-        },
-        { withCredentials: true }
-      )
-      .then((response) => {
-        this.setState({ dashboards: response.data });
-        this.showInventoryList();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    if (localStorage.getItem("auth") != null) {
-      return true;
-    } else {
-      return false;
-    }
+  changeHandler = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
   };
 
-  getShared = () => {
-    let token = localStorage.getItem("auth");
-    axios
-      .get(
-        "http://localhost:1331/inventory/shared",
-        {
-          headers: { auth: token },
-        },
-        { withCredentials: true }
-      )
-      .then((response) => {
-        this.setState({ shared: response.data });
-        this.showSharedList();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  submitHandler = (e) => {
+    e.preventDefault();
+    if (this.state.search) {
+      let token = localStorage.getItem("auth");
+      const form = new FormData();
 
-    if (localStorage.getItem("auth") != null) {
-      return true;
-    } else {
-      return false;
+      let search = this.state.search;
+
+      form.append("keys", search);
+      axios
+        .post("http://localhost:1331/recipe/search", form, {
+          headers: { "Content-Type": "multipart/form-data", auth: token},
+          withCredentials: true,
+        })
+        .then((response) => {
+          this.setState({ recipes: response.data });
+          console.log(response.data)
+          this.showRecipes();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
@@ -92,80 +71,6 @@ export default class Dashboard extends Component {
     }
   };
 
-  createInventory = async () => {
-    let token = localStorage.getItem("auth");
-    const form = new FormData();
-    const { value: name } = await Swal.fire({
-      title: "Enter inventory name",
-      input: "text",
-      inputPlaceholder: "Enter inventory name",
-      inputValidator: (value) => {
-        if (!value) {
-          return "Invalid Name";
-        } else {
-          form.append("name", value);
-
-          axios
-            .post("http://localhost:1331/inventory/add", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-              window.location.reload();
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      },
-    });
-  };
-
-  createEditButton = () => {
-    return (
-      <span
-        className="edit-button"
-        role="img"
-        aria-label="jsx-a11y/aria-proptypes"
-        onClick={() => {
-          this.askName();
-        }}
-      >
-        ✏️
-      </span>
-    );
-  };
-
-  showInventoryList = () => {
-    var x;
-    var json = this.state.dashboards;
-
-    for (x in json) {
-      document.getElementById("inventoryList").innerHTML += "<tr>";
-      document.getElementById("inventoryList").innerHTML +=
-        '<td><a href="/dashboard/inventory/' + json[x] + '">' + x + '</td><td class="table-edit""><span onclick="alert()">✏️</span></td>';
-      document.getElementById("inventoryList").innerHTML += "</tr>";
-    }
-  };
-
-  showSharedList = () => {
-    var x;
-    var json = this.state.shared;
-    for (x in json) {
-      document.getElementById("sharedList").innerHTML += "<tr>";
-      document.getElementById("sharedList").innerHTML +=
-        '<td><a href="/dashboard/inventory/' +
-        json[x] +
-        '">' +
-        x +
-        '</td><td class="table-edit""><span onclick="alert()">✏️</span></td>';
-      document.getElementById("sharedList").innerHTML += "</tr>";
-    }
-  };
-
   removeToken = () => {
     localStorage.removeItem("auth");
     this.props.history.push("/");
@@ -180,13 +85,31 @@ export default class Dashboard extends Component {
     }
   }
 
+  showRecipes = () => {
+    var x;
+    var json = this.state.recipes;
+    document.getElementById("recipesList").innerHTML = null;
+    for (x in json) {
+        let recipe = json[x];
+        console.log(recipe)
+      document.getElementById("recipesList").innerHTML += "<tr>";
+      document.getElementById("recipesList").innerHTML +=
+        '<td id="image">' +
+        '<img src="' + recipe.image + '"width="100" height="100"></img>'+
+        '</td>' +
+        '<td>' +
+        recipe.title +
+        '</td>';
+      document.getElementById("recipesList").innerHTML += "</tr>";
+    }
+  };
+
   componentDidMount() {
-    this.getDashboards();
-    this.getShared();
     this.getInfo();
   }
 
   render() {
+    const { search } = this.state;
     /*const { dashboards } = this.state;*/
     return (
       <div>
@@ -361,16 +284,20 @@ export default class Dashboard extends Component {
         </header>
         <section className="page-content">
           <section className="search-and-user">
-            {/*
-            <form>
-              <input type="search" placeholder="Search Pages..." />
-              <button type="submit" aria-label="submit form">
+            <form onSubmit={this.submitHandler}>
+              <input
+                type="text"
+                placeholder="Search recipes..."
+                name="search"
+                value={search}
+                onChange={this.changeHandler}
+              />
+              <button type="submit">
                 <svg aria-hidden="true">
                   <use href="#search"></use>
                 </svg>
               </button>
             </form>
-            */}
             <div className="admin-profile">
               <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
@@ -382,20 +309,9 @@ export default class Dashboard extends Component {
           </section>
           <section className="grid">
             <article className="inventories">
-              <div className="inventories-text">Inventories</div>
-              <table id="inventoryList"></table>
-              <div className="inventory-button">
-                <input
-                  className="create-button"
-                  type="button"
-                  value="Create Inventory"
-                  onClick={this.createInventory}
-                ></input>
-              </div>
-            </article>
-            <article className="inventories">
-              <div className="inventories-text">Shared Inventories</div>
-              <table id="sharedList"></table>
+              <div className="inventories-text">Recipes</div>
+              <table id="recipesList">
+              </table>
             </article>
           </section>
           <footer className="page-footer">

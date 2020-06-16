@@ -209,15 +209,16 @@ body {
 
 .search-and-user form {
   position: relative;
+  width: 100%;
 }
 
-.search-and-user input[type="search"] {
+.search-and-user input[type="text"] {
   width: 100%;
   height: 50px;
   font-size: 1.5rem;
   padding-left: 15px;
   background: var(--page-content-blockColor);
-  color: var(--white);
+  color: black;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
 }
@@ -368,6 +369,42 @@ body {
   font-weight: bold;
   color: var(--page-header-bgColor);
 }
+
+#recipesList {
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+#recipesList td, #recipesList th {
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  padding-left: 8px;
+  font-size: 20px;
+  font-weight: normal;
+  padding-top: 6px;
+}
+
+#recipesList img {
+  border-radius: 10%;
+}
+
+#recipesList tr:hover {background-color: #ddd;}
+
+#recipesList th {
+  text-align: left;
+  font-weight: bold;
+  color: var(--page-header-bgColor);
+}
+
+.table-edit{
+  text-align: right;
+  font-size: 30px;
+}
+
+.table-edit span{
+  cursor: pointer;
+}
+
 
 .create-button{
   margin: 10px;

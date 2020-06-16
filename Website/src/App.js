@@ -7,6 +7,7 @@ import Dashboard from './dashboard'
 import UserInfo from "./userinfo";
 import Inventory from "./inventory";
 import Friends from "./friends";
+import Recipes from "./recipes";
 
 
 
@@ -54,6 +55,7 @@ class App extends Component {
               <Route path="/dashboard/userinfo" component={UserInfo} />
               <Route path="/dashboard/inventory/" component={Inventory} />
               <Route path="/dashboard/friends/" component={Friends} />
+              <Route path="/dashboard/recipes/" component={Recipes} />
               <Route exact path="*" component={Dashboard} />
             </Switch>
           </Router>
