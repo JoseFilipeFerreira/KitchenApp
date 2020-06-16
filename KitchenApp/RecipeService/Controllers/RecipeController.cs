@@ -10,28 +10,8 @@ namespace RecipeService.Controllers
 {
     [ApiController]
     [Route("[action]")]
-    public class WeatherForecastController : ControllerBase
+    public class RecipeController : ControllerBase
     {
-        [HttpPost]
-        public async Task<List<Recipe>> Search([FromHeader] string auth, [FromForm] string keys)
-        {
-            string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
-            {
-                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
-                return null;
-            }
-
-            HttpContext.Response.Headers.Add("auth", auth);
-            var list = RecipeSearch.SearchRecipe(10, keys);
-            foreach (var v in list)
-            {
-                await RecipeStore.Add(new MinimalRecipe(v));
-            }
-
-            return list;
-        }
-        
         [HttpPost]
         public async Task<List<Recipe>> Search([FromHeader] string auth, [FromForm] string keys, [FromForm] string inventory)
         {
@@ -42,15 +22,27 @@ namespace RecipeService.Controllers
                 return null;
             }
 
+            List<Recipe> list;
+
             HttpContext.Response.Headers.Add("auth", auth);
-            var inv = InventoryStore.Get(inventory, user).Result;
-            if (inv == null)
+            if (inventory != null)
             {
-                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                return null;
+                var inv = InventoryStore.Get(inventory, user).Result;
+                if (inv == null)
+                {
+                    HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                    return null;
+                }
+
+                var r = new List<Product>(inv._products);
+                list = RecipeSearch.SearchRecipe(10, keys, r);
             }
-            var r = new List<Product>(inv._products);
-            var list = RecipeSearch.SearchRecipe(10, keys, r);
+
+            else
+            {
+                list = RecipeSearch.SearchRecipe(10, keys);
+            }
+
             foreach (var v in list)
             {
                 await RecipeStore.Add(new MinimalRecipe(v));
