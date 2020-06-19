@@ -1,5 +1,4 @@
 # Documentation
-## endpoints
 * [AuthServer](AuthServer)
 * [InventoryService](InventoryService)
 * [ProductService](ProductService)

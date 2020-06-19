@@ -1,7 +1,8 @@
 # The Kitchen App
 Informatic Labs IV assignment @ UMinho
 
-## [Documentation](KitchenApp)
+## Documentation
+Click [here](KitchenApp) to see the documentation
 
 ## Authors
 * [João Teixeira](https://github.com/jtexeira)
