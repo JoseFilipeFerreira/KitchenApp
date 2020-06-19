@@ -1,6 +1,8 @@
 # The Kitchen App
 Informatic Labs IV assignment @ UMinho
 
+## [Documentation](KitchenApp)
+
 ## Authors
 * [João Teixeira](https://github.com/jtexeira)
 * [José Filipe de Sousa Matos Ferreira](https://github.com/JoseFilipeFerreira)
