@@ -352,45 +352,21 @@ export default class UserInfo extends Component {
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/wishlists">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
-                  <span>To-do</span>
+                  <span>Wishlists</span>
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/shoppinglists">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
-                  <span>To-do</span>
+                  <span>Shopping Lists</span>
                 </a>
-              </li>
-              <li>
-                <a href="#0">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>To-do</span>
-                </a>
-              </li>
-              <li>
-                <a href="#0">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>To-do</span>
-                </a>
-              </li>
-              <li>
-                <a href="#0">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>To-do</span>
-                </a>
-              </li>
+              </li >
               <li className="menu-heading">
                 <h3>Settings</h3>
               </li>
@@ -402,6 +378,14 @@ export default class UserInfo extends Component {
                   <span>Account</span>
                 </a>
               </li>
+              <li>
+                <a href="/dashboard/friends">
+                  <svg>
+                    <use href="#users"></use>
+                  </svg>
+                  <span>Friends</span>
+                </a>
+              </li >
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
@@ -441,7 +425,6 @@ export default class UserInfo extends Component {
             <div className="admin-profile">
               <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
-                <span className="badge">1</span>
                 <svg>
                   <use href="#users"></use>
                 </svg>

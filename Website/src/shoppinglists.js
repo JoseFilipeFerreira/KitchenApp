@@ -4,26 +4,26 @@ import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
 
-export default class Dashboard extends Component {
+export default class ShoppingLists extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      dashboards: null,
+      shoplists: null,
       shared: null,
       name: null,
     };
   }
 
-  getDashboards = () => {
+  getShoplists = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("http://localhost:1331/inventory/all", {
+      .get("http://localhost:1331/shopping/all", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
-        this.setState({ dashboards: response.data });
-        this.showInventoryList();
+        this.setState({ shoplists: response.data });
+        this.showShopList();
       })
       .catch((error) => {
         console.log(error);
@@ -39,7 +39,7 @@ export default class Dashboard extends Component {
   getShared = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("http://localhost:1331/inventory/shared", {
+      .get("http://localhost:1331/shopping/shared", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
@@ -84,13 +84,13 @@ export default class Dashboard extends Component {
     }
   };
 
-  createInventory = async () => {
+  createShoplist = async () => {
     let token = localStorage.getItem('auth');
     const form = new FormData();
     const { value: name } = await Swal.fire({
-      title: "Enter inventory name",
+      title: "Enter shoplist name",
       input: "text",
-      inputPlaceholder: "Enter inventory name",
+      inputPlaceholder: "Enter shoplist name",
       inputValidator: (value) => {
         if (!value) {
           return "Invalid Name";
@@ -98,7 +98,7 @@ export default class Dashboard extends Component {
           form.append("name", value);
 
           axios
-            .post("http://localhost:1331/inventory/add", form, {
+            .post("http://localhost:1331/shopping/add", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -116,11 +116,11 @@ export default class Dashboard extends Component {
     });
   }
 
-  showInventoryList = () => {
+  showShopList = () => {
     var x;
-    var json = this.state.dashboards;
+    var json = this.state.shoplists;
     for (x in json) {
-      document.getElementById("inventoryList").innerHTML += '<a href="/dashboard/inventory/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
+      document.getElementById("wishList").innerHTML += '<a href="/dashboard/shoplist/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
         x + '"></input></a>'
     }
   }
@@ -129,7 +129,7 @@ export default class Dashboard extends Component {
     var x;
     var json = this.state.shared;
     for (x in json) {
-      document.getElementById("sharedList").innerHTML += '<a href="/dashboard/inventory/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
+      document.getElementById("sharedList").innerHTML += '<a href="/dashboard/shoplist/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
         x + '"></input></a>'
     }
   }
@@ -149,7 +149,7 @@ export default class Dashboard extends Component {
   }
 
   componentDidMount() {
-    this.getDashboards();
+    this.getShoplists();
     this.getShared();
     this.getInfo();
   }
@@ -335,23 +335,23 @@ export default class Dashboard extends Component {
           <section className="grid">
             <article className="inventories">
               <div className="inventories-text">
-                Inventories
+                Shoplists
               </div>
-              <div id="inventoryList">
+              <div id="shoplist">
 
               </div>
               <div className="inventory-button">
                 <input
                   className="create-button"
                   type="button"
-                  value="Create Inventory"
-                  onClick={this.createInventory}
+                  value="Create Shoplist"
+                  onClick={this.createShoplist}
                 ></input>
               </div>
             </article>
             <article className="inventories">
               <div className="inventories-text">
-                Shared Inventories
+                Shared Shoplists
               </div>
               <div id="sharedList">
 

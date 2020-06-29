@@ -5,6 +5,10 @@ import Login from './login'
 import Register from './register'
 import Dashboard from './dashboard'
 import UserInfo from "./userinfo";
+import Inventory from "./inventory";
+import Whishlists from "./wishlists";
+import ShoppingLists from "./shoppinglists";
+import Friends from "./friends";
 
 
 
@@ -49,7 +53,11 @@ class App extends Component {
           <Router>
             <Switch>
               <Route exact path="/dashboard" component={Dashboard} />
-              <Route exact path="/dashboard/userinfo" component={UserInfo} />
+              <Route path="/dashboard/userinfo" component={UserInfo} />
+              <Route path="/dashboard/inventory/" component={Inventory} />
+              <Route path="/dashboard/wishlists/" component={Whishlists} />
+              <Route path="/dashboard/shoppinglists/" component={ShoppingLists} />
+              <Route path="/dashboard/friends/" component={Friends} />
               <Route exact path="*" component={Dashboard} />
             </Switch>
           </Router>
