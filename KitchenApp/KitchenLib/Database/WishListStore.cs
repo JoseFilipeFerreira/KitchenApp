@@ -166,7 +166,10 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("Match (u:User)-[]->(i:Wishlist), (p:Product) " +
                                               "where u._email = $email and i.guid = $uid and p._guid = $prodName " +
-                                              "create (i)-[:CONTAIN]->(p)", new {email, uid, prodName});
+                                              "Optional match (i)-[f:CONTAIN]-(p) " +
+                                              "with i, p, f, case when f is null then [1] else [] end as arr " +
+                                              "foreach(x in arr | create (i)-[:CONTAIN]->(p)",
+                        new {email, uid, prodName});
                 });
             }
             finally

@@ -168,7 +168,9 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("Match (u:User)-[]-(i:Shoppinglist), (p:Product) " +
                                               "where u._email = $email and i.name = $name and p._guid = $pguid " +
-                                              "create (i)-[:CONTAIN {quantity: $quant}]->(p)",
+                                              "Optional match (i)-[f:CONTAIN]-(p) " +
+                                              "with i, p, f, case when f is null then [1] else [] end as arr " +
+                                              "foreach(x in arr | create (i)-[:CONTAIN {quantity: $quant}]->(p))",
                         new {quant, email, name = uid, pguid = prodName});
                 });
             }
