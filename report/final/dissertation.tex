@@ -1,129 +1,117 @@
+\documentclass[a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{hyperref}
+\usepackage{a4wide}
+\hypersetup{pdftitle={Trabalho 1},
+pdfauthor={João Teixeira, José Ferreira, Maria Silva, Miguel Solino, Pedro Oliveira},
+colorlinks=true,
+urlcolor=blue,
+linkcolor=black}
+\usepackage{subcaption}
+\usepackage[cache=false]{minted}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{appendix}
+\usepackage{tikz}
+\usepackage{authblk}
+\usepackage{bashful}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usetikzlibrary{positioning,automata,decorations.markings}
+\definecolor{solarized@base03}{HTML}{002B36}
+\definecolor{solarized@base02}{HTML}{073642}
+\definecolor{solarized@base01}{HTML}{586e75}
+\definecolor{solarized@base00}{HTML}{657b83}
+\definecolor{solarized@base0}{HTML}{839496}
+\definecolor{solarized@base1}{HTML}{93a1a1}
+\definecolor{solarized@base2}{HTML}{EEE8D5}
+\definecolor{solarized@base3}{HTML}{FDF6E3}
+\definecolor{solarized@yellow}{HTML}{B58900}
+\definecolor{solarized@orange}{HTML}{CB4B16}
+\definecolor{solarized@red}{HTML}{DC322F}
+\definecolor{solarized@magenta}{HTML}{D33682}
+\definecolor{solarized@violet}{HTML}{6C71C4}
+\definecolor{solarized@blue}{HTML}{268BD2}
+\definecolor{solarized@cyan}{HTML}{2AA198}
+\definecolor{solarized@green}{HTML}{859900}
 
-% example for dissertation.sty
-\documentclass[
-  % Replace oneside by twoside if you are printing your thesis on both sides
-  % of the paper, leave as is for single sided prints or for viewing on screen.
-  oneside,
-  %twoside,
-  11pt, a4paper,
-  footinclude=true,
-  headinclude=true,
-  cleardoublepage=empty
-]{scrbook}
+\lstset{
+  language=Python,
+  upquote=true,
+  columns=fixed,
+  tabsize=4,
+  extendedchars=true,
+  breaklines=true,
+  numbers=left,
+  numbersep=5pt,
+  rulesepcolor=\color{solarized@base03},
+  numberstyle=\tiny\color{solarized@base01},
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\color{solarized@green},
+  stringstyle=\color{solarized@yellow}\ttfamily,
+  identifierstyle=\color{solarized@blue},
+  commentstyle=\color{solarized@base01},
+  emphstyle=\color{solarized@red}
+}
 
-\usepackage{dissertation}
-
-
-
-% ACRONYMS -----------------------------------------------------
-
-%import the necessary package with some options
-\usepackage[acronym,nonumberlist,nomain]{glossaries}
-
-%enable the following to avoid links from the acronym usage to the list
-%\glsdisablehyper
-
-%displays the first use of an acronym in italic
-\defglsdisplayfirst[\acronymtype]{\emph{#1#4}}
-
-%the style of the Glossary
-\glossarystyle{listgroup}
-
-% set the name for the acronym entries page
-\renewcommand{\glossaryname}{Acronyms}
-
-%this shall be the last thing in the acronym configuration!!
-\makeglossaries
-
-
-% here are the acronym entries
-\newacronym{mei}{MEI}{Mestrado em Engenharia Informática}
-
-    
-% these could go in an acronyms.tex file, and loaded with:
-% \loadglsentries[\acronymtype]{Parts/Definitions/acronyms}
-% when using this, you may want to remove 'nomain' from the package options
-
-%% **MORE INFO** %%
-
-%to add the acronyms list add the following where you want to print it:
-%\printglossary[type=\acronymtype]
-%\clearpage
-%\thispagestyle{empty}
-
-%to use an acronym:
-%\gls{qps}
-
-% compile the thesis in command line with the following command sequence:
-% pdlatex dissertation.tex
-% makeglossaries dissertation
-% bibtex dissertation
-% pdlatex dissertation.tex
-% pdlatex dissertation.tex
-
-% ----------------------------------------------------------------
-
-% Title
-\titleA{Title1}
-\titleB{Title2} % (if any)
-
-% Author
-\author{Aluno 1}
-
-% Supervisor(s)
-\supervisor{Orientador}
-\cosupervisor{Coorientador}
-
-% Date
-\date{\myear} % change to text if date is not today
-
-% Keywords
-%\keywords{master thesis}
-
-% Glossaries & Acronyms
-%\makeglossaries  %  either use this ...
-%\makeindex	   % ... or this
-
-% Define Acronyms
-%\input{sec/acronyms}
-%\glsaddall[types={\acronymtype}]
-
-\ummetadata % add metadata to the document (author, publisher, ...)
+%%%%    TECNOLOGIAS UTILIZADAS    %%%%
+%   Software:
+%   [?] Android Studio - App para criar a aplicação android
+%   [?] Postman - Testar pedidos, Verificar headers
+%   Visual Studio
+%   
+%   Linguagens Programação:
+%   C#
+%   Javascript
+%   CSS
+%   [?] Python
+%
+%   Base Dados:
+%   Neo4J
+%   
+%   Outros:
+%   HTML
+%   React - Library de javascript para construir interfaces
 
 \begin{document}
-	% Cover page ---------------------------------------
-	\umfrontcover	
-	\umtitlepage
-	
-	% Add acknowledgements ----------------------------
-	\chapter*{Acknowledgements}
-	Write acknowledgements here
 
+% Title
+\title{Titulo\\
+\large Grupo Nº 1}
 
-	% Add abstracts (en,pt) ---------------------------
-	
-	\cleardoublepage
-	\chapter*{Resumo}
-	\input{abstract/abstractEN.tex}
-	
-	\cleardoublepage
-	\chapter*{Resumo}
-	\input{abstract/abstractPT.tex}
-	
-	
-	% Summary Lists ------------------------------------
-	\tableofcontents
-	\listoffigures
-	\listoftables
-	%\lstlistoflistings
-	%\listofabbreviations
-	\printglossary[type=\acronymtype]
-	\clearpage
-	\thispagestyle{empty}
+% Author
+\author{João Teixeira (A85504) \and José Ferreira (A83683) \and Maria Silva (A83840) \and Miguel Solino (A86435) \and Pedro Oliveira (A83762)}
 
-	
-	\pagenumbering{arabic}
-	
+% % Supervisor(s) (!!!)
+% \supervisor{Orientador}
+% \cosupervisor{Coorientador}
+
+% Date
+\date{\today}
+
+% (!!!) linhas 98 - 132 ?
+\begin{center}
+    \begin{minipage}{0.75\linewidth}
+        \centering
+       
+% (!!!) mudar imagem       
+        \includegraphics[width=0.6\textwidth]{uminho.png}\par\vspace{1cm}
+        \vspace{1cm}
+        \href{https://www.uminho.pt/PT}
+        {\color{black}{\scshape\LARGE Universidade do Minho}} \par
+        \vspace{1cm}
+        \href{https://www.di.uminho.pt/}
+        {\color{black}{\scshape\Large Departamento de Informática}} \par
+        \maketitle
+    \end{minipage}
+\end{center}
+
+\tableofcontents
+
+\pagebreak
+
 % CHAPTER - Introdução -------------------------------------------------------------------------------
 	\chapter{Introduction}
 	    \input{introduction/intro.tex}
@@ -135,7 +123,7 @@
         \input{introduction/goals.tex}
         \section{Structure}
         \input{introduction/structure.tex}
-		
+
 
 % CHAPTER - Estado da Arte ---------------------------------------------------------------------------
 	\chapter{Literature Review}
@@ -146,8 +134,6 @@
 
         
         \section{Basics/Background/Related work}
-
-
 
 	% CHAPTER - Problem and Challenges ---------------
 	\chapter{Methods}
@@ -169,7 +155,6 @@
     Main result(s) and their scientific evidence
 	\section{Summary}
 
-
 	% CHAPTER - Application -------------------------
 	\chapter{Case Studies / Experiments}
 		Application of main result (examples and case studies)
@@ -183,7 +168,8 @@
 		Conclusions and future work.
 	\section{Conclusions}
 	\section{Prospect for future work}
-			
+	
+	% (!!!)
 	\bookmarksetup{startatroot} % Ends last part.
 	\addtocontents{toc}{\bigskip} % Making the table of contents look good.
 	%\cleardoublepage
@@ -216,9 +202,9 @@
 
 
 	% Back Cover -------------------------------------------
+	% (!!!)
 	\umbackcover{
 	NB: place here information about funding, FCT project, etc in which the work is framed. Leave empty otherwise.
 	}
-
 
 \end{document}
