@@ -16,5 +16,6 @@ namespace KitchenLib
         public long id { get; set; }
         public List<RecipeProduct> extendedIngredients{ get; set; }
         public string summary{ get; set; }
+        public string instructions{ get; set; }
     }
 }

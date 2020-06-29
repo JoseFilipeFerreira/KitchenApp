@@ -114,7 +114,10 @@ namespace KitchenLib
         private static List<MinimalRecipe> GetMinimalRecipies(string options)
         {
             var API_KEY = "7a98067ae9ea425ca548d96347913e74";
-            var url = "https://api.spoonacular.com/recipes/complexSearch?" + options + "&apiKey=" + API_KEY;
+            var url = "https://api.spoonacular.com/recipes/complexSearch?"
+                      + options
+                      + "&instructionsRequired=true&apiKey="
+                      + API_KEY;
             return JsonConvert.DeserializeObject<RootMinimalRecipes>(get_request(url)).results;
         }
     }
