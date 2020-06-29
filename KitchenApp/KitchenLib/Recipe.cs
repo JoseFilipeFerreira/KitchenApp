@@ -13,7 +13,7 @@ namespace KitchenLib
     {
         public string title { get; set; }
         public string image { get; set; }
-        public uint id { get; set; }
+        public long id { get; set; }
         public List<RecipeProduct> extendedIngredients{ get; set; }
         public string summary{ get; set; }
     }

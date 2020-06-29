@@ -8,19 +8,17 @@ namespace KitchenLib.Database
 {
     public class WishlistStore
     {
-        private static string uri = "bolt://localhost:7687";
-
         public static async Task<bool> Exists(string uid, string user)
         {
             Boolean exists;
-            var session = new Database(uri, "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 exists = await session.ReadTransactionAsync(async tx =>
                 {
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
-                        "MATCH(u:User)-[:WSH]->(i:Wishlist) WHERE u._email = $email AND i.guid = $guid RETURN i.name",
+                        "MATCH(u:User)-[]->(i:Wishlist) WHERE u._email = $email AND i.guid = $guid RETURN i.name",
                         new {email = user, name = uid});
                     while (await reader.FetchAsync())
                         lst.Add(reader.Current[0].ToString());
@@ -64,13 +62,13 @@ namespace KitchenLib.Database
 
         public static async Task Add(Inventory<Product> inv, string user)
         {
-            var session = new Database(uri, "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    await tx.RunAsync("MATCH (u:User) where u._name = $user " +
-                                      "CREATE (i:Wishlist {name: $name, guid = $guid}) " +
+                    await tx.RunAsync("MATCH (u:User) where u._email = $user " +
+                                      "CREATE (i:Wishlist {name: $name, guid: $guid}) " +
                                       "CREATE (u)-[:WSH]->(i)",
                         new {user, name = inv._name, guid = inv._guid});
                 });
@@ -83,7 +81,7 @@ namespace KitchenLib.Database
 
         public static async Task<bool> Remove(string uid, string email)
         {
-            var session = new Database(uri, "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.ReadTransactionAsync(async tx =>
@@ -106,19 +104,17 @@ namespace KitchenLib.Database
 
         public static async Task<Inventory<Product>> Get(string uid, string email)
         {
-            var session = new Database(uri, "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.ReadTransactionAsync(async tx =>
                 {
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
-                        "Match(u:User)-[:WSH]->(i:Wishlist) " +
-                        "Optional match (i)-[c:CONTAIN]->(p:Product) " +
-                        "Optional Match(i)-[:SHARED]->(z:User) " +
+                        "Match(u:User)-[]->(i:Wishlist) " +
                         "Where u._email = $email AND i.guid = $name " +
-                        "Return [(a)-[c:CONTAIN]->(b) where b: Product] as products, " +
-                        "[(a)-[:Shared]->(b) where b: User | b] as guests " +
+                        "Return [(i)-[c:CONTAIN]->(b) where b: Product] as products, " +
+                        "[(i)-[:Shared]-(b) where b: User | b] as guests " +
                         "u._email as owner_id, " +
                         "i.name as name, i.guid as guid",
                         new {email, name = uid});
@@ -133,10 +129,11 @@ namespace KitchenLib.Database
                         inv._guests = new List<string>();
                         foreach (var guest in guests)
                         {
-                            inv._guests.Append(guest["_email"].As<string>());
+                            inv._guests.Add(guest["_email"].As<string>());
                         }
 
                         if (prods == null) continue;
+                        inv._products = new List<Product>();
                         foreach (var prod in prods)
                         {
                             var u = new Product();
@@ -145,7 +142,7 @@ namespace KitchenLib.Database
                                 u.GetType().GetProperty(key)?.SetValue(u, value, null);
                             }
 
-                            inv._products.Append(u);
+                            inv._products.Add(u);
                         }
                     }
 
@@ -162,12 +159,12 @@ namespace KitchenLib.Database
 
         public static async Task Add_prod(string uid, string prodName, string email)
         {
-            var session = new Database(uri, "neo4j", "APPmvc").session();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var r = await tx.RunAsync("Match (u:User)-[:WSH]->(i:Wishlist), (p:Product) " +
+                    var r = await tx.RunAsync("Match (u:User)-[]->(i:Wishlist), (p:Product) " +
                                               "where u._email = $email and i.guid = $uid and p._guid = $prodName " +
                                               "create (i)-[:CONTAIN]->(p)", new {email, uid, prodName});
                 });
@@ -185,7 +182,7 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var query = "Match (u:User)-[:WSH]->(i:Wishlist)-[c:CONTAIN]->(p:Product) " +
+                    var query = "Match (u:User)-[]->(i:Wishlist)-[c:CONTAIN]->(p:Product) " +
                                 "where u._email = $email and i.guid = $name and p._guid = $pguid " +
                                 "delete c";
                     IDictionary<string, object> dic = new Dictionary<string, object>
@@ -209,7 +206,7 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("Match (u:User)-[:WSH]->(i:Wishlist), (z:User) " +
                                               "where u._email = $email and i.guid = $name and z._email = $friend " +
-                                              "create (i)-[:Shared]->(z)", new {email, name = uid, friend});
+                                              "create (i)<-[:Shared]-(z)", new {email, name = uid, friend});
                 });
             }
             finally

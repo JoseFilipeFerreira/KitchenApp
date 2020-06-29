@@ -1,0 +1,11 @@
+FROM neo4j:latest
+
+ENV NEO4J_PASSWD APPmvc
+ENV NEO4J_AUTH neo4j/${NEO4J_PASSWD}
+
+CMD bash -c 'bin/neo4j start && sleep 10 && \
+    for f in data/*.cypher; do \
+      [ -f "$f" ] || continue; \
+      bin/cypher-shell -u neo4j -p ${NEO4J_PASSWD} --fail-fast < $f; \
+    done && \
+    tail -f logs/neo4j.log'

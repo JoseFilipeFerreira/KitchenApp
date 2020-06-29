@@ -523,7 +523,7 @@ export default class Inventory extends Component {
                   </svg>
                   <span>Friends</span>
                 </a>
-              </li>
+              </li >
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
