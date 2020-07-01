@@ -358,3 +358,5 @@ MigrationBackup/
 *.log
 *.toc
 Report.pdf
+
+app.config

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Net;
 using System.Threading.Tasks;
 using KitchenLib;
@@ -12,6 +12,8 @@ namespace RecipeService.Controllers
     [Route("[action]")]
     public class RecipeController : ControllerBase
     {
+        private string API_KEY = ConfigurationManager.AppSettings.Get("SpoonacularKey");
+        
         [HttpPost]
         public async Task<List<Recipe>> Search([FromHeader] string auth, [FromForm] string keys, [FromForm] string inventory)
         {
@@ -35,12 +37,12 @@ namespace RecipeService.Controllers
                 }
 
                 var r = new List<Product>(inv._products);
-                list = RecipeSearch.SearchRecipe(10, keys, r);
+                list = RecipeSearch.SearchRecipe(API_KEY, 10, keys, r);
             }
 
             else
             {
-                list = RecipeSearch.SearchRecipe(10, keys);
+                list = RecipeSearch.SearchRecipe(API_KEY, 10, keys);
             }
 
             foreach (var v in list)
@@ -104,7 +106,7 @@ namespace RecipeService.Controllers
             }
 
             HttpContext.Response.Headers.Add("auth", auth);
-            return RecipeSearch.SearchRecipe(new List<long>{id});
+            return RecipeSearch.SearchRecipe(API_KEY, new List<long>{id});
         }
     }
 }

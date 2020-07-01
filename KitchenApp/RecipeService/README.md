@@ -1,3 +1,14 @@
+# Config File
+A config file is needed. It follows the following format:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <appSettings>
+        <add key="SpoonacularKey" value="[SPOONACULAR KEY HERE]" />
+    </appSettings>
+</configuration>
+```
+
 # Recipe Service
 
 - /get

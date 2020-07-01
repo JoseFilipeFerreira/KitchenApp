@@ -15,75 +15,72 @@ namespace KitchenLib
     public class RecipeSearch
     {
         // 1 point base + 0.01 points per recipe
-        public static List<MinimalRecipe> SearchMinimalRecipe(uint number, List<Product> ingridients)
+        public static List<MinimalRecipe> SearchMinimalRecipe(string API_KEY, uint number, List<Product> ingridients)
         {
             var options = "number=" + number;
 
-            options += "&includeIngredients=";
-
             var ingridientsString = ingridients.Select(s => s._name).ToList();
+            options += "&ingredients=";
             options += string.Join(",", ingridientsString);
             
-            return GetMinimalRecipies(options);
+            return GetMinimalRecipies(API_KEY, options);
         }
         
         // 2 point 1st recipe + 0.51 point per recipe
-        public static List<Recipe> SearchRecipe(uint number, List<Product> ingridients)
+        public static List<Recipe> SearchRecipe(string API_KEY, uint number, List<Product> ingridients)
         {
-            return SearchRecipe(SearchMinimalRecipe(number, ingridients));
+            return SearchRecipe(API_KEY, SearchMinimalRecipe(API_KEY, number, ingridients));
         }
         
         // 1 point base + 0.01 points per recipe
-        public static List<MinimalRecipe> SearchMinimalRecipe(uint number, string recipeName)
+        public static List<MinimalRecipe> SearchMinimalRecipe(string API_KEY, uint number, string recipeName)
         {
             var options = "number=" + number;
             options += "&query=" + recipeName;
 
-            return GetMinimalRecipies(options);
+            return GetMinimalRecipies(API_KEY, options);
         }
         
         // 2 point 1st recipe + 0.51 point per recipe
-        public static List<Recipe> SearchRecipe(uint number, string recipeName)
+        public static List<Recipe> SearchRecipe(string API_KEY, uint number, string recipeName)
         {
-            return SearchRecipe(SearchMinimalRecipe(number, recipeName));
+            return SearchRecipe(API_KEY, SearchMinimalRecipe(API_KEY, number, recipeName));
         }
         
         // 1 point base + 0.01 points per recipe
-        public static List<MinimalRecipe> SearchMinimalRecipe(uint number, string recipeName, List<Product> ingridients)
+        public static List<MinimalRecipe> SearchMinimalRecipe(string API_KEY, uint number, string recipeName, List<Product> ingridients)
         {
             var options = "number=" + number;
             
             options += "&query=" + recipeName;
             
-            options += "&includeIngredients=";
-
             var ingridientsString = ingridients.Select(s => s._name).ToList();
+            options += "&ingredients=";
             options += string.Join(",", ingridientsString);
             
-            return GetMinimalRecipies(options);
+            return GetMinimalRecipies(API_KEY, options);
         }
         
         // 2 point 1st recipe + 0.51 point per recipe
-        public static List<Recipe> SearchRecipe(uint number, string recipeName, List<Product> ingridients)
+        public static List<Recipe> SearchRecipe(string API_KEY, uint number, string recipeName, List<Product> ingridients)
         {
-            return SearchRecipe(SearchMinimalRecipe(number, recipeName, ingridients));
+            return SearchRecipe(API_KEY, SearchMinimalRecipe(API_KEY, number, recipeName, ingridients));
         }
         
         // 1 point
-        public static Recipe SearchSingleRecipe(MinimalRecipe mR)
+        public static Recipe SearchSingleRecipe(string API_KEY, MinimalRecipe mR)
         {
             var n = new List<MinimalRecipe> {mR};
-            return SearchRecipe(n)[0];
+            return SearchRecipe(API_KEY, n)[0];
         }
         
         // 1 point 1st recipe + 0.5 point per recipe
-        public static List<Recipe> SearchRecipe(List<long> minimalListID)
+        public static List<Recipe> SearchRecipe(string API_KEY, List<long> minimalListID)
         {
             if (!minimalListID.Any())
             {
                 return new List<Recipe>();
             }
-            var API_KEY = "7a98067ae9ea425ca548d96347913e74";
             var url = "https://api.spoonacular.com/recipes/informationBulk?ids=";
             
             url += string.Join(",", minimalListID);
@@ -93,11 +90,22 @@ namespace KitchenLib
         }
         
         // 1 point 1st recipe + 0.5 point per recipe
-        public static List<Recipe> SearchRecipe(List<MinimalRecipe> minimalList)
+        public static List<Recipe> SearchRecipe(string API_KEY, List<MinimalRecipe> minimalList)
         {
-            return SearchRecipe(minimalList.Select(s => (long)s.id).ToList());
+            return SearchRecipe(API_KEY, minimalList.Select(s => (long)s.id).ToList());
         }
         
+        
+        // 1 point base + 0.01 points per recipe
+        private static List<MinimalRecipe> GetMinimalRecipies(string API_KEY, string options)
+        {
+            var url = "https://api.spoonacular.com/recipes/complexSearch?"
+                      + options
+                      + "&instructionsRequired=true&apiKey="
+                      + API_KEY;
+            return JsonConvert.DeserializeObject<RootMinimalRecipes>(get_request(url)).results;
+        }
+
         private static string get_request(string url)
         {
             var httpWebRequestQr = (HttpWebRequest)WebRequest.Create(url);
@@ -108,17 +116,6 @@ namespace KitchenLib
             var httpResponseQr = (HttpWebResponse)httpWebRequestQr.GetResponse();
             using var streamReader = new StreamReader(httpResponseQr.GetResponseStream());
             return streamReader.ReadToEnd();
-        }
-        
-        // 1 point base + 0.01 points per recipe
-        private static List<MinimalRecipe> GetMinimalRecipies(string options)
-        {
-            var API_KEY = "7a98067ae9ea425ca548d96347913e74";
-            var url = "https://api.spoonacular.com/recipes/complexSearch?"
-                      + options
-                      + "&instructionsRequired=true&apiKey="
-                      + API_KEY;
-            return JsonConvert.DeserializeObject<RootMinimalRecipes>(get_request(url)).results;
         }
     }
 }
