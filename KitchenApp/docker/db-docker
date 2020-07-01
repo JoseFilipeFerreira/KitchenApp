@@ -1,11 +1,19 @@
 FROM neo4j:latest
 
-ENV NEO4J_PASSWD APPmvc
-ENV NEO4J_AUTH neo4j/${NEO4J_PASSWD}
+copy db/products.cypher /var/lib/neo4j/data/products.cypher
 
-CMD bash -c 'bin/neo4j start && sleep 10 && \
+ENV NEO4J_PASSWD APPmvc
+ENV NEO4J_AUTH neo4j/APPmvc
+
+CMD bash -c 'bin/neo4j-admin set-initial-password 'APPmvc' && \
+    bin/neo4j start && sleep 30 && \
     for f in data/*.cypher; do \
       [ -f "$f" ] || continue; \
-      bin/cypher-shell -u neo4j -p ${NEO4J_PASSWD} --fail-fast < $f; \
+      while true; do \
+        echo ree; \
+        bin/cypher-shell -u neo4j -p APPmvc --fail-fast < $f; \
+        status=$?; \
+        [ $status -eq 0 ] && break || sleep 30; \
+       done; \
     done && \
     tail -f logs/neo4j.log'

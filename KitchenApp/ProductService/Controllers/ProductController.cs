@@ -46,7 +46,7 @@ namespace ProductService.Controllers
             await ProductStore.Add(p);
             return p;
         }
-        
+
 /*
         [HttpPost]
         public async Task<Product> Edit([FromHeader] string auth, [FromForm] string uid,
@@ -81,9 +81,9 @@ namespace ProductService.Controllers
         }
 */
 
-        
         [HttpPost]
-        public async Task<List<Product>> Search([FromHeader] string auth, [FromForm] string regex)
+        public async Task<List<Product>> Search([FromHeader] string auth, [FromForm] string regex,
+            [FromForm] string category)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
@@ -93,36 +93,26 @@ namespace ProductService.Controllers
             }
 
             HttpContext.Response.Headers.Add("auth", auth);
+            if (category != null)
+            {
+                return await ProductStore.Search(regex, category);
+            }
+
             return await ProductStore.Search(regex);
         }
-        
-        [HttpPost]
-        public async Task<List<Product>> Search([FromHeader] string auth, [FromForm] string regex, [FromForm] string category)
-        {
-            string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
-            {
-                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
-                return null;
-            }
 
-            HttpContext.Response.Headers.Add("auth", auth);
-            return await ProductStore.Search(regex, category);
-        }
-        
         [HttpGet]
         public async Task<List<Product>> GetAll([FromHeader] string auth)
         {
-             string user;
-             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
-             {
-                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
-                 return null;
-             }
- 
-             HttpContext.Response.Headers.Add("auth", auth);
-             return await ProductStore.GetAll();
-             
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+            return await ProductStore.GetAll();
         }
     }
 }
