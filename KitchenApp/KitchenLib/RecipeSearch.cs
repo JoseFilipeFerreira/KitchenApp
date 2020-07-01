@@ -19,7 +19,7 @@ namespace KitchenLib
         {
             var options = "number=" + number;
 
-            options += "&includeIngredients=";
+            options += "&ingredients=";
 
             var ingridientsString = ingridients.Select(s => s._name).ToList();
             options += string.Join(",", ingridientsString);
@@ -55,7 +55,7 @@ namespace KitchenLib
             
             options += "&query=" + recipeName;
             
-            options += "&includeIngredients=";
+            options += "&ingredients=";
 
             var ingridientsString = ingridients.Select(s => s._name).ToList();
             options += string.Join(",", ingridientsString);
