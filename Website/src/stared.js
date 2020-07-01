@@ -3,66 +3,40 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
-import InventoryList from "./components/InventoryList";
+import RecipesTable from "./components/RecipesTable";
 
-export default class Dashboard extends Component {
+export default class Stared extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      inventories: {},
-      shared: {},
+      stared: [],
       name: null,
     };
   }
 
-  getInventories = () => {
+  handler = () => {
+    this.getStared();
+  }
+
+  getStared = () => {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/inventory/all",
+        "http://localhost:1331/recipe/stared",
         {
           headers: { auth: token },
         },
         { withCredentials: true }
       )
       .then((response) => {
-        this.setState({ inventories: response.data });
+        console.log(response.data)
+        this.setState({ stared: response.data });
       })
       .catch((error) => {
         console.log(error);
       });
-
-    if (localStorage.getItem("auth") != null) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  getShared = () => {
-    let token = localStorage.getItem("auth");
-    axios
-      .get(
-        "http://localhost:1331/inventory/shared",
-        {
-          headers: { auth: token },
-        },
-        { withCredentials: true }
-      )
-      .then((response) => {
-        this.setState({ shared: response.data });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    if (localStorage.getItem("auth") != null) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  }
 
   getInfo = () => {
     let token = localStorage.getItem("auth");
@@ -91,38 +65,6 @@ export default class Dashboard extends Component {
     }
   };
 
-
-  showInventoryList = () => {
-    var x;
-    var json = this.state.inventories;
-
-    for (x in json) {
-      document.getElementById("inventoryList").innerHTML += "<tr>";
-      document.getElementById("inventoryList").innerHTML +=
-        '<td><a href="/dashboard/inventory/' +
-        json[x] +
-        '">' +
-        x +
-        '</td><td class="table-edit""><span onclick="alert()">✏️</span></td>';
-      document.getElementById("inventoryList").innerHTML += "</tr>";
-    }
-  };
-
-  showSharedList = () => {
-    var x;
-    var json = this.state.shared;
-    for (x in json) {
-      document.getElementById("sharedList").innerHTML += "<tr>";
-      document.getElementById("sharedList").innerHTML +=
-        '<td><a href="/dashboard/inventory/' +
-        json[x] +
-        '">' +
-        x +
-        '</td><td class="table-edit""><span onclick="alert()">✏️</span></td>';
-      document.getElementById("sharedList").innerHTML += "</tr>";
-    }
-  };
-
   removeToken = () => {
     localStorage.removeItem("auth");
     this.props.history.push("/");
@@ -138,9 +80,8 @@ export default class Dashboard extends Component {
   }
 
   componentDidMount() {
-    this.getInventories();
-    this.getShared();
     this.getInfo();
+    this.getStared();
   }
 
   render() {
@@ -266,27 +207,11 @@ export default class Dashboard extends Component {
                 </a>
               </li>
               <li>
-                <a href="/dashboard/products">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>Products</span>
-                </a>
-              </li>
-              <li>
                 <a href="/dashboard/recipes">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
                   <span>Recipes</span>
-                </a>
-              </li>
-              <li>
-                <a href="/dashboard/recipes/stared">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>Favourite Recipes</span>
                 </a>
               </li>
               <li className="menu-heading">
@@ -308,14 +233,6 @@ export default class Dashboard extends Component {
                   <span>Friends</span>
                 </a>
               </li>
-              <li>
-                <a href="/dashboard/friends">
-                  <svg>
-                    <use href="#users"></use>
-                  </svg>
-                  <span>Friends</span>
-                </a>
-              </li >
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
@@ -351,10 +268,12 @@ export default class Dashboard extends Component {
               </div>
             </div>
           </section>
-          <InventoryList 
-          inventories={this.state.inventories}
-          shared={this.state.shared}
-          />
+          <section className="grid">
+            <article className="inventories">
+              <div className="inventories-text">Favourite Recipes</div>
+              <RecipesTable data={this.state.stared} stared={true} handler = {this.handler}/>
+            </article>
+          </section>
           <footer className="page-footer">
             <small>
               Made with <span>❤</span> by{" "}

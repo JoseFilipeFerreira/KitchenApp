@@ -9,9 +9,11 @@ import Inventory from "./inventory";
 import Friends from "./friends";
 import Recipes from "./recipes";
 import Recipe from "./recipe";
+import Stared from "./stared";
 import { Helmet } from "react-helmet";
 import Whishlists from "./wishlists";
 import ShoppingLists from "./shoppinglists";
+
 
 class App extends Component {
   isAuth = () => {
@@ -67,6 +69,7 @@ class App extends Component {
               <Route path="/dashboard/inventory/" render={(props) => <Inventory shared={false} {...props}/>} />
               <Route path="/dashboard/shared/inventory/" render={(props) =><Inventory shared={true} {...props}/>} />
               <Route path="/dashboard/friends/" component={Friends} />
+              <Route path="/dashboard/recipes/stared" component={Stared} />
               <Route path="/dashboard/recipes/" component={Recipes} />
               <Route path="/dashboard/recipe/" component={Recipe} />
               <Route path="/dashboard/wishlists/" component={Whishlists} />
