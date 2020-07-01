@@ -25,7 +25,7 @@ namespace ProductService.Controllers
             return await ProductStore.Categories();
         }
     
-        [HttpGet]
+        [HttpPost]
         public async Task<List<Product>> GetProds([FromHeader] string auth, [FromForm] string category)
         {
             string user;

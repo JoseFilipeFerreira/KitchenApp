@@ -46,3 +46,9 @@ body, and can be called with a **GET** request.
 
 Calling this endpoint through a **GET** request, will return a list containing
 all the avaliable categories present in the database.
+
+## /category/getprods
+
+Calling this endpoint through a **POST** request, will return a list containing
+all the products from a category, given in a form in the field **category**,
+present in the database.
