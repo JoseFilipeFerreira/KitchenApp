@@ -2,22 +2,26 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
-import Swal from "sweetalert2";
-import InventoryPage from "./components/InventoryPage";
-import RecipesTable from "./components/RecipesTable";
+import RecipePage from "./components/RecipePage";
 
-export default class Inventory extends Component {
+export default class Recipe extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      inventory_id: null,
-      inventory_name: null,
       name: null,
-      categories: null,
-      items: [],
+      recipe_id: null,
+      recipe_title: null,
+      recipe_summary: null,
+      recipe_img: null,
+      recipe_ingredients: [],
+      recipe_instructions: null,
     };
   }
+
+  changeHandler = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
 
   getInfo = () => {
     let token = localStorage.getItem("auth");
@@ -46,148 +50,24 @@ export default class Inventory extends Component {
     }
   };
 
-  getInventoryInfo = () => {
+  starRecipe = () => {
     let token = localStorage.getItem("auth");
+    const form = new FormData();
+    form.append("id", this.state.recipe_id);
+
     axios
-      .get(
-        "http://localhost:1331/inventory/info/" + this.state.inventory_id,
-        {
-          headers: { auth: token },
-        },
-        { withCredentials: true }
-      )
+      .post("http://localhost:1331/recipe/star", form, {
+        headers: { "Content-Type": "multipart/form-data", auth: token },
+        withCredentials: true,
+      })
       .then((response) => {
-        console.log(response.data);
-        let json = response.data;
-        this.setState({
-          inventory_name: json["_name"],
-          items: json["_products"],
-        });
+        const token = response.headers["auth"];
+        localStorage.setItem("auth", token);
+        alert("Recipe stared");
       })
       .catch((error) => {
         console.log(error);
-        this.props.history.push("/dashboard");
       });
-
-    if (localStorage.getItem("auth") != null) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  getInventoryID = () => {
-    let url = window.location.pathname;
-    let regex = /[/]inventory[/](.*)/;
-    let id = url.match(regex)[1];
-    if (id != null) {
-      console.log(id);
-      this.setState({ inventory_id: id }, () => {
-        this.getInventoryInfo();
-      });
-    }
-  };
-
-  editProduct = () => {};
-
-  editInventory = async () => {
-    let token = localStorage.getItem("auth");
-    let uid = this.state.inventory_id;
-    const form = new FormData();
-    const { value: name } = await Swal.fire({
-      title: "Enter new name",
-      input: "text",
-      inputPlaceholder: "Enter your name",
-      inputValidator: (value) => {
-        if (!value) {
-          return "Invalid Name";
-        } else {
-          form.append("uid", uid);
-          form.append("name", value);
-
-          axios
-            .post("http://localhost:1331/inventory/edit", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-              window.location.reload();
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      },
-    });
-  };
-
-  shareInventory = async () => {
-    console.log(this.props.shared)
-    if (!this.props.shared) {
-      let token = localStorage.getItem("auth");
-      let uid = this.state.inventory_id;
-      const form = new FormData();
-      const { value: name } = await Swal.fire({
-        title: "Enter user email",
-        input: "email",
-        inputPlaceholder: "Enter email",
-        inputValidator: (value) => {
-          if (!value) {
-            return "Invalid Name";
-          } else {
-            form.append("uid", uid);
-            form.append("friend", value);
-  
-            axios
-              .post("http://localhost:1331/inventory/share", form, {
-                headers: { "Content-Type": "multipart/form-data", auth: token },
-                withCredentials: true,
-              })
-              .then((response) => {
-                /* save this token inside localStorage */
-                const token = response.headers["auth"];
-                localStorage.setItem("auth", token);
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          }
-        },
-      });
-    } else {
-      Swal.fire(
-        'Nope!',
-        'You are not the owner of this inventory',
-        'error'
-      )
-    }
-  };
-
-  showItems = () => {
-    var x;
-    var json = this.state.items;
-    json.sort(function(a, b){
-      return a._name.localeCompare(b._name);
-    });
-    for (x in json) {
-      let product = json[x];
-      console.log(product);
-      document.getElementById("inventoryList").innerHTML += "<tr>";
-      document.getElementById("inventoryList").innerHTML +=
-        "<td>" +
-        product["_name"] +
-        "</td>" +
-        "<td>" +
-        product["_stock"] +
-        "</td>" +
-        "<td>" +
-        product["_consume_before"].substring(0, 10) +
-        "</td>";
-      document.getElementById("inventoryList").innerHTML += "</tr>";
-    }
   };
 
   removeToken = () => {
@@ -204,9 +84,65 @@ export default class Inventory extends Component {
     }
   }
 
+  getRecipeInfo = () => {
+    let token = localStorage.getItem("auth");
+    axios
+      .get(
+        "http://localhost:1331/recipe/get/" + this.state.id,
+        {
+          headers: { auth: token },
+        },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        console.log(response.data);
+        let json = response.data[0];
+        this.setState({
+          recipe_title: json["title"],
+          recipe_img: json["image"],
+          recipe_summary: json["summary"],
+          recipe_ingredients: json["extendedIngredients"],
+          recipe_id: json["id"],
+          recipe_instructions: json["instructions"],
+        });
+        let s = this.state.recipe_summary.replace(/[.] Try.*/g, ".");
+        let ins = this.state.recipe_instructions.replace(/[.][ ]/g, ". <br/>");
+        /* Remove Summary recipes links */
+        this.setState({
+          recipe_summary: s,
+          recipe_instructions: ins,
+        });
+        console.log(this.state);
+      })
+      .catch((error) => {
+        console.log(error);
+        this.props.history.push("/dashboard");
+      });
+
+    if (localStorage.getItem("auth") != null) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  getRecipeID = () => {
+    let url = window.location.pathname;
+    let regex = /[/]dashboard[/]recipe[/]get[/](.*)/;
+    let id = url.match(regex)[1];
+    if (id != null) {
+      console.log(id);
+      this.setState({ id: id }, () => {
+        this.getRecipeInfo();
+      });
+    }
+  };
+
+  showRecipe = () => {};
+
   componentDidMount() {
-    this.getInventoryID();
     this.getInfo();
+    this.getRecipeID();
   }
 
   render() {
@@ -331,6 +267,14 @@ export default class Inventory extends Component {
                   <span>Shopping Lists</span>
                 </a>
               </li>
+              <li>
+                <a href="/dashboard/recipes">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Recipes</span>
+                </a>
+              </li>
               <li className="menu-heading">
                 <h3>Settings</h3>
               </li>
@@ -376,16 +320,6 @@ export default class Inventory extends Component {
         </header>
         <section className="page-content">
           <section className="search-and-user">
-            {/*
-            <form>
-              <input type="search" placeholder="Search Pages..." />
-              <button type="submit" aria-label="submit form">
-                <svg aria-hidden="true">
-                  <use href="#search"></use>
-                </svg>
-              </button>
-            </form>
-            */}
             <div className="admin-profile">
               <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
@@ -395,12 +329,25 @@ export default class Inventory extends Component {
               </div>
             </div>
           </section>
-            <InventoryPage 
-            inventory_name={this.state.inventory_name}
-            inventory_id={this.state.inventory_id}
-            items={this.state.items}
-            shared={this.props.shared}
-            />
+          <section className="grid">
+            <article className="inventories">
+              <div className="inventories-text">{this.state.recipe_title}</div>
+              <RecipePage
+                img={this.state.recipe_img}
+                summary={this.state.recipe_summary}
+                ingredients={this.state.recipe_ingredients}
+                instructions={this.state.recipe_instructions}
+              />
+              <div className="inventory-button">
+                <input
+                  className="create-button"
+                  type="button"
+                  value="Star Recipe"
+                  onClick={this.starRecipe}
+                ></input>
+              </div>
+            </article>
+          </section>
           <footer className="page-footer">
             <small>
               Made with <span>❤</span> by{" "}

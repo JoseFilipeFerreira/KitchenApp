@@ -24,7 +24,7 @@ export default class Friends extends Component {
       }, { withCredentials: true })
       .then((response) => {
         this.setState({ friends: response.data });
-        console.log(response)
+        console.log(response.data)
         this.showFriendsList();
       })
       .catch((error) => {
@@ -46,7 +46,7 @@ export default class Friends extends Component {
       }, { withCredentials: true })
       .then((response) => {
         this.setState({ requests: response.data });
-        console.log(response)
+        console.log(response.data)
         this.showRequestsList();
       })
       .catch((error) => {
@@ -266,7 +266,7 @@ export default class Friends extends Component {
         form.append("friend", email);
 
           axios
-            .delete("http://localhost:1331/user/friends/remove", form, {
+            .post("http://localhost:1331/user/friends/remove", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -278,12 +278,6 @@ export default class Friends extends Component {
             .catch((error) => {
               console.log(error);
             });
-
-        Swal.fire(
-          'Deleted!',
-          'Friend has been deleted.',
-          'success'
-        )
       }
     })
   }

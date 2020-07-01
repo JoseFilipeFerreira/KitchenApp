@@ -3,21 +3,47 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
-import InventoryPage from "./components/InventoryPage";
 import RecipesTable from "./components/RecipesTable";
 
-export default class Inventory extends Component {
+export default class Recipes extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      inventory_id: null,
-      inventory_name: null,
+      search: "",
+      recipes: [],
       name: null,
-      categories: null,
-      items: [],
     };
   }
+
+  changeHandler = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  submitHandler = (e) => {
+    e.preventDefault();
+    if (this.state.search) {
+      let token = localStorage.getItem("auth");
+      const form = new FormData();
+
+      let search = this.state.search;
+
+      form.append("keys", search);
+      axios
+        .post("http://localhost:1331/recipe/search", form, {
+          headers: { "Content-Type": "multipart/form-data", auth: token},
+          withCredentials: true,
+        })
+        .then((response) => {
+          this.setState({ recipes: response.data });
+          console.log(response.data)
+          this.showRecipes();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
 
   getInfo = () => {
     let token = localStorage.getItem("auth");
@@ -46,150 +72,6 @@ export default class Inventory extends Component {
     }
   };
 
-  getInventoryInfo = () => {
-    let token = localStorage.getItem("auth");
-    axios
-      .get(
-        "http://localhost:1331/inventory/info/" + this.state.inventory_id,
-        {
-          headers: { auth: token },
-        },
-        { withCredentials: true }
-      )
-      .then((response) => {
-        console.log(response.data);
-        let json = response.data;
-        this.setState({
-          inventory_name: json["_name"],
-          items: json["_products"],
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-        this.props.history.push("/dashboard");
-      });
-
-    if (localStorage.getItem("auth") != null) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  getInventoryID = () => {
-    let url = window.location.pathname;
-    let regex = /[/]inventory[/](.*)/;
-    let id = url.match(regex)[1];
-    if (id != null) {
-      console.log(id);
-      this.setState({ inventory_id: id }, () => {
-        this.getInventoryInfo();
-      });
-    }
-  };
-
-  editProduct = () => {};
-
-  editInventory = async () => {
-    let token = localStorage.getItem("auth");
-    let uid = this.state.inventory_id;
-    const form = new FormData();
-    const { value: name } = await Swal.fire({
-      title: "Enter new name",
-      input: "text",
-      inputPlaceholder: "Enter your name",
-      inputValidator: (value) => {
-        if (!value) {
-          return "Invalid Name";
-        } else {
-          form.append("uid", uid);
-          form.append("name", value);
-
-          axios
-            .post("http://localhost:1331/inventory/edit", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-              window.location.reload();
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      },
-    });
-  };
-
-  shareInventory = async () => {
-    console.log(this.props.shared)
-    if (!this.props.shared) {
-      let token = localStorage.getItem("auth");
-      let uid = this.state.inventory_id;
-      const form = new FormData();
-      const { value: name } = await Swal.fire({
-        title: "Enter user email",
-        input: "email",
-        inputPlaceholder: "Enter email",
-        inputValidator: (value) => {
-          if (!value) {
-            return "Invalid Name";
-          } else {
-            form.append("uid", uid);
-            form.append("friend", value);
-  
-            axios
-              .post("http://localhost:1331/inventory/share", form, {
-                headers: { "Content-Type": "multipart/form-data", auth: token },
-                withCredentials: true,
-              })
-              .then((response) => {
-                /* save this token inside localStorage */
-                const token = response.headers["auth"];
-                localStorage.setItem("auth", token);
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          }
-        },
-      });
-    } else {
-      Swal.fire(
-        'Nope!',
-        'You are not the owner of this inventory',
-        'error'
-      )
-    }
-  };
-
-  showItems = () => {
-    var x;
-    var json = this.state.items;
-    json.sort(function(a, b){
-      return a._name.localeCompare(b._name);
-    });
-    for (x in json) {
-      let product = json[x];
-      console.log(product);
-      document.getElementById("inventoryList").innerHTML += "<tr>";
-      document.getElementById("inventoryList").innerHTML +=
-        "<td>" +
-        product["_name"] +
-        "</td>" +
-        "<td>" +
-        product["_stock"] +
-        "</td>" +
-        "<td>" +
-        product["_consume_before"].substring(0, 10) +
-        "</td>";
-      document.getElementById("inventoryList").innerHTML += "</tr>";
-    }
-  };
-
   removeToken = () => {
     localStorage.removeItem("auth");
     this.props.history.push("/");
@@ -204,13 +86,23 @@ export default class Inventory extends Component {
     }
   }
 
+  showRecipes = () => {
+    var x;
+    var json = this.state.recipes;
+    for (x in json) {
+      delete json[x]['extendedIngredients'];
+      delete json[x]['summary'];
+    }
+    this.setState({recipes: json})
+
+  };
+
   componentDidMount() {
-    this.getInventoryID();
     this.getInfo();
   }
 
   render() {
-    /*const { dashboards } = this.state;*/
+    const { search } = this.state;
     return (
       <div>
         <svg>
@@ -331,6 +223,14 @@ export default class Inventory extends Component {
                   <span>Shopping Lists</span>
                 </a>
               </li>
+              <li>
+                <a href="/dashboard/recipes">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Recipes</span>
+                </a>
+              </li>
               <li className="menu-heading">
                 <h3>Settings</h3>
               </li>
@@ -376,16 +276,20 @@ export default class Inventory extends Component {
         </header>
         <section className="page-content">
           <section className="search-and-user">
-            {/*
-            <form>
-              <input type="search" placeholder="Search Pages..." />
-              <button type="submit" aria-label="submit form">
+            <form onSubmit={this.submitHandler}>
+              <input
+                type="text"
+                placeholder="Search recipes..."
+                name="search"
+                value={search}
+                onChange={this.changeHandler}
+              />
+              <button type="submit">
                 <svg aria-hidden="true">
                   <use href="#search"></use>
                 </svg>
               </button>
             </form>
-            */}
             <div className="admin-profile">
               <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
@@ -395,12 +299,12 @@ export default class Inventory extends Component {
               </div>
             </div>
           </section>
-            <InventoryPage 
-            inventory_name={this.state.inventory_name}
-            inventory_id={this.state.inventory_id}
-            items={this.state.items}
-            shared={this.props.shared}
-            />
+          <section className="grid">
+            <article className="inventories">
+              <div className="inventories-text">Recipes</div>
+              <RecipesTable data={this.state.recipes} stared={false}/>
+            </article>
+          </section>
           <footer className="page-footer">
             <small>
               Made with <span>❤</span> by{" "}
