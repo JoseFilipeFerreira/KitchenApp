@@ -5,6 +5,10 @@ http {
         server authservice;
     }
 
+    upstream rec {
+        server recipe;
+    }
+
     upstream inv {
         server inventory;
     }
@@ -16,6 +20,15 @@ http {
     upstream users {
         server userservice;
     }
+
+    upstream prods {
+        server products;
+    }
+
+    upstream shp {
+        server shopping;
+    }
+
 
     server {
         server_name kitchen.app;
@@ -51,6 +64,36 @@ http {
             proxy_pass http://users/;
         }
 
+        location /product/ {
+            if ($request_method = OPTIONS) {
+                add_header Content-Length 0;
+                add_header Content-Type text/plain;
+                add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS";
+                add_header Access-Control-Allow-Origin $http_origin;
+                add_header Access-Control-Allow-Headers "auth, Content-Type";
+                add_header Access-Control-Allow-Credentials true;
+                return 200;
+            }
+            auth_request /auth;
+            auth_request_set $auth_header_auth $upstream_http_header_auth;
+            proxy_pass http://prods/;
+        }
+
+        location /shopping/ {
+            if ($request_method = OPTIONS) {
+                add_header Content-Length 0;
+                add_header Content-Type text/plain;
+                add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS";
+                add_header Access-Control-Allow-Origin $http_origin;
+                add_header Access-Control-Allow-Headers "auth, Content-Type";
+                add_header Access-Control-Allow-Credentials true;
+                return 200;
+            }
+            auth_request /auth;
+            auth_request_set $auth_header_auth $upstream_http_header_auth;
+            proxy_pass http://shp/;
+        }
+
         location /inventory/ {
             if ($request_method = OPTIONS) {
                 add_header Content-Length 0;
@@ -79,6 +122,21 @@ http {
             auth_request /auth;
             auth_request_set $auth_header_auth $upstream_http_header_auth;
             proxy_pass http://wsh/;
+        }
+
+        location /recipe/ {
+            if ($request_method = OPTIONS) {
+                add_header Content-Length 0;
+                add_header Content-Type text/plain;
+                add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS";
+                add_header Access-Control-Allow-Origin $http_origin;
+                add_header Access-Control-Allow-Headers "auth, Content-Type";
+                add_header Access-Control-Allow-Credentials true;
+                return 200;
+            }
+            auth_request /auth;
+            auth_request_set $auth_header_auth $upstream_http_header_auth;
+            proxy_pass http://rec/;
         }
     }
 }

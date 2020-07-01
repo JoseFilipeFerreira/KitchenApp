@@ -63,7 +63,6 @@ namespace KitchenLib
             }
         }
 
-        //TODO Move this function
         public static async Task<string> UserJwtToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -85,7 +84,7 @@ namespace KitchenLib
             return jwtToken.Actor;
         }
 
-        public static Task<ClaimsIdentity> CreateClaimsIdentitiesAsync(User user)
+        private static Task<ClaimsIdentity> CreateClaimsIdentitiesAsync(User user)
         {
             ClaimsIdentity claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim(ClaimTypes.Actor, user._email));

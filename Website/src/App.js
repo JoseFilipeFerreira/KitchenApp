@@ -10,6 +10,8 @@ import Friends from "./friends";
 import Recipes from "./recipes";
 import Recipe from "./recipe";
 import { Helmet } from "react-helmet";
+import Whishlists from "./wishlists";
+import ShoppingLists from "./shoppinglists";
 
 class App extends Component {
   isAuth = () => {
@@ -67,6 +69,9 @@ class App extends Component {
               <Route path="/dashboard/friends/" component={Friends} />
               <Route path="/dashboard/recipes/" component={Recipes} />
               <Route path="/dashboard/recipe/" component={Recipe} />
+              <Route path="/dashboard/wishlists/" component={Whishlists} />
+              <Route path="/dashboard/shoppinglists/" component={ShoppingLists} />
+
               <Route exact path="*" component={Dashboard} />
             </Switch>
           </Router>

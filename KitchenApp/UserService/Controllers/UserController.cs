@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using KitchenLib;
@@ -75,7 +76,7 @@ namespace UserService.Controllers
             return u;
         }
 
-        [HttpDelete]
+        [HttpPost]
         public void Remove([FromHeader] string auth)
         {
             string user;

@@ -18,7 +18,7 @@ namespace KitchenLib.Database
                 {
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
-                        "MATCH(u:User)-[:INV]->(i:Inventory) WHERE u._email = $email AND i.guid = $name RETURN i.name",
+                        "MATCH(u:User)-[]->(i:Inventory) WHERE u._email = $email AND i.guid = $name RETURN i.name",
                         new {email, name});
                     while (await reader.FetchAsync())
                         lst.Add(reader.Current[0].ToString());
@@ -110,12 +110,10 @@ namespace KitchenLib.Database
                 await session.ReadTransactionAsync(async tx =>
                 {
                     var reader = await tx.RunAsync(
-                        "Match(u:User)-[:INV]->(i:Inventory) " +
-                        "Optional match (i)-[c:CONTAIN]->(p:Product) " +
-                        "Optional Match(i)-[:SHARED]->(z:User) " +
+                        "Match(u:User)-[]->(i:Inventory) " +
                         "Where u._email = $email AND i.guid = $name " +
-                        "Return [(a)-[c:CONTAIN]->(b) where b: Product | { prod: b, quant: c.quantity, expire: c.expiration_date }] as products, " +
-                        "[(a)-[:Shared]->(b) where b: User | b] as guests, " +
+                        "Return [(i)-[c]->(p) where p: Product| { prod: p, quant: c.quantity, expire: c.expiration_date }] as products, " +
+                        "[(i)-[:Shared]-(b) where b: User | b] as guests, " +
                         "u._email as owner_id, " +
                         "i.name as name, i.guid as guid",
                         new {email, name = uid});
@@ -130,10 +128,11 @@ namespace KitchenLib.Database
                         inv._guests = new List<string>();
                         foreach (var guest in guests)
                         {
-                            inv._guests.Append(guest["_email"].As<string>());
+                            inv._guests.Add(guest["_email"].As<string>());
                         }
 
                         if (prods == null) continue;
+                        inv._products = new List<OwnedProduct>();
                         foreach (var prod in prods)
                         {
                             var u = new OwnedProduct();
@@ -143,9 +142,9 @@ namespace KitchenLib.Database
                             }
 
                             u._consume_before = prod["expire"].As<DateTime>();
-                            u._stock = prod["quant"].As<uint>();
+                            u._stock = prod["quant"].As<long>();
 
-                            inv._products.Append(u);
+                            inv._products.Add(u);
                         }
                     }
                 });
@@ -165,9 +164,11 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var r = await tx.RunAsync("Match (u:User)-[:INV]->(i:Inventory), (p:Product) " +
+                    var r = await tx.RunAsync("Match (u:User)-[]->(i:Inventory), (p:Product) " +
                                               "where u._email = $email and i.guid = $name and p._guid = $pguid " +
-                                              "create (i)-[:CONTAIN {quantity: $quant, expiration_date: $date}]->(p)",
+                                              "Optional match (i)-[f:CONTAIN]-(p) " +
+                                              "with i, p, f, case when f is null then [1] else [] end as arr " +
+                                              "foreach(x in arr | create (i)-[:CONTAIN {quantity: $quant, expiration_date: $date}]->(p))",
                         new {date, quant, email, name = uid, pguid = prodName});
                 });
             }
@@ -186,7 +187,7 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var query = "Match (u:User)-[:INV]->(i:Inventory)-[c:CONTAIN]->(p:Product) " +
+                    var query = "Match (u:User)-[]->(i:Inventory)-[c:CONTAIN]->(p:Product) " +
                                 "where u._email = $email and i.guid = $name and p._guid = $pguid ";
                     IDictionary<string, object> dic = new Dictionary<string, object>
                         {{"name", uid}, {"pguid", prodName}, {"email", email}};
@@ -218,7 +219,7 @@ namespace KitchenLib.Database
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    var query = "Match (u:User)-[:INV]->(i:Inventory)-[c:CONTAIN]->(p:Product) " +
+                    var query = "Match (u:User)-[]->(i:Inventory)-[c:CONTAIN]->(p:Product) " +
                                 "where u._email = $email and i.guid = $name and p._guid = $pguid " +
                                 "delete c";
                     IDictionary<string, object> dic = new Dictionary<string, object>
@@ -242,7 +243,7 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("Match (u:User)-[:INV]->(i:Inventory), (z:User) " +
                                               "where u._email = $email and i.guid = $name and z._email = $friend " +
-                                              "create (i)-[:Shared]->(z)", new {email, name = uid, friend});
+                                              "create (i)<-[:Shared]-(z)", new {email, name = uid, friend});
                 });
             }
             finally
@@ -317,6 +318,34 @@ namespace KitchenLib.Database
             {
                 await session.CloseAsync();
             }
+        }
+
+        public static async Task<Dictionary<string, IDictionary<string, string>>> expire_warning(string email)
+        {
+            var l = new Dictionary<string, IDictionary<string, string>>();
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var r = await tx.RunAsync("match (u:User)-[:INV]->(i)-[c:CONTAIN]->(p:Product) " +
+                                              "where u._email = $email and date(c.expiration_date) <= date() + duration(\"P1M\") " +
+                                              "return i.name as iname, p._name as pname, i.guid as iguid", new {email});
+                    while (await r.FetchAsync())
+                    {
+                        l.Add(r.Current["pname"].As<string>(), new Dictionary<string, string>
+                        {
+                            {"name", r.Current["iname"].As<string>()}, {"guid", r.Current["iguid"].As<string>()}
+                        });
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return l;
         }
     }
 }
