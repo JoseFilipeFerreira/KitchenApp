@@ -3,19 +3,20 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
+import InventoryList from "./components/InventoryList";
 
 export default class Dashboard extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      dashboards: null,
-      shared: null,
+      inventories: {},
+      shared: {},
       name: null,
     };
   }
 
-  getDashboards = () => {
+  getInventories = () => {
     let token = localStorage.getItem("auth");
     axios
       .get(
@@ -26,8 +27,7 @@ export default class Dashboard extends Component {
         { withCredentials: true }
       )
       .then((response) => {
-        this.setState({ dashboards: response.data });
-        this.showInventoryList();
+        this.setState({ inventories: response.data });
       })
       .catch((error) => {
         console.log(error);
@@ -52,7 +52,6 @@ export default class Dashboard extends Component {
       )
       .then((response) => {
         this.setState({ shared: response.data });
-        this.showSharedList();
       })
       .catch((error) => {
         console.log(error);
@@ -92,61 +91,19 @@ export default class Dashboard extends Component {
     }
   };
 
-  createInventory = async () => {
-    let token = localStorage.getItem("auth");
-    const form = new FormData();
-    const { value: name } = await Swal.fire({
-      title: "Enter inventory name",
-      input: "text",
-      inputPlaceholder: "Enter inventory name",
-      inputValidator: (value) => {
-        if (!value) {
-          return "Invalid Name";
-        } else {
-          form.append("name", value);
-
-          axios
-            .post("http://localhost:1331/inventory/add", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-              window.location.reload();
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      },
-    });
-  };
-
-  createEditButton = () => {
-    return (
-      <span
-        className="edit-button"
-        role="img"
-        aria-label="jsx-a11y/aria-proptypes"
-        onClick={() => {
-          this.askName();
-        }}
-      >
-        ✏️
-      </span>
-    );
-  };
 
   showInventoryList = () => {
     var x;
-    var json = this.state.dashboards;
+    var json = this.state.inventories;
 
     for (x in json) {
       document.getElementById("inventoryList").innerHTML += "<tr>";
       document.getElementById("inventoryList").innerHTML +=
-        '<td><a href="/dashboard/inventory/' + json[x] + '">' + x + '</td><td class="table-edit""><span onclick="alert()">✏️</span></td>';
+        '<td><a href="/dashboard/inventory/' +
+        json[x] +
+        '">' +
+        x +
+        '</td><td class="table-edit""><span onclick="alert()">✏️</span></td>';
       document.getElementById("inventoryList").innerHTML += "</tr>";
     }
   };
@@ -181,7 +138,7 @@ export default class Dashboard extends Component {
   }
 
   componentDidMount() {
-    this.getDashboards();
+    this.getInventories();
     this.getShared();
     this.getInfo();
   }
@@ -309,11 +266,27 @@ export default class Dashboard extends Component {
                 </a>
               </li>
               <li>
+                <a href="/dashboard/products">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Products</span>
+                </a>
+              </li>
+              <li>
                 <a href="/dashboard/recipes">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
                   <span>Recipes</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes/stared">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Favourite Recipes</span>
                 </a>
               </li>
               <li className="menu-heading">
@@ -361,16 +334,6 @@ export default class Dashboard extends Component {
         </header>
         <section className="page-content">
           <section className="search-and-user">
-            {/*
-            <form>
-              <input type="search" placeholder="Search Pages..." />
-              <button type="submit" aria-label="submit form">
-                <svg aria-hidden="true">
-                  <use href="#search"></use>
-                </svg>
-              </button>
-            </form>
-            */}
             <div className="admin-profile">
               <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
@@ -380,24 +343,10 @@ export default class Dashboard extends Component {
               </div>
             </div>
           </section>
-          <section className="grid">
-            <article className="inventories">
-              <div className="inventories-text">Inventories</div>
-              <table id="inventoryList"></table>
-              <div className="inventory-button">
-                <input
-                  className="create-button"
-                  type="button"
-                  value="Create Inventory"
-                  onClick={this.createInventory}
-                ></input>
-              </div>
-            </article>
-            <article className="inventories">
-              <div className="inventories-text">Shared Inventories</div>
-              <table id="sharedList"></table>
-            </article>
-          </section>
+          <InventoryList 
+          inventories={this.state.inventories}
+          shared={this.state.shared}
+          />
           <footer className="page-footer">
             <small>
               Made with <span>❤</span> by{" "}

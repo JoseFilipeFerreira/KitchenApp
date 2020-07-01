@@ -2,15 +2,20 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
-import Swal from "sweetalert2";
+import RecipePage from "./components/RecipePage";
 
 export default class Recipe extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      id: null,
       name: null,
+      recipe_id: null,
+      recipe_title: null,
+      recipe_summary: null,
+      recipe_img: null,
+      recipe_ingredients: [],
+      recipe_instructions: null,
     };
   }
 
@@ -45,8 +50,24 @@ export default class Recipe extends Component {
     }
   };
 
-  starRecipe = (e) => {
-    console.log(e);
+  starRecipe = () => {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
+    form.append("id", this.state.recipe_id);
+
+    axios
+      .post("http://localhost:1331/recipe/star", form, {
+        headers: { "Content-Type": "multipart/form-data", auth: token },
+        withCredentials: true,
+      })
+      .then((response) => {
+        const token = response.headers["auth"];
+        localStorage.setItem("auth", token);
+        alert("Recipe stared");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   removeToken = () => {
@@ -75,14 +96,23 @@ export default class Recipe extends Component {
       )
       .then((response) => {
         console.log(response.data);
-        let json = response.data;
-        /*
+        let json = response.data[0];
         this.setState({
-          inventory_name: json["_name"],
-          items: json["_products"],
+          recipe_title: json["title"],
+          recipe_img: json["image"],
+          recipe_summary: json["summary"],
+          recipe_ingredients: json["extendedIngredients"],
+          recipe_id: json["id"],
+          recipe_instructions: json["instructions"],
         });
-        */
-        //this.showItems();
+        let s = this.state.recipe_summary.replace(/[.] Try.*/g, ".");
+        let ins = this.state.recipe_instructions.replace(/[.][ ]/g, ". <br/>");
+        /* Remove Summary recipes links */
+        this.setState({
+          recipe_summary: s,
+          recipe_instructions: ins,
+        });
+        console.log(this.state);
       })
       .catch((error) => {
         console.log(error);
@@ -98,7 +128,7 @@ export default class Recipe extends Component {
 
   getRecipeID = () => {
     let url = window.location.pathname;
-    let regex = /[/]dashboard[/]recipe[/](.*)/;
+    let regex = /[/]dashboard[/]recipe[/]get[/](.*)/;
     let id = url.match(regex)[1];
     if (id != null) {
       console.log(id);
@@ -108,9 +138,7 @@ export default class Recipe extends Component {
     }
   };
 
-  showRecipe = () => {
-
-  };
+  showRecipe = () => {};
 
   componentDidMount() {
     this.getInfo();
@@ -118,7 +146,6 @@ export default class Recipe extends Component {
   }
 
   render() {
-    const { search } = this.state;
     /*const { dashboards } = this.state;*/
     return (
       <div>
@@ -293,20 +320,6 @@ export default class Recipe extends Component {
         </header>
         <section className="page-content">
           <section className="search-and-user">
-            <form onSubmit={this.submitHandler}>
-              <input
-                type="text"
-                placeholder="Search recipes..."
-                name="search"
-                value={search}
-                onChange={this.changeHandler}
-              />
-              <button type="submit">
-                <svg aria-hidden="true">
-                  <use href="#search"></use>
-                </svg>
-              </button>
-            </form>
             <div className="admin-profile">
               <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
@@ -318,9 +331,21 @@ export default class Recipe extends Component {
           </section>
           <section className="grid">
             <article className="inventories">
-              <div className="inventories-text">Recipes</div>
-              <table id="recipesList">
-              </table>
+              <div className="inventories-text">{this.state.recipe_title}</div>
+              <RecipePage
+                img={this.state.recipe_img}
+                summary={this.state.recipe_summary}
+                ingredients={this.state.recipe_ingredients}
+                instructions={this.state.recipe_instructions}
+              />
+              <div className="inventory-button">
+                <input
+                  className="create-button"
+                  type="button"
+                  value="Star Recipe"
+                  onClick={this.starRecipe}
+                ></input>
+              </div>
             </article>
           </section>
           <footer className="page-footer">

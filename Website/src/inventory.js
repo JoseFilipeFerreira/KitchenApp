@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
+import InventoryPage from "./components/InventoryPage";
+import RecipesTable from "./components/RecipesTable";
 
 export default class Inventory extends Component {
   constructor(props) {
@@ -13,7 +15,7 @@ export default class Inventory extends Component {
       inventory_name: null,
       name: null,
       categories: null,
-      items: null,
+      items: [],
     };
   }
 
@@ -61,7 +63,6 @@ export default class Inventory extends Component {
           inventory_name: json["_name"],
           items: json["_products"],
         });
-        this.showItems();
       })
       .catch((error) => {
         console.log(error);
@@ -77,197 +78,13 @@ export default class Inventory extends Component {
 
   getInventoryID = () => {
     let url = window.location.pathname;
-    let regex = /[/]dashboard[/]inventory[/](.*)/;
+    let regex = /[/]inventory[/](.*)/;
     let id = url.match(regex)[1];
     if (id != null) {
       console.log(id);
       this.setState({ inventory_id: id }, () => {
         this.getInventoryInfo();
       });
-    }
-  };
-
-  addProductMenu = () => {
-    let token = localStorage.getItem("auth");
-    axios
-      .get(
-        "http://localhost:1331/product/getall",
-        {
-          headers: { auth: token },
-        },
-        { withCredentials: true }
-      )
-      .then(async (response) => {
-        console.log(response.data);
-        let json = response.data;
-        const token = response.headers["auth"];
-        localStorage.setItem("auth", token);
-        var r = [];
-        let i = 0;
-        var p = "";
-        for (p in json) {
-          r[i++] = json[p]["_category"];
-        }
-        var categories = Array.from(new Set(r));
-        let sc = [];
-        for (i = 0; i < categories.length; i++) {
-          sc[i] = categories[i];
-        }
-        this.setState({
-          categories: sc,
-        });
-
-        this.showCategories(json, this.state.categories);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  addProduct = async (product) => {
-    let token = localStorage.getItem("auth");
-    const form = new FormData();
-    const { value: formValues } = await Swal.fire({
-      title: "Add Product",
-      html:
-        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">' +
-        '<input id="swal-input2" placeholder="Expire date (YYYY/MM/DD)" class="swal2-input">',
-      focusConfirm: false,
-      preConfirm: () => {
-        let quantity = document.getElementById("swal-input1").value;
-        let expire = document.getElementById("swal-input2").value;
-        return [quantity, expire];
-      },
-    });
-
-    if (formValues != null && formValues[0] != null && formValues[1] != null) {
-      form.append("product", product["_guid"]);
-      form.append("quantity", formValues[0]);
-      form.append("expire", formValues[1]);
-      form.append("uid", this.state.inventory_id);
-
-      axios
-        .post("http://localhost:1331/inventory/addproduct", form, {
-          headers: { "Content-Type": "multipart/form-data", auth: token },
-          withCredentials: true,
-        })
-        .then((response) => {
-          /* save this token inside localStorage */
-          const token = response.headers["auth"];
-          localStorage.setItem("auth", token);
-          window.location.reload();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
-
-  showCategories = async (json, categories) => {
-    const { value: category } = await Swal.fire({
-      title: "Select category",
-      input: "select",
-      inputOptions: categories,
-      inputPlaceholder: "Select a category",
-      showCancelButton: true,
-      inputValidator: (value) => {
-        return new Promise((resolve) => {
-          if (value) {
-            resolve();
-          } else {
-            resolve("You need to select one");
-          }
-        });
-      },
-    });
-
-    if (category) {
-      this.showProducts(json, categories[category]);
-    }
-  };
-
-  showProducts = async (json, category) => {
-    var products = [];
-    var ids = [];
-    let i = 0;
-    var p = "";
-    for (p in json) {
-      if (json[p]["_category"] === category) products[i] = json[p]["_name"];
-      ids[i++] = json[p]["_guid"];
-    }
-    await Swal.fire({
-      title: "Select product",
-      input: "select",
-      inputOptions: products,
-      inputPlaceholder: "Select a category",
-      showCancelButton: true,
-      cancelButtonText: "Back",
-      inputValidator: (value) => {
-        return new Promise((resolve) => {
-          if (value) {
-            resolve();
-          } else {
-            resolve("You need to select one");
-          }
-        });
-      },
-    }).then((result) => {
-      if (!result.value) {
-        this.showCategories(json, this.state.categories);
-      } else {
-        this.addProduct(json[result.value]);
-      }
-    });
-  };
-
-  removeProduct = async () => {
-    var p = "";
-    const form = new FormData();
-    var products = [],
-      ids = [];
-    let i = 0;
-    for (p in this.state.items) {
-      let product = this.state.items[p];
-      products[i] = product["_name"];
-      ids[i++] = product["_guid"];
-    }
-    const { value: product } = await Swal.fire({
-      title: "Select product",
-      input: "select",
-      inputOptions: products,
-      inputPlaceholder: "Select a product",
-      showCancelButton: true,
-      inputValidator: (value) => {
-        return new Promise((resolve) => {
-          if (value) {
-            resolve();
-          } else {
-            resolve("You need to select one");
-          }
-        });
-      },
-    });
-
-    if (product) {
-      let prod = this.state.items[product];
-      let token = localStorage.getItem("auth");
-      form.append("uid", this.state.inventory_id);
-      form.append("prod", prod["_guid"]);
-
-      axios
-        .post("http://localhost:1331/inventory/removeproduct", form, {
-          headers: { "Content-Type": "multipart/form-data", auth: token },
-          withCredentials: true,
-        })
-        .then((response) => {
-          /* save this token inside localStorage */
-          const token = response.headers["auth"];
-          localStorage.setItem("auth", token);
-          window.location.reload();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     }
   };
 
@@ -308,36 +125,45 @@ export default class Inventory extends Component {
   };
 
   shareInventory = async () => {
-    let token = localStorage.getItem("auth");
-    let uid = this.state.inventory_id;
-    const form = new FormData();
-    const { value: name } = await Swal.fire({
-      title: "Enter user email",
-      input: "email",
-      inputPlaceholder: "Enter email",
-      inputValidator: (value) => {
-        if (!value) {
-          return "Invalid Name";
-        } else {
-          form.append("uid", uid);
-          form.append("friend", value);
-
-          axios
-            .post("http://localhost:1331/inventory/share", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      },
-    });
+    console.log(this.props.shared)
+    if (!this.props.shared) {
+      let token = localStorage.getItem("auth");
+      let uid = this.state.inventory_id;
+      const form = new FormData();
+      const { value: name } = await Swal.fire({
+        title: "Enter user email",
+        input: "email",
+        inputPlaceholder: "Enter email",
+        inputValidator: (value) => {
+          if (!value) {
+            return "Invalid Name";
+          } else {
+            form.append("uid", uid);
+            form.append("friend", value);
+  
+            axios
+              .post("http://localhost:1331/inventory/share", form, {
+                headers: { "Content-Type": "multipart/form-data", auth: token },
+                withCredentials: true,
+              })
+              .then((response) => {
+                /* save this token inside localStorage */
+                const token = response.headers["auth"];
+                localStorage.setItem("auth", token);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        },
+      });
+    } else {
+      Swal.fire(
+        'Nope!',
+        'You are not the owner of this inventory',
+        'error'
+      )
+    }
   };
 
   showItems = () => {
@@ -569,52 +395,12 @@ export default class Inventory extends Component {
               </div>
             </div>
           </section>
-          <section className="grid">
-            <article className="inventories">
-              <div className="inventories-text">
-                {this.state.inventory_name}
-              </div>
-              <table id="inventoryList">
-                <tr>
-                  <th>Name</th>
-                  <th>Quantity</th>
-                  <th>Expire</th>
-                </tr>
-              </table>
-              <div className="inventory-button">
-                <input
-                  className="create-button"
-                  type="button"
-                  value="Add product"
-                  onClick={this.addProductMenu}
-                ></input>
-                <input
-                  className="create-button"
-                  type="button"
-                  value="Remove product"
-                  onClick={this.removeProduct}
-                ></input>
-                <input
-                  className="create-button"
-                  type="button"
-                  value="Edit product"
-                  onClick={this.editProduct}
-                ></input>
-                <input
-                  className="create-button"
-                  type="button"
-                  value="Edit inventory"
-                  onClick={this.editInventory}
-                ></input>
-                <input
-                  className="create-button"
-                  type="button"
-                  value="Share inventory"
-                  onClick={this.shareInventory}
-                ></input>
-              </div>
-            </article>
-          </section>
+            <InventoryPage 
+            inventory_name={this.state.inventory_name}
+            inventory_id={this.state.inventory_id}
+            items={this.state.items}
+            shared={this.props.shared}
+            />
           <footer className="page-footer">
             <small>
               Made with <span>❤</span> by{" "}

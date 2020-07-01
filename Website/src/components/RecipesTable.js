@@ -1,16 +1,14 @@
 import React from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default class RecipesTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.getHeader = this.getHeader.bind(this);
-    this.getRowsData = this.getRowsData.bind(this);
-    this.getKeys = this.getKeys.bind(this);
-  }
 
   getKeys = function () {
-    return Object.keys(this.props.data[0]);
+    if (this.props.data.length)
+      return Object.keys(this.props.data[0]);
+    else
+      return [];
   };
 
   getHeader = function () {
@@ -33,7 +31,7 @@ export default class RecipesTable extends React.Component {
     var keys = this.getKeys();
     delete keys[2];
     return items.map((row, index) => {
-      return <RenderRow key={index} data={row} keys={keys} />;
+      return <RenderRow key={index} data={row} keys={keys} stared={this.props.stared} handler={this.props.handler}/>;
     });
   };
 
@@ -49,6 +47,32 @@ export default class RecipesTable extends React.Component {
   }
 }
 const RenderRow = (props) => {
+
+  function createButton() {
+    console.log(props)
+    if (props.stared) {
+      return (<td
+        id="fav-button"
+        onClick={() => {
+          unstarRecipe(props.data["id"]);
+        }}
+      >
+        <span title="Unstar">⭐</span>
+        
+      </td>)
+    } else {
+      return (<td
+        id="fav-button"
+        onClick={() => {
+          starRecipe(props.data["id"]);
+        }}
+      >
+        <span title="Star">⭐</span>
+        
+      </td>)
+    }
+  }
+
   function starRecipe(e) {
     let token = localStorage.getItem("auth");
     const form = new FormData();
@@ -62,7 +86,36 @@ const RenderRow = (props) => {
       .then((response) => {
         const token = response.headers["auth"];
         localStorage.setItem("auth", token);
-        alert('Recipe stared')
+        Swal.fire(
+          'Recipe Stared!',
+          'This recipe has been stared',
+          'success'
+        )
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  function unstarRecipe(e) {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
+    form.append("id", e);
+
+    axios
+      .post("http://localhost:1331/recipe/unstar", form, {
+        headers: { "Content-Type": "multipart/form-data", auth: token },
+        withCredentials: true,
+      })
+      .then((response) => {
+        const token = response.headers["auth"];
+        localStorage.setItem("auth", token);
+        Swal.fire(
+          'Recipe Unstared!',
+          'This recipe has been unstared',
+          'success'
+        )
+        props.handler();
       })
       .catch((error) => {
         console.log(error);
@@ -80,15 +133,8 @@ const RenderRow = (props) => {
             heigh="150"
           ></img>
         </td>
-        <td id="title">{props.data["title"]}</td>
-        <td
-          id="fav-button"
-          onClick={() => {
-            starRecipe(props.data["id"]);
-          }}
-        >
-          ⭐
-        </td>
+        <td id="title"><a href={"/dashboard/recipe/get/" + props.data["id"]}>{props.data["title"]}</a></td>
+        {createButton()}
       </tr>
     );
   } else {
