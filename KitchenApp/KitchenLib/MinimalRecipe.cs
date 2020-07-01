@@ -19,9 +19,9 @@ namespace KitchenLib
         {
         }
 
-        public Recipe ToRecipe()
+        public Recipe ToRecipe(string API_KEY)
         {
-            return RecipeSearch.SearchSingleRecipe(this);
+            return RecipeSearch.SearchSingleRecipe(API_KEY, this);
         }
     }
 }
