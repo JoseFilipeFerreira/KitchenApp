@@ -56,9 +56,121 @@ export default class RecipesTable extends React.Component {
 }
 const RenderRow = (props) => {
 
+  async function addProductInventory(product_id, inventory_id) {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
+    const { value: formValues } = await Swal.fire({
+      title: "Add Product",
+      html:
+        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">' +
+        '<input id="swal-input2" placeholder="Expire date (YYYY/MM/DD)" class="swal2-input">',
+      focusConfirm: false,
+      preConfirm: () => {
+        let quantity = document.getElementById("swal-input1").value;
+        let expire = document.getElementById("swal-input2").value;
+        return [quantity, expire];
+      },
+    });
+
+    if (formValues != null && formValues[0] != null && formValues[1] != null) {
+      form.append("product", product_id);
+      form.append("quantity", formValues[0]);
+      form.append("expire", formValues[1]);
+      form.append("uid", inventory_id);
+
+      axios
+        .post("http://localhost:1331/inventory/addproduct", form, {
+          headers: { "Content-Type": "multipart/form-data", auth: token },
+          withCredentials: true,
+        })
+        .then((response) => {
+          /* save this token inside localStorage */
+          const token = response.headers["auth"];
+          localStorage.setItem("auth", token);
+          //window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  async function addProductWishlist(product_id, whishlist_id) {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
+    const { value: formValues } = await Swal.fire({
+      title: "Add Product",
+      html:
+        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
+      focusConfirm: false,
+      preConfirm: () => {
+        let quantity = document.getElementById("swal-input1").value;
+        return quantity;
+      },
+    });
+
+    if (formValues != null) {
+      form.append("product", product_id);
+      form.append("quantity", formValues);
+      form.append("uid", whishlist_id);
+
+      axios
+        .post("http://localhost:1331/wishlist/addproduct", form, {
+          headers: { "Content-Type": "multipart/form-data", auth: token },
+          withCredentials: true,
+        })
+        .then((response) => {
+          /* save this token inside localStorage */
+          const token = response.headers["auth"];
+          localStorage.setItem("auth", token);
+          //window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  async function addProductShopping(product_id, shopping_id) {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
+    const { value: formValues } = await Swal.fire({
+      title: "Add Product",
+      html:
+        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
+      focusConfirm: false,
+      preConfirm: () => {
+        let quantity = document.getElementById("swal-input1").value;
+        return quantity;
+      },
+    });
+
+    if (formValues != null) {
+      form.append("product", product_id);
+      form.append("quantity", formValues);
+      form.append("uid", shopping_id);
+
+      axios
+        .post("http://localhost:1331/shopping/addproduct", form, {
+          headers: { "Content-Type": "multipart/form-data", auth: token },
+          withCredentials: true,
+        })
+        .then((response) => {
+          /* save this token inside localStorage */
+          const token = response.headers["auth"];
+          localStorage.setItem("auth", token);
+          //window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
 
   async function addProduct(e) {
     let lists = ['Inventory','Wishlist','Shoppinglist']
+    console.log(e)
 
     const { value: list } = await Swal.fire({
       title: "Select list",
@@ -78,9 +190,6 @@ const RenderRow = (props) => {
     });
 
     const choice = lists[list]
-
-    console.log(choice)
-
     let names;
 
     switch (choice) {
@@ -96,7 +205,7 @@ const RenderRow = (props) => {
     }
 
     if (list) {
-      const { value: value } = await Swal.fire({
+      const { value: index } = await Swal.fire({
         title: "Select " + choice,
         input: "select",
         inputOptions: Object.keys(names),
@@ -112,7 +221,24 @@ const RenderRow = (props) => {
           });
         },
       });
+
+      const id = Object.values(names)[index]
+      console.log(names)
+      console.log(Object.values(names))
+      console.log(id)
+    switch (choice) {
+      case "Inventory":
+        addProductInventory(e, id)
+        break
+      case "Wishlist":
+        addProductWishlist(e, id)
+        break
+      default:
+        addProductShopping(e, id)
+        break
     }
+    }
+
   }
 
 
