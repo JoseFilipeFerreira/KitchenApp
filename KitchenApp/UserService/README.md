@@ -44,6 +44,7 @@ five endpoints, being
 
 - /get
 - /pending
+- /sent
 - /add
 - /remove
 - /accept
@@ -60,6 +61,11 @@ the key of the dictionary being the friend's email, and the value the correspond
 
 This endpoint is similar to the `/get` endpoint, the difference being that it
 returns the info about pending friend requests.
+
+### /sent
+
+This endpoint is similar to the `/get` endpoint, the difference being that it
+returns the info about sent friend requests.
 
 ### /add
 
