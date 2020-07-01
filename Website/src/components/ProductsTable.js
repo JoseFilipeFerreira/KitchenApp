@@ -16,8 +16,8 @@ export default class RecipesTable extends React.Component {
     if (keys.length) {
       return (
         <tr>
-          <th></th>
-          <th></th>
+          <th>Name</th>
+          <th>Category</th>
           <th></th>
         </tr>
       );
@@ -29,9 +29,17 @@ export default class RecipesTable extends React.Component {
   getRowsData = function () {
     var items = this.props.data;
     var keys = this.getKeys();
+    console.log(keys)
     //delete keys[2];
     return items.map((row, index) => {
-      return <RenderRow key={index} data={row} keys={keys} stared={this.props.stared} handler={this.props.handler}/>;
+      return <RenderRow 
+      key={index} 
+      data={row} 
+      keys={keys} 
+      inventories={this.props.inventories}
+      wishlists={this.props.wishlists}
+      shoppinglists={this.props.shoppinglists}
+      />;
     });
   };
 
@@ -48,93 +56,82 @@ export default class RecipesTable extends React.Component {
 }
 const RenderRow = (props) => {
 
-  function createButton() {
-    console.log(props)
-    if (props.stared) {
-      return (<td
-        id="fav-button"
-        onClick={() => {
-          unstarRecipe(props.data["id"]);
-        }}
-      >
-        <span title="Unstar">⭐</span>
-        
-      </td>)
-    } else {
-      return (<td
-        id="fav-button"
-        onClick={() => {
-          starRecipe(props.data["id"]);
-        }}
-      >
-        <span title="Star">⭐</span>
-        
-      </td>)
+
+  async function addProduct(e) {
+    let lists = ['Inventory','Wishlist','Shoppinglist']
+
+    const { value: list } = await Swal.fire({
+      title: "Select list",
+      input: "select",
+      inputOptions: lists,
+      inputPlaceholder: "Select a list",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          if (value) {
+            resolve();
+          } else {
+            resolve("You need to select one");
+          }
+        });
+      },
+    });
+
+    const choice = lists[list]
+
+    console.log(choice)
+
+    let names;
+
+    switch (choice) {
+      case "Inventory":
+        names = props.inventories
+        break
+      case "Wishlist":
+        names = props.wishlists
+        break
+      default:
+        names = props.shoppinglists
+        break
+    }
+
+    if (list) {
+      const { value: value } = await Swal.fire({
+        title: "Select " + choice,
+        input: "select",
+        inputOptions: Object.keys(names),
+        inputPlaceholder: "Select a " + choice,
+        showCancelButton: true,
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value) {
+              resolve();
+            } else {
+              resolve("You need to select one");
+            }
+          });
+        },
+      });
     }
   }
 
-  function starRecipe(e) {
-    let token = localStorage.getItem("auth");
-    const form = new FormData();
-    form.append("id", e);
 
-    axios
-      .post("http://localhost:1331/recipe/star", form, {
-        headers: { "Content-Type": "multipart/form-data", auth: token },
-        withCredentials: true,
-      })
-      .then((response) => {
-        const token = response.headers["auth"];
-        localStorage.setItem("auth", token);
-        Swal.fire(
-          'Recipe Stared!',
-          'This recipe has been stared',
-          'success'
-        )
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
 
-  function unstarRecipe(e) {
-    let token = localStorage.getItem("auth");
-    const form = new FormData();
-    form.append("id", e);
-
-    axios
-      .post("http://localhost:1331/recipe/unstar", form, {
-        headers: { "Content-Type": "multipart/form-data", auth: token },
-        withCredentials: true,
-      })
-      .then((response) => {
-        const token = response.headers["auth"];
-        localStorage.setItem("auth", token);
-        Swal.fire(
-          'Recipe Unstared!',
-          'This recipe has been unstared',
-          'success'
-        )
-        props.handler();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
 
   if (props.keys.length) {
     return (
       <tr>
-        <td id="image">
-          <img
-            src={props.data["image"]}
-            alt={props.data["title"]}
-            width="150"
-            heigh="150"
-          ></img>
-        </td>
-        <td id="title"><a href={"/dashboard/recipe/get/" + props.data["id"]}>{props.data["title"]}</a></td>
-        {createButton()}
+        <td id="title">{props.data["_name"]}</td>
+        <td id="title">{props.data["_category"]}</td>
+        <td
+        id="fav-button"
+        onClick={() => {
+          addProduct(props.data["_guid"]);
+        }}
+      >
+        <span title="Add Product">➕</span>
+        
+      </td>
       </tr>
     );
   } else {

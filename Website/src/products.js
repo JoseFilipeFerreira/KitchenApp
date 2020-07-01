@@ -13,6 +13,9 @@ export default class Products extends Component {
       search: "",
       products: [],
       name: null,
+      inventories: {},
+      shoplists: {},
+      wishlists: {},
     };
   }
 
@@ -35,7 +38,7 @@ export default class Products extends Component {
           withCredentials: true,
         })
         .then((response) => {
-          this.setState({ recipes: response.data });
+          this.setState({ products: response.data });
           console.log(response.data)
         })
         .catch((error) => {
@@ -85,8 +88,78 @@ export default class Products extends Component {
     }
   }
 
+  getInventories = () => {
+    let token = localStorage.getItem("auth");
+    axios
+      .get(
+        "http://localhost:1331/inventory/all",
+        {
+          headers: { auth: token },
+        },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        console.log(response.data)
+        this.setState({ inventories: response.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    if (localStorage.getItem("auth") != null) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  getWishlists = () => {
+    let token = localStorage.getItem('auth');
+    axios
+      .get("http://localhost:1331/wishlist/all", {
+        headers: { "auth": token }
+      }, { withCredentials: true })
+      .then((response) => {
+        this.setState({ wishlists: response.data });
+        this.showWishList();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    if (localStorage.getItem('auth') != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  getShoplists = () => {
+    let token = localStorage.getItem('auth');
+    axios
+      .get("http://localhost:1331/shopping/all", {
+        headers: { "auth": token }
+      }, { withCredentials: true })
+      .then((response) => {
+        this.setState({ shoplists: response.data });
+        this.showShopList();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    if (localStorage.getItem('auth') != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   componentDidMount() {
     this.getInfo();
+    this.getInventories();
+    this.getShoplists();
+    this.getWishlists();
   }
 
   render() {
@@ -290,7 +363,12 @@ export default class Products extends Component {
           <section className="grid">
             <article className="inventories">
               <div className="inventories-text">Products</div>
-              <ProductsTable data={this.state.products}/>
+              <ProductsTable 
+              data={this.state.products} 
+              inventories={this.state.inventories}
+              wishlists={this.state.wishlists}
+              shoppinglists={this.state.shoplists}
+              />
             </article>
           </section>
           <footer className="page-footer">
