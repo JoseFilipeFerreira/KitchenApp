@@ -165,6 +165,32 @@ namespace KitchenLib.Database
             }
         }
   
+        public static async Task<IDictionary<string, string>> GetSentFriends(string uid)
+        {
+            var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            var pendings = new Dictionary<string, string>();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var reader = await tx.RunAsync("Match(u:User)-[f:FRND]->(z:User) " +
+                                                   "Where u._email = $email and f.pending = true " +
+                                                   "return z._email as email, z._name as name",
+                        new {email = uid});
+                    while (await reader.FetchAsync())
+                    {
+                        pendings.Add(reader.Current["email"].As<string>(), reader.Current["name"].As<string>());
+                    }
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return pendings;
+        }
+  
         public static async Task<IDictionary<string, string>> GetPendingFriends(string uid)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
@@ -173,7 +199,7 @@ namespace KitchenLib.Database
             {
                 await session.ReadTransactionAsync(async tx =>
                 {
-                    var reader = await tx.RunAsync("Match(u:User)-[f:FRND]-(z:User) " +
+                    var reader = await tx.RunAsync("Match(u:User)<-[f:FRND]-(z:User) " +
                                                    "Where u._email = $email and f.pending = true " +
                                                    "return z._email as email, z._name as name",
                         new {email = uid});

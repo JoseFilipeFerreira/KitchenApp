@@ -88,10 +88,6 @@ services:
         build:
             dockerfile: db-docker
             context: .
-        environment:
-            - NEO4J_AUTH=neo4j/APPmvc
-        volumes:
-            - ./db/products.cypher:/var/lib/neo4j/data/products.cypher
         expose: 
             - "7687"
             - "7474"
@@ -102,11 +98,11 @@ services:
             - db
         restart: always
     nginx:
-        image: nginx:latest
+        build: 
+            dockerfile: nginx-docker
+            context: .
         ports:
             - 1331:80
-        volumes: 
-            - ./nginx/conf:/etc/nginx/nginx.conf
         depends_on:
             - authservice
             - userservice

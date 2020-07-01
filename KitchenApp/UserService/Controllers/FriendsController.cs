@@ -41,6 +41,20 @@ namespace UserService.Controllers
             return UserStore.GetPendingFriends(user).Result;
         }
 
+        [HttpGet]
+        public IDictionary<string, string> Sent([FromHeader] string auth)
+        {
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+            return UserStore.GetSentFriends(user).Result;
+        }
+        
         [HttpPost]
         public async void Add([FromHeader] string auth, [FromForm] string friend)
         {
