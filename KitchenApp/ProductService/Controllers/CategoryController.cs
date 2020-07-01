@@ -24,5 +24,19 @@ namespace ProductService.Controllers
             HttpContext.Response.Headers.Add("auth", auth);
             return await ProductStore.Categories();
         }
+    
+        [HttpGet]
+        public async Task<List<Product>> GetProds([FromHeader] string auth, [FromForm] string category)
+        {
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+            return await ProductStore.GetAll(category);
+        }
     }
 }
