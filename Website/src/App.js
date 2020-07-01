@@ -13,6 +13,7 @@ import Stared from "./stared";
 import { Helmet } from "react-helmet";
 import Whishlists from "./wishlists";
 import ShoppingLists from "./shoppinglists";
+import Products from "./products";
 
 
 class App extends Component {
@@ -74,6 +75,7 @@ class App extends Component {
               <Route path="/dashboard/recipe/" component={Recipe} />
               <Route path="/dashboard/wishlists/" component={Whishlists} />
               <Route path="/dashboard/shoppinglists/" component={ShoppingLists} />
+              <Route path="/dashboard/products/" component={Products} />
 
               <Route exact path="*" component={Dashboard} />
             </Switch>
