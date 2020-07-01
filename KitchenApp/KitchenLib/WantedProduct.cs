@@ -4,10 +4,10 @@ namespace KitchenLib
 {
     public class WantedProduct : Product
     { 
-        public uint _stock { get; set; }
+        public long _stock { get; set; }
         public string _owner_uid { get; set; }
 
-        public WantedProduct(string name, string category, uint quantity, string units, string owner_uid, float price, uint stock)
+        public WantedProduct(string name, string category, long quantity, string units, string owner_uid, double price, long stock)
         {
             _name = name;
             _category = category;

@@ -7,7 +7,6 @@ using KitchenLib.Database;
 using Microsoft.AspNetCore.Mvc;
 using Neo4j.Driver;
 
-//TODO Implement a All like endpoint to the shared inventories
 namespace InventoryService.Controllers
 {
     [ApiController]
@@ -90,7 +89,7 @@ namespace InventoryService.Controllers
             [FromForm] string uid, [FromForm] DateTime? expire = null, [FromForm] long? quantity = null)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !await UserStore.Exists(user))
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 return;
@@ -111,7 +110,7 @@ namespace InventoryService.Controllers
         public async void RemoveProduct([FromHeader] string auth, [FromForm] string uid, [FromForm] string prod)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !await UserStore.Exists(user))
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 return;
@@ -138,7 +137,7 @@ namespace InventoryService.Controllers
             }
 
             HttpContext.Response.Headers.Add("auth", auth);
-            if (await InventoryStore.ExistName(name, user))
+            if (InventoryStore.ExistName(name, user).Result)
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Conflict;
             }
@@ -148,7 +147,7 @@ namespace InventoryService.Controllers
             }
         }
 
-        [HttpDelete("{uid}")]
+        [HttpPost("{uid}")]
         public bool Remove([FromHeader] string auth, [FromRoute] string uid)
         {
             string user;
@@ -194,13 +193,27 @@ namespace InventoryService.Controllers
             }
 
             HttpContext.Response.Headers.Add("auth", auth);
-            if (await InventoryStore.ExistName(name, user))
+            if (InventoryStore.ExistName(name, user).Result)
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Conflict;
                 return;
             }
 
             await InventoryStore.EditName(user, uid, name);
+        }
+
+        [HttpGet]
+        public async Task<Dictionary<string, IDictionary<string, string>>> Expired([FromHeader] string auth)
+        {
+            string user;
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
+            {
+                HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                return null;
+            }
+
+            HttpContext.Response.Headers.Add("auth", auth);
+            return await InventoryStore.expire_warning(user);
         }
     }
 }
