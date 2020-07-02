@@ -78,6 +78,8 @@ class App extends Component {
               <Route path="/dashboard/recipe/" component={Recipe} />
               <Route path="/dashboard/wishlists/" component={Whishlists} />
               <Route path="/dashboard/shoppinglists/" component={ShoppingLists} />
+              <Route path="/dashboard/shopping/" render={(props) => <Shopping shared={false} {...props}/>} />
+              <Route path="/dashboard/shared/shopping/" render={(props) =><Shopping shared={true} {...props}/>} />
               <Route path="/dashboard/products/" component={Products} />
 
               <Route exact path="*" component={Dashboard} />
