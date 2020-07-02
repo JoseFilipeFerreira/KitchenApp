@@ -107,18 +107,19 @@ namespace KitchenLib.Database
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
+                Inventory<Product> inv = null;
                 await session.ReadTransactionAsync(async tx =>
                 {
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
                         "Match(u:User)-[]->(i:Wishlist) " +
                         "Where u._email = $email AND i.guid = $name " +
-                        "Return [(i)-[c:CONTAIN]->(b) where b: Product] as products, " +
-                        "[(i)-[:Shared]-(b) where b: User | b] as guests " +
+                        "Return [(i)-[c:CONTAIN]->(p) where p: Product | p] as products, " +
+                        "[(i)-[:Shared]-(b) where b: User | b] as guests, " +
                         "u._email as owner_id, " +
                         "i.name as name, i.guid as guid",
                         new {email, name = uid});
-                    var inv = new Inventory<Product>();
+                    inv = new Inventory<Product>();
                     while (await reader.FetchAsync())
                     {
                         var prods = reader.Current["products"].As<IList<INode>>();
@@ -145,9 +146,8 @@ namespace KitchenLib.Database
                             inv._products.Add(u);
                         }
                     }
-
-                    return inv;
                 });
+                return inv;
             }
             finally
             {
