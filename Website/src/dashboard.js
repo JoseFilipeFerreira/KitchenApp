@@ -141,11 +141,20 @@ export default class Dashboard extends Component {
     }
   }
 
+  openMenu() {
+    if (document.body.className === "") {
+      document.body.className = "mob-menu-opened";
+    } else {
+      document.body.className = "";
+    }
+  }
+
   componentDidMount() {
     this.getInventories();
     this.getShared();
     this.getInfo();
   }
+
 
   render() {
     /*const { dashboards } = this.state;*/
@@ -236,6 +245,7 @@ export default class Dashboard extends Component {
               className="toggle-mob-menu"
               aria-expanded="false"
               aria-label="open menu"
+              onClick={this.openMenu}
             >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
