@@ -4,6 +4,7 @@ import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
 import 'sweetalert2/src/sweetalert2.scss'
+import FriendsPage from "./components/FriendsPage";
 
 
 export default class Friends extends Component {
@@ -11,9 +12,16 @@ export default class Friends extends Component {
     super(props);
 
     this.state = {
-      friends: null,
-      requests: null,
+      friends: {},
+      requests: {},
+      sent: {},
     };
+  }
+
+  handler = () => {
+    this.getFriends();
+    this.getRequests();
+    this.getSent();
   }
 
   getFriends = () => {
@@ -25,7 +33,6 @@ export default class Friends extends Component {
       .then((response) => {
         this.setState({ friends: response.data });
         console.log(response.data)
-        this.showFriendsList();
       })
       .catch((error) => {
         console.log(error);
@@ -47,7 +54,27 @@ export default class Friends extends Component {
       .then((response) => {
         this.setState({ requests: response.data });
         console.log(response.data)
-        this.showRequestsList();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    if (localStorage.getItem('auth') != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  getSent = () => {
+    let token = localStorage.getItem('auth');
+    axios
+      .get("http://localhost:1331/user/friends/sent", {
+        headers: { "auth": token }
+      }, { withCredentials: true })
+      .then((response) => {
+        this.setState({ sent: response.data });
+        console.log(response.data)
       })
       .catch((error) => {
         console.log(error);
@@ -300,6 +327,7 @@ export default class Friends extends Component {
   componentDidMount() {
     this.getFriends();
     this.getRequests();
+    this.getSent();
     this.getInfo();
   }
 
@@ -461,17 +489,6 @@ export default class Friends extends Component {
         </header >
         <section className="page-content">
           <section className="search-and-user">
-            {/*
-            <form>
-              <input type="search" placeholder="Search Pages..." />
-              <button type="submit" aria-label="submit form">
-                <svg aria-hidden="true">
-                  <use href="#search"></use>
-                </svg>
-              </button>
-            </form>
-            */
-            }
             <div className="admin-profile">
               <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
@@ -481,32 +498,12 @@ export default class Friends extends Component {
               </div>
             </div>
           </section>
-          <section className="grid">
-          <article className="inventories">
-              <div className="inventories-text">
-                Friend Requests
-              </div>
-              <div id="requestList">
-
-              </div>
-            </article>
-            <article className="inventories">
-              <div className="inventories-text">
-                Friends
-              </div>
-              <div id="friendList">
-
-              </div>
-              <div className="inventory-button">
-                <input
-                  className="create-button"
-                  type="button"
-                  value="Add Friend"
-                  onClick={this.addFriend}
-                ></input>
-              </div>
-            </article>
-          </section>
+          <FriendsPage
+          requests={this.state.requests}
+          friends={this.state.friends}
+          sent={this.state.sent}
+          handler = {this.handler}
+          />
           <footer className="page-footer">
             <small>Made with <span>❤</span> by <a href="http://www.uminho.pt/">Grupo 1</a>
             </small>
