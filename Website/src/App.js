@@ -6,6 +6,7 @@ import Register from "./register";
 import Dashboard from "./dashboard";
 import UserInfo from "./userinfo";
 import Inventory from "./inventory";
+import Shopping from "./shopping";
 import Friends from "./friends";
 import Recipes from "./recipes";
 import Recipe from "./recipe";
