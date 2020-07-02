@@ -16,6 +16,10 @@ export default class Dashboard extends Component {
     };
   }
 
+  handler = () => {
+    this.getInventories();
+  }
+  
   getInventories = () => {
     let token = localStorage.getItem("auth");
     axios
@@ -354,6 +358,7 @@ export default class Dashboard extends Component {
           <InventoryList 
           inventories={this.state.inventories}
           shared={this.state.shared}
+          handler = {this.handler}
           />
           <footer className="page-footer">
             <small>

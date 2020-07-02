@@ -87,7 +87,6 @@ const RenderRow = (props) => {
           /* save this token inside localStorage */
           const token = response.headers["auth"];
           localStorage.setItem("auth", token);
-          //window.location.reload();
         })
         .catch((error) => {
           console.log(error);
@@ -123,7 +122,6 @@ const RenderRow = (props) => {
           /* save this token inside localStorage */
           const token = response.headers["auth"];
           localStorage.setItem("auth", token);
-          //window.location.reload();
         })
         .catch((error) => {
           console.log(error);
@@ -159,7 +157,6 @@ const RenderRow = (props) => {
           /* save this token inside localStorage */
           const token = response.headers["auth"];
           localStorage.setItem("auth", token);
-          //window.location.reload();
         })
         .catch((error) => {
           console.log(error);

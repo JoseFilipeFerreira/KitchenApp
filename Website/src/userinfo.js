@@ -19,6 +19,10 @@ export default class UserInfo extends Component {
     };
   }
 
+  handler = () => {
+    this.getInfo();
+  }
+
   validateEmail = (e) => {
     if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e) && e !== "") {
       return true;
@@ -81,31 +85,6 @@ export default class UserInfo extends Component {
     }
   };
 
-  createInventory = () => {
-    let name = prompt("Nome para o inventário:");
-    let token = localStorage.getItem("auth");
-    const form = new FormData();
-
-    if (name !== null) {
-      form.append("name", name);
-
-      axios
-        .post("http://localhost:1331/inventory/add", form, {
-          headers: { "Content-Type": "multipart/form-data", auth: token },
-          withCredentials: true,
-        })
-        .then((response) => {
-          /* save this token inside localStorage */
-          const token = response.headers["auth"];
-          localStorage.setItem("auth", token);
-          window.location.reload();
-        })
-        .catch((error) => {
-          alert("Email ou password errada.");
-        });
-    }
-  };
-
   async askName() {
     let token = localStorage.getItem("auth");
     const form = new FormData();
@@ -128,7 +107,7 @@ export default class UserInfo extends Component {
               /* save this token inside localStorage */
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
-              window.location.reload();
+              this.handler();
             })
             .catch((error) => {
               console.log(error);
@@ -175,7 +154,7 @@ export default class UserInfo extends Component {
               /* save this token inside localStorage */
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
-              window.location.reload();
+              this.handler();
             })
             .catch((error) => {
               console.log(error);
@@ -207,7 +186,7 @@ export default class UserInfo extends Component {
               /* save this token inside localStorage */
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
-              window.location.reload();
+              this.handler();
             })
             .catch((error) => {
               console.log(error);
@@ -223,8 +202,7 @@ export default class UserInfo extends Component {
       "/" +
       this.state.birthdate["month"] +
       "/" +
-      this.state.birthdate["day"] +
-      document.getElementById("birthdate-info").innerHTML;
+      this.state.birthdate["day"];
   };
 
   removeToken = () => {

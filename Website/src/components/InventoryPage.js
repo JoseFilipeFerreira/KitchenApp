@@ -81,10 +81,12 @@ export default class InventoryList extends React.Component {
           /* save this token inside localStorage */
           const token = response.headers["auth"];
           localStorage.setItem("auth", token);
-          window.location.reload();
+          this.props.handler();
+          Swal.fire("Product Added!", "Product has been added.", "success");
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire("Nope!", "Product has not been added.", "error");
         });
     }
   };
@@ -172,10 +174,12 @@ export default class InventoryList extends React.Component {
             /* save this token inside localStorage */
             const token = response.headers["auth"];
             localStorage.setItem("auth", token);
-            window.location.reload();
+            this.props.handler();
+            Swal.fire("Product Removed!", "Product has been removed.", "success");
           })
           .catch((error) => {
             console.log(error);
+            Swal.fire("Nope!", "Product has not been removed.", "error");
           });
       }
     });

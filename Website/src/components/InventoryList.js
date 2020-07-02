@@ -28,7 +28,7 @@ export default class InventoryList extends React.Component {
             /* save this token inside localStorage */
             const token = response.headers["auth"];
             localStorage.setItem("auth", token);
-            window.location.reload();
+            this.props.handler()
             Swal.fire("Deleted!", "Inventory has been deleted.", "success");
           })
           .catch((error) => {
@@ -62,7 +62,8 @@ export default class InventoryList extends React.Component {
               /* save this token inside localStorage */
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
-              window.location.reload();
+              this.props.handler()
+              Swal.fire("Edited!", "Inventory has been edited.", "success");
             })
             .catch((error) => {
               console.log(error);
@@ -162,10 +163,12 @@ export default class InventoryList extends React.Component {
               /* save this token inside localStorage */
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
-              window.location.reload();
+              this.props.handler()
+              Swal.fire("Created!", "Inventory has been created.", "success");
             })
             .catch((error) => {
               console.log(error);
+              Swal.fire("Nope!", "Inventory has not been created.", "error");
             });
         }
       },
