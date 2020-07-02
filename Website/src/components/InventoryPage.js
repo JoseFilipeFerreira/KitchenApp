@@ -187,6 +187,48 @@ export default class InventoryList extends React.Component {
 
   editProduct = async (uid) => {};
 
+  shareInventory = async () => {
+    console.log(this.props.shared)
+    if (!this.props.shared) {
+      let token = localStorage.getItem("auth");
+      let uid = this.state.inventory_id;
+      const form = new FormData();
+      const { value: name } = await Swal.fire({
+        title: "Enter user email",
+        input: "email",
+        inputPlaceholder: "Enter email",
+        inputValidator: (value) => {
+          if (!value) {
+            return "Invalid Name";
+          } else {
+            form.append("uid", uid);
+            form.append("friend", value);
+  
+            axios
+              .post("http://localhost:1331/inventory/share", form, {
+                headers: { "Content-Type": "multipart/form-data", auth: token },
+                withCredentials: true,
+              })
+              .then((response) => {
+                /* save this token inside localStorage */
+                const token = response.headers["auth"];
+                localStorage.setItem("auth", token);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        },
+      });
+    } else {
+      Swal.fire(
+        'Nope!',
+        'You are not the owner of this inventory',
+        'error'
+      )
+    }
+  };
+
   showItems = () => {
     let json = this.props.items;
     json.sort(function (a, b) {
