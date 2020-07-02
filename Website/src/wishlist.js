@@ -5,7 +5,7 @@ import "./dashboard.css";
 import Swal from "sweetalert2";
 import WishlistPage from "./components/WishlistPage";
 
-export default class Inventory extends Component {
+export default class Wishlist extends Component {
   constructor(props) {
     super(props);
 
@@ -19,7 +19,7 @@ export default class Inventory extends Component {
   }
 
   handler = () => {
-    this.getInventoryInfo();
+    this.getWishlistInfo();
   }
 
   getInfo = () => {
@@ -49,7 +49,7 @@ export default class Inventory extends Component {
     }
   };
 
-  getInventoryInfo = () => {
+  getWishlistInfo = () => {
     let token = localStorage.getItem("auth");
     axios
       .get(
@@ -79,21 +79,21 @@ export default class Inventory extends Component {
     }
   };
 
-  getInventoryID = () => {
+  getWishlistID = () => {
     let url = window.location.pathname;
     let regex = /[/]wishlist[/](.*)/;
     let id = url.match(regex)[1];
     if (id != null) {
       console.log(id);
       this.setState({ wishlist_id: id }, () => {
-        this.getInventoryInfo();
+        this.getWishlistInfo();
       });
     }
   };
 
   editProduct = () => {};
 
-  editInventory = async () => {
+  editWishlist = async () => {
     let token = localStorage.getItem("auth");
     let uid = this.state.wishlist_id;
     const form = new FormData();
@@ -127,7 +127,7 @@ export default class Inventory extends Component {
     });
   };
 
-  shareInventory = async () => {
+  shareWishlist = async () => {
     console.log(this.props.shared)
     if (!this.props.shared) {
       let token = localStorage.getItem("auth");
@@ -208,7 +208,7 @@ export default class Inventory extends Component {
   }
 
   componentDidMount() {
-    this.getInventoryID();
+    this.getWishlistID();
     this.getInfo();
   }
 

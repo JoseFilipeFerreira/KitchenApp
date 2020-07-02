@@ -7,10 +7,6 @@ export default class WishlistList extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      recipes: [],
-    };
   }
 
   addProductMenu = () => {
@@ -195,7 +191,6 @@ export default class WishlistList extends React.Component {
         <tr>
           <td>{item._name}</td>
           <td>{item._stock}</td>
-          <td>{item._consume_before.substring(0, 10)}</td>
           <td className="table-edit" key={"edit" + item._guid}>
             <span
               onClick={() => {
@@ -267,7 +262,6 @@ export default class WishlistList extends React.Component {
               <tr>
                 <th>Name</th>
                 <th>Quantity</th>
-                <th>Expire</th>
                 <th></th>
                 <th></th>
               </tr>
