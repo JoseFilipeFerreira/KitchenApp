@@ -19,6 +19,10 @@ export default class Inventory extends Component {
     };
   }
 
+  handler = () => {
+    this.getInventoryInfo();
+  }
+
   getInfo = () => {
     let token = localStorage.getItem("auth");
     axios
@@ -114,7 +118,7 @@ export default class Inventory extends Component {
               /* save this token inside localStorage */
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
-              window.location.reload();
+              this.handler();
             })
             .catch((error) => {
               console.log(error);
@@ -400,6 +404,7 @@ export default class Inventory extends Component {
             inventory_id={this.state.inventory_id}
             items={this.state.items}
             shared={this.props.shared}
+            handler = {this.handler}
             />
           <footer className="page-footer">
             <small>

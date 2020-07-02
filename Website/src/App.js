@@ -31,7 +31,10 @@ class App extends Component {
         console.log("Token valido");
       })
       .catch((error) => {
-        localStorage.removeItem("auth")
+        if (localStorage.getItem("auth")) {
+          localStorage.removeItem("auth")
+          window.location.reload()
+        }
         console.log(error);
       });
 
