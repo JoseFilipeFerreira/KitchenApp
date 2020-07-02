@@ -4,47 +4,104 @@ import axios from "axios";
 import RecipesTable from "./RecipesTable";
 
 export default class ShoppingList extends React.Component {
-
   constructor(props) {
     super(props);
 
+    this.state = {
+      categories: [],
+      products: [],
+    };
   }
 
   addProductMenu = () => {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/product/getall",
+        "http://localhost:1331/product/category/all",
         {
           headers: { auth: token },
         },
         { withCredentials: true }
       )
-      .then(async (response) => {
-        console.log(response.data);
+      .then((response) => {
         let json = response.data;
+        this.setState({
+          categories: json,
+        });
+        this.chooseCategory();
         const token = response.headers["auth"];
         localStorage.setItem("auth", token);
-        var r = [];
-        let i = 0;
-        var p = "";
-        for (p in json) {
-          r[i++] = json[p]["_category"];
-        }
-        var categories = Array.from(new Set(r));
-        let sc = [];
-        for (i = 0; i < categories.length; i++) {
-          sc[i] = categories[i];
-        }
-        this.setState({
-          categories: sc,
-        });
-
-        this.showCategories(json, this.state.categories);
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  chooseCategory = async () => {
+    const { value: category } = await Swal.fire({
+      title: "Select category",
+      input: "select",
+      inputOptions: this.state.categories,
+      inputPlaceholder: "Select a category",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          if (value) {
+            resolve();
+          } else {
+            resolve("You need to select one");
+          }
+        });
+      },
+    });
+
+    if (category) this.showProductsList(this.state.categories[category]);
+  };
+
+  showProductsList = (category) => {
+    let token = localStorage.getItem("auth");
+    let form = new FormData();
+    form.append("category", category);
+    axios
+      .post("http://localhost:1331/product/category/getprods", form, {
+        headers: { "Content-Type": "multipart/form-data", auth: token },
+        withCredentials: true,
+      })
+      .then((response) => {
+        let json = response.data;
+        this.setState({
+          products: json,
+        });
+        const token = response.headers["auth"];
+        localStorage.setItem("auth", token);
+        this.chooseProduct();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  chooseProduct = async () => {
+    let names = this.state.products.map((x) => x._name);
+    console.log(names);
+    const { value: product } = await Swal.fire({
+      title: "Select product",
+      input: "select",
+      inputOptions: names,
+      inputPlaceholder: "Select a product",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          if (value) {
+            resolve();
+          } else {
+            resolve("You need to select one");
+          }
+        });
+      },
+    });
+
+    if (product) this.addProduct(this.state.products[product]);
   };
 
   addProduct = async (product) => {
@@ -85,63 +142,6 @@ export default class ShoppingList extends React.Component {
     }
   };
 
-  showCategories = async (json, categories) => {
-    const { value: category } = await Swal.fire({
-      title: "Select category",
-      input: "select",
-      inputOptions: categories,
-      inputPlaceholder: "Select a category",
-      showCancelButton: true,
-      inputValidator: (value) => {
-        return new Promise((resolve) => {
-          if (value) {
-            resolve();
-          } else {
-            resolve("You need to select one");
-          }
-        });
-      },
-    });
-
-    if (category) {
-      this.showProducts(json, categories[category]);
-    }
-  };
-
-  showProducts = async (json, category) => {
-    var products = [];
-    var ids = [];
-    let i = 0;
-    var p = "";
-    for (p in json) {
-      if (json[p]["_category"] === category) products[i] = json[p]["_name"];
-      ids[i++] = json[p]["_guid"];
-    }
-    await Swal.fire({
-      title: "Select product",
-      input: "select",
-      inputOptions: products,
-      inputPlaceholder: "Select a category",
-      showCancelButton: true,
-      cancelButtonText: "Back",
-      inputValidator: (value) => {
-        return new Promise((resolve) => {
-          if (value) {
-            resolve();
-          } else {
-            resolve("You need to select one");
-          }
-        });
-      },
-    }).then((result) => {
-      if (!result.value) {
-        this.showCategories(json, this.state.categories);
-      } else {
-        this.addProduct(json[result.value]);
-      }
-    });
-  };
-
   removeProduct = async (uid) => {
     let token = localStorage.getItem("auth");
     Swal.fire({
@@ -169,7 +169,11 @@ export default class ShoppingList extends React.Component {
             const token = response.headers["auth"];
             localStorage.setItem("auth", token);
             this.props.handler();
-            Swal.fire("Product Removed!", "Product has been removed.", "success");
+            Swal.fire(
+              "Product Removed!",
+              "Product has been removed.",
+              "success"
+            );
           })
           .catch((error) => {
             console.log(error);
