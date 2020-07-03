@@ -14,6 +14,15 @@ export default class InventoryList extends React.Component {
     };
   }
 
+  validateBirthday = (e) => {
+    if (
+      /^([12]\d{3}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01]))$/.test(e) &&
+      e !== ""
+    ) {
+      return true;
+    } else return false;
+  };
+
   addProductMenu = () => {
     let token = localStorage.getItem("auth");
     axios
@@ -82,11 +91,9 @@ export default class InventoryList extends React.Component {
       });
   };
 
-  
-
   chooseProduct = async () => {
-    let names = this.state.products.map((x) => x._name)
-    console.log(names)
+    let names = this.state.products.map((x) => x._name);
+    console.log(names);
     const { value: product } = await Swal.fire({
       title: "Select product",
       input: "select",
@@ -143,13 +150,16 @@ export default class InventoryList extends React.Component {
         })
         .catch((error) => {
           console.log(error);
-          Swal.fire("Nope!", "Product has not been added.", "error");
+          Swal.fire(
+            "Nope!",
+            "Product has not been added. Make sure to insert valid expire date and valid quantity.",
+            "error"
+          );
         });
     }
   };
 
   removeProduct = async (uid) => {
-    let token = localStorage.getItem("auth");
     Swal.fire({
       title: "Remove Product",
       text: "Do you want to remove this product?",
@@ -189,7 +199,51 @@ export default class InventoryList extends React.Component {
     });
   };
 
-  editProduct = async (uid) => {};
+  editProduct = async (uid) => {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
+    const { value: formValues } = await Swal.fire({
+      title: "Edit Product",
+      html:
+        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">' +
+        '<input id="swal-input2" placeholder="Expire date (YYYY/MM/DD)" class="swal2-input">' +
+        "(You can edit only one, leave the other blank)",
+      focusConfirm: false,
+      preConfirm: () => {
+        let quantity = document.getElementById("swal-input1").value;
+        let expire = document.getElementById("swal-input2").value;
+        return [quantity, expire];
+      },
+    });
+
+    if (formValues != null && formValues[0] != null && formValues[1] != null) {
+      form.append("product", uid);
+      if (formValues[0]) form.append("quantity", formValues[0]);
+      if (formValues[1]) form.append("expire", formValues[1]);
+      form.append("uid", this.props.inventory_id);
+
+      axios
+        .post("http://localhost:1331/inventory/editproduct", form, {
+          headers: { "Content-Type": "multipart/form-data", auth: token },
+          withCredentials: true,
+        })
+        .then((response) => {
+          /* save this token inside localStorage */
+          const token = response.headers["auth"];
+          localStorage.setItem("auth", token);
+          this.props.handler();
+          Swal.fire("Product edited!", "Product has been edited.", "success");
+        })
+        .catch((error) => {
+          console.log(error);
+          Swal.fire(
+            "Nope!",
+            "Product has not been edited. Make sure to insert valid expire date and/or valid quantity",
+            "error"
+          );
+        });
+    }
+  };
 
   showItems = () => {
     let json = this.props.items;
@@ -205,6 +259,9 @@ export default class InventoryList extends React.Component {
           <td>{item._consume_before.substring(0, 10)}</td>
           <td className="table-edit" key={"edit" + item._guid}>
             <span
+              className="edit-button"
+              role="img"
+              aria-label="jsx-a11y/aria-proptypes"
               onClick={() => {
                 this.editProduct(item._guid);
               }}
@@ -214,6 +271,9 @@ export default class InventoryList extends React.Component {
           </td>
           <td className="table-edit" key={"remove" + item._guid}>
             <span
+              className="edit-button"
+              role="img"
+              aria-label="jsx-a11y/aria-proptypes"
               onClick={() => {
                 this.removeProduct(item._guid);
               }}

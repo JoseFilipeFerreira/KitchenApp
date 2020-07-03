@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
+import Notifications from "./components/Notifications"
 
 export default class UserInfo extends Component {
   constructor(props) {
@@ -88,7 +89,7 @@ export default class UserInfo extends Component {
   async askName() {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new name",
       input: "text",
       inputPlaceholder: "Enter your name",
@@ -118,7 +119,7 @@ export default class UserInfo extends Component {
   }
 
   async askEmail() {
-    const { value: email } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new email",
       input: "email",
       inputPlaceholder: "Enter your email",
@@ -135,7 +136,7 @@ export default class UserInfo extends Component {
   async askPhone() {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: phone } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new phone",
       input: "text",
       inputPlaceholder: "Enter your phone",
@@ -167,7 +168,7 @@ export default class UserInfo extends Component {
   async askBirthdate() {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: birthdate } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new birthdate",
       input: "text",
       inputPlaceholder: "Enter your birthdate",
@@ -214,6 +215,14 @@ export default class UserInfo extends Component {
   collapseBar() {
     if (document.body.className === "") {
       document.body.className = "collapsed";
+    } else {
+      document.body.className = "";
+    }
+  }
+
+  openMenu() {
+    if (document.body.className === "") {
+      document.body.className = "mob-menu-opened";
     } else {
       document.body.className = "";
     }
@@ -312,6 +321,7 @@ export default class UserInfo extends Component {
               className="toggle-mob-menu"
               aria-expanded="false"
               aria-label="open menu"
+              onClick={this.openMenu}
             >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
@@ -326,7 +336,7 @@ export default class UserInfo extends Component {
                   <svg>
                     <use href="#collection"></use>
                   </svg>
-                  <span>Invetories</span>
+                  <span>Inventories</span>
                 </a>
               </li>
               <li>
@@ -344,12 +354,36 @@ export default class UserInfo extends Component {
                   </svg>
                   <span>Shopping Lists</span>
                 </a>
-              </li >
+              </li>
+              <li>
+                <a href="/dashboard/products">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Products</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Recipes</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes/stared">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Favourite Recipes</span>
+                </a>
+              </li>
               <li className="menu-heading">
                 <h3>Settings</h3>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/userinfo">
                   <svg>
                     <use href="#users"></use>
                   </svg>
@@ -363,7 +397,7 @@ export default class UserInfo extends Component {
                   </svg>
                   <span>Friends</span>
                 </a>
-              </li >
+              </li>
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
@@ -389,26 +423,7 @@ export default class UserInfo extends Component {
           </nav>
         </header>
         <section className="page-content">
-          <section className="search-and-user">
-            {/*
-            <form>
-              <input type="search" placeholder="Search Pages..." />
-              <button type="submit" aria-label="submit form">
-                <svg aria-hidden="true">
-                  <use href="#search"></use>
-                </svg>
-              </button>
-            </form>
-            */}
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.state.name}</span>
-              <div className="notifications">
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
-            </div>
-          </section>
+          <Notifications name={this.state.name}/>
           <section className="grid">
             <article className="inventories">
               <div className="inventories-text">

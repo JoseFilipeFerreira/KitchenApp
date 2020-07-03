@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 import RecipePage from "./components/RecipePage";
+import Notifications from "./components/Notifications"
 
 export default class Recipe extends Component {
   constructor(props) {
@@ -138,6 +139,14 @@ export default class Recipe extends Component {
     }
   };
 
+  openMenu() {
+    if (document.body.className === "") {
+      document.body.className = "mob-menu-opened";
+    } else {
+      document.body.className = "";
+    }
+  }
+
   showRecipe = () => {};
 
   componentDidMount() {
@@ -234,6 +243,7 @@ export default class Recipe extends Component {
               className="toggle-mob-menu"
               aria-expanded="false"
               aria-label="open menu"
+              onClick={this.openMenu}
             >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
@@ -268,11 +278,27 @@ export default class Recipe extends Component {
                 </a>
               </li>
               <li>
+                <a href="/dashboard/products">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Products</span>
+                </a>
+              </li>
+              <li>
                 <a href="/dashboard/recipes">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
                   <span>Recipes</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes/stared">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Favourite Recipes</span>
                 </a>
               </li>
               <li className="menu-heading">
@@ -319,16 +345,7 @@ export default class Recipe extends Component {
           </nav>
         </header>
         <section className="page-content">
-          <section className="search-and-user">
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.state.name}</span>
-              <div className="notifications">
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
-            </div>
-          </section>
+          <Notifications name={this.state.name}/>
           <section className="grid">
             <article className="inventories">
               <div className="inventories-text">{this.state.recipe_title}</div>

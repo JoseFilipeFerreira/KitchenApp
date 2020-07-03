@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
-import Swal from "sweetalert2";
 import InventoryList from "./components/InventoryList";
 import Notifications from "./components/Notifications";
 
@@ -312,14 +311,6 @@ export default class Dashboard extends Component {
                     <use href="#users"></use>
                   </svg>
                   <span>Account</span>
-                </a>
-              </li>
-              <li>
-                <a href="/dashboard/friends">
-                  <svg>
-                    <use href="#users"></use>
-                  </svg>
-                  <span>Friends</span>
                 </a>
               </li>
               <li>

@@ -409,12 +409,13 @@ body {
 }
 
 #recipesList td#image {
-  width: 1vh;
+  width: 1%;
 }
 
 #recipesList #fav-button {
   font-size: 30px;
   cursor: pointer;
+  width: 1%;
 }
 
 #recipesList td#title {
