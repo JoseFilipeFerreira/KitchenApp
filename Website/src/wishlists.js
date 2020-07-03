@@ -17,7 +17,10 @@ export default class Wishlists extends Component {
   }
 
   handler = () => {
+    let old = this.state.wishlists.length
     this.getWishlists();
+    if (old === this.state.wishlists.length)
+      this.getWishlists();
   }
 
   getWishlists = () => {

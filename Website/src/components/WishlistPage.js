@@ -145,6 +145,44 @@ export default class WishlistList extends React.Component {
     }
   };
 
+  editProduct = async (product) => {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
+    const { value: formValues } = await Swal.fire({
+      title: "Edit Product",
+      html:
+        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
+      focusConfirm: false,
+      preConfirm: () => {
+        let quantity = document.getElementById("swal-input1").value;
+        return quantity;
+      },
+    });
+
+    if (formValues != null) {
+      form.append("product", product["_guid"]);
+      form.append("quantity", formValues[0]);
+      form.append("uid", this.props.wishlist_id);
+
+      axios
+        .post("http://localhost:1331/wishlist/editproduct", form, {
+          headers: { "Content-Type": "multipart/form-data", auth: token },
+          withCredentials: true,
+        })
+        .then((response) => {
+          /* save this token inside localStorage */
+          const token = response.headers["auth"];
+          localStorage.setItem("auth", token);
+          this.props.handler();
+          Swal.fire("Product Added!", "Product has been added.", "success");
+        })
+        .catch((error) => {
+          console.log(error);
+          Swal.fire("Nope!", "Product has not been added.", "error");
+        });
+    }
+  };
+
   removeProduct = async (uid) => {
     let token = localStorage.getItem("auth");
     Swal.fire({
@@ -180,6 +218,48 @@ export default class WishlistList extends React.Component {
           });
       }
     });
+  };
+
+  shareWishlist = async () => {
+    console.log(this.props.shared)
+    if (!this.props.shared) {
+      let token = localStorage.getItem("auth");
+      let uid = this.props.wishlist_id;
+      const form = new FormData();
+      const { value: name } = await Swal.fire({
+        title: "Enter user email",
+        input: "email",
+        inputPlaceholder: "Enter email",
+        inputValidator: (value) => {
+          if (!value) {
+            return "Invalid Name";
+          } else {
+            form.append("uid", uid);
+            form.append("friend", value);
+  
+            axios
+              .post("http://localhost:1331/wishlist/share", form, {
+                headers: { "Content-Type": "multipart/form-data", auth: token },
+                withCredentials: true,
+              })
+              .then((response) => {
+                /* save this token inside localStorage */
+                const token = response.headers["auth"];
+                localStorage.setItem("auth", token);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        },
+      });
+    } else {
+      Swal.fire(
+        'Nope!',
+        'You are not the owner of this wishlist',
+        'error'
+      )
+    }
   };
 
   editProduct = async (uid) => {};
