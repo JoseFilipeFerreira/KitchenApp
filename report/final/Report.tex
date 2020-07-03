@@ -1,0 +1,191 @@
+\documentclass[a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{hyperref}
+\usepackage{a4wide}
+\hypersetup{pdftitle={Trabalho 1},
+pdfauthor={João Teixeira, José Ferreira, Maria Silva, Miguel Solino},
+colorlinks=true,
+urlcolor=blue,
+linkcolor=black}
+\usepackage{subcaption}
+\usepackage[cache=false]{minted}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{appendix}
+\usepackage{tikz}
+\usepackage{authblk}
+\usepackage{bashful}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usetikzlibrary{positioning,automata,decorations.markings}
+\definecolor{solarized@base03}{HTML}{002B36}
+\definecolor{solarized@base02}{HTML}{073642}
+\definecolor{solarized@base01}{HTML}{586e75}
+\definecolor{solarized@base00}{HTML}{657b83}
+\definecolor{solarized@base0}{HTML}{839496}
+\definecolor{solarized@base1}{HTML}{93a1a1}
+\definecolor{solarized@base2}{HTML}{EEE8D5}
+\definecolor{solarized@base3}{HTML}{FDF6E3}
+\definecolor{solarized@yellow}{HTML}{B58900}
+\definecolor{solarized@orange}{HTML}{CB4B16}
+\definecolor{solarized@red}{HTML}{DC322F}
+\definecolor{solarized@magenta}{HTML}{D33682}
+\definecolor{solarized@violet}{HTML}{6C71C4}
+\definecolor{solarized@blue}{HTML}{268BD2}
+\definecolor{solarized@cyan}{HTML}{2AA198}
+\definecolor{solarized@green}{HTML}{859900}
+
+\lstset{
+  language=Python,
+  upquote=true,
+  columns=fixed,
+  tabsize=4,
+  extendedchars=true,
+  breaklines=true,
+  numbers=left,
+  numbersep=5pt,
+  rulesepcolor=\color{solarized@base03},
+  numberstyle=\tiny\color{solarized@base01},
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\color{solarized@green},
+  stringstyle=\color{solarized@yellow}\ttfamily,
+  identifierstyle=\color{solarized@blue},
+  commentstyle=\color{solarized@base01},
+  emphstyle=\color{solarized@red}
+}
+
+\begin{document}
+
+% Title
+\title{Titulo\\
+\large Grupo Nº 1}
+
+% Author
+\author{João Teixeira (A85504) \and José Ferreira (A83683) \and Maria Silva (A83840) \and Miguel Solino (A86435) \and Pedro Oliveira (A83762)}
+
+% % Supervisor(s) (!!!)
+% \supervisor{Orientador}
+% \cosupervisor{Coorientador}
+
+% Date
+\date{\today}
+
+% (!!!) linhas 98 - 132 ?
+\begin{center}
+    \begin{minipage}{0.75\linewidth}
+        \centering
+       
+% (!!!) mudar imagem       
+        \includegraphics[width=0.4\textwidth]{images/eng.jpeg}\par\vspace{1cm}
+        \vspace{1cm}
+        \href{https://www.uminho.pt/PT}
+        {\color{black}{\scshape\LARGE Universidade do Minho}} \par
+        \vspace{1cm}
+        \href{https://www.di.uminho.pt/}
+        {\color{black}{\scshape\Large Departamento de Informática}} \par
+        \maketitle
+    \end{minipage}
+\end{center}
+
+\tableofcontents
+
+\pagebreak
+
+% CHAPTER - Introdução -------------------------------------------------------------------------------
+	\chapter{Introduction}
+	    \input{introduction/intro.tex}
+        \section{Context}
+        \input{introduction/context.tex}
+        \section{Motivation}
+        \input{introduction/motiv.tex}
+        \section{Goals}
+        \input{introduction/goals.tex}
+        \section{Structure}
+        \input{introduction/structure.tex}
+
+
+% CHAPTER - Estado da Arte ---------------------------------------------------------------------------
+	\chapter{Literature Review}
+		State of the art review; related work
+        \input{literaturereview/introduction.tex}
+        \input{literaturereview/section1.tex}
+        \section{Section 1}
+
+        
+        \section{Basics/Background/Related work}
+
+	% CHAPTER - Problem and Challenges ---------------
+	\chapter{Methods}
+	         The problem and its challenges.
+
+	\section{Proposed Approach - solution}
+	In this section, it is presented various ways to display an image.
+     \subsection{System Architecture}
+     A block diagram of the planned system / approach
+
+	Here we have an example of inserting an image between the text paragraphs.
+	
+	% CHAPTER - Contribution -------------------------
+	\chapter{Development}
+		
+	\section{Decisions}
+    \section{Implementation}
+    \section{Outcomes}
+    Main result(s) and their scientific evidence
+	\section{Summary}
+
+	% CHAPTER - Application -------------------------
+	\chapter{Case Studies / Experiments}
+		Application of main result (examples and case studies)
+	\section{Experiment setup}
+    \section{Results}
+    \section{Discussion}
+	\section{Summary}
+
+	% CHAPTER - Conclusion/Future Work --------------
+	\chapter{Conclusion}
+		Conclusions and future work.
+	\section{Conclusions}
+	\section{Prospect for future work}
+	
+	% (!!!)
+	\bookmarksetup{startatroot} % Ends last part.
+	\addtocontents{toc}{\bigskip} % Making the table of contents look good.
+	%\cleardoublepage
+
+	%- Bibliography (needs bibtex) -%
+	\bibliography{dissertation}
+
+	% Index of terms (needs  makeindex) -------------
+	%\printindex
+	
+	
+	% APPENDIX --------------------------------------
+	\umappendix{Appendix}
+	
+	% Add appendix chapters
+	\chapter{Support material}
+	Auxiliary results which are not main-stream; or
+
+	%\chapter{Details of results}
+	Details of results whose length would compromise readability of main text; or
+
+	%\chapter{Listings}
+	Specifications and Code Listings: should this be the case; or
+
+	%\chapter{Tooling}
+	Tooling: Should this be the case.
+
+	%Anyone using \Latex\ should consider having a look at \TUG,
+	%the \tug{\TeX\ Users Group}
+
+
+	% Back Cover -------------------------------------------
+	% (!!!)
+	\umbackcover{
+	NB: place here information about funding, FCT project, etc in which the work is framed. Leave empty otherwise.
+	}
+
+\end{document}
