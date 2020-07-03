@@ -46,7 +46,7 @@ export default class FriendsPage extends React.Component {
   addFriend = async () => {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter user email",
       input: "email",
       inputPlaceholder: "Enter email",
@@ -91,6 +91,9 @@ export default class FriendsPage extends React.Component {
             <td key={request}>{request}</td>
             <td className="table-edit" key={"accept" + names[index]}>
               <span
+              className="edit-button"
+              role="img"
+              aria-label="jsx-a11y/aria-proptypes"
                 onClick={() => {
                   this.acceptFriend(request);
                 }}
@@ -100,6 +103,9 @@ export default class FriendsPage extends React.Component {
             </td>
             <td className="table-edit" key={"decline" + names[index]}>
               <span
+              className="edit-button"
+              role="img"
+              aria-label="jsx-a11y/aria-proptypes"
                 onClick={() => {
                   this.declineFriend(request);
                 }}
@@ -131,6 +137,9 @@ export default class FriendsPage extends React.Component {
             <td key={request}>{request}</td>
             <td className="table-edit" key={"decline" + names[index]}>
               <span
+              className="edit-button"
+              role="img"
+              aria-label="jsx-a11y/aria-proptypes"
                 onClick={() => {
                   this.declineFriend(request);
                 }}
@@ -162,6 +171,9 @@ export default class FriendsPage extends React.Component {
             <td key={request}>{request}</td>
             <td className="table-edit" key={"decline" + names[index]}>
               <span
+              className="edit-button"
+              role="img"
+              aria-label="jsx-a11y/aria-proptypes"
                 onClick={() => {
                   this.declineFriend(request);
                 }}

@@ -3,12 +3,9 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 export default class RecipesTable extends React.Component {
-
   getKeys = function () {
-    if (this.props.data.length)
-      return Object.keys(this.props.data[0]);
-    else
-      return [];
+    if (this.props.data.length) return Object.keys(this.props.data[0]);
+    else return [];
   };
 
   getHeader = function () {
@@ -29,17 +26,19 @@ export default class RecipesTable extends React.Component {
   getRowsData = function () {
     var items = this.props.data;
     var keys = this.getKeys();
-    console.log(keys)
+    console.log(keys);
     //delete keys[2];
     return items.map((row, index) => {
-      return <RenderRow 
-      key={index} 
-      data={row} 
-      keys={keys} 
-      inventories={this.props.inventories}
-      wishlists={this.props.wishlists}
-      shoppinglists={this.props.shoppinglists}
-      />;
+      return (
+        <RenderRow
+          key={index}
+          data={row}
+          keys={keys}
+          inventories={this.props.inventories}
+          wishlists={this.props.wishlists}
+          shoppinglists={this.props.shoppinglists}
+        />
+      );
     });
   };
 
@@ -55,7 +54,6 @@ export default class RecipesTable extends React.Component {
   }
 }
 const RenderRow = (props) => {
-
   async function addProductInventory(product_id, inventory_id) {
     let token = localStorage.getItem("auth");
     const form = new FormData();
@@ -92,7 +90,7 @@ const RenderRow = (props) => {
           console.log(error);
         });
     }
-  };
+  }
 
   async function addProductWishlist(product_id, whishlist_id) {
     let token = localStorage.getItem("auth");
@@ -127,7 +125,7 @@ const RenderRow = (props) => {
           console.log(error);
         });
     }
-  };
+  }
 
   async function addProductShopping(product_id, shopping_id) {
     let token = localStorage.getItem("auth");
@@ -162,12 +160,11 @@ const RenderRow = (props) => {
           console.log(error);
         });
     }
-  };
-
+  }
 
   async function addProduct(e) {
-    let lists = ['Inventory','Wishlist','Shoppinglist']
-    console.log(e)
+    let lists = ["Inventory", "Wishlist", "Shoppinglist"];
+    console.log(e);
 
     const { value: list } = await Swal.fire({
       title: "Select list",
@@ -186,19 +183,19 @@ const RenderRow = (props) => {
       },
     });
 
-    const choice = lists[list]
+    const choice = lists[list];
     let names;
 
     switch (choice) {
       case "Inventory":
-        names = props.inventories
-        break
+        names = props.inventories;
+        break;
       case "Wishlist":
-        names = props.wishlists
-        break
+        names = props.wishlists;
+        break;
       default:
-        names = props.shoppinglists
-        break
+        names = props.shoppinglists;
+        break;
     }
 
     if (list) {
@@ -219,27 +216,23 @@ const RenderRow = (props) => {
         },
       });
 
-      const id = Object.values(names)[index]
-      console.log(names)
-      console.log(Object.values(names))
-      console.log(id)
-    switch (choice) {
-      case "Inventory":
-        addProductInventory(e, id)
-        break
-      case "Wishlist":
-        addProductWishlist(e, id)
-        break
-      default:
-        addProductShopping(e, id)
-        break
+      const id = Object.values(names)[index];
+      console.log(names);
+      console.log(Object.values(names));
+      console.log(id);
+      switch (choice) {
+        case "Inventory":
+          addProductInventory(e, id);
+          break;
+        case "Wishlist":
+          addProductWishlist(e, id);
+          break;
+        default:
+          addProductShopping(e, id);
+          break;
+      }
     }
-    }
-
   }
-
-
-
 
   if (props.keys.length) {
     return (
@@ -247,14 +240,20 @@ const RenderRow = (props) => {
         <td id="title">{props.data["_name"]}</td>
         <td id="title">{props.data["_category"]}</td>
         <td
-        id="fav-button"
-        onClick={() => {
-          addProduct(props.data["_guid"]);
-        }}
-      >
-        <span title="Add Product">➕</span>
-        
-      </td>
+          id="fav-button"
+          onClick={() => {
+            addProduct(props.data["_guid"]);
+          }}
+        >
+          <span
+            className="edit-button"
+            role="img"
+            aria-label="jsx-a11y/aria-proptypes"
+            title="Add Product"
+          >
+            ➕
+          </span>
+        </td>
       </tr>
     );
   } else {

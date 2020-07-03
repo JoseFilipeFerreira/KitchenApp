@@ -25,6 +25,7 @@ export default class RecipePage extends React.Component {
             dangerouslySetInnerHTML={{ __html: this.props.summary }}
           ></div>
           <div id="recipeIngredients"><b>Ingredients:</b> {this.getIngredients()}</div>
+          <div id="recipeIngredients"><b>Instructions</b></div>
           <div id="recipeIngredients" dangerouslySetInnerHTML={{ __html: this.props.instructions }}></div>
         </div>
       </div>

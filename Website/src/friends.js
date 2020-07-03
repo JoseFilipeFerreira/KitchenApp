@@ -124,7 +124,7 @@ export default class Friends extends Component {
   addFriend = async () => {
     let token = localStorage.getItem('auth');
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter user email",
       input: "email",
       inputPlaceholder: "Enter email",
@@ -155,7 +155,7 @@ export default class Friends extends Component {
   removeFriend = async () => {
     let token = localStorage.getItem('auth');
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter user email",
       input: "email",
       inputPlaceholder: "Enter email",
@@ -181,34 +181,6 @@ export default class Friends extends Component {
         }
       },
     });
-  }
-
-  showRequestsList = () => {
-    var x;
-    var json = this.state.requests;
-    var button;
-    for (x in json) {
-      button = document.createElement('input')
-      button.setAttribute('type','button')
-      button.onclick = e => {this.answerRequest(x)}
-      button.className = 'inventory-entry'
-      button.value = json[x] + ' | ' + x
-      document.getElementById("requestList").append(button)
-    }
-  }
-
-  showFriendsList = () => {
-    var x;
-    var json = this.state.friends;
-    var button;
-    for (x in json) {
-      button = document.createElement('input')
-      button.setAttribute('type','button')
-      button.onclick = e => {this.editFriend(x)}
-      button.className = 'inventory-entry'
-      button.value = json[x] + ' | ' + x
-      document.getElementById("friendList").append(button)
-    }
   }
 
   answerRequest = (email) => {

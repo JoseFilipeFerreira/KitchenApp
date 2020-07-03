@@ -4,7 +4,6 @@ import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
 import InventoryPage from "./components/InventoryPage";
-import RecipesTable from "./components/RecipesTable";
 
 export default class Inventory extends Component {
   constructor(props) {
@@ -102,7 +101,7 @@ export default class Inventory extends Component {
     let token = localStorage.getItem("auth");
     let uid = this.state.inventory_id;
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new name",
       input: "text",
       inputPlaceholder: "Enter your name",

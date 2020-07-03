@@ -88,7 +88,7 @@ export default class UserInfo extends Component {
   async askName() {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new name",
       input: "text",
       inputPlaceholder: "Enter your name",
@@ -118,7 +118,7 @@ export default class UserInfo extends Component {
   }
 
   async askEmail() {
-    const { value: email } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new email",
       input: "email",
       inputPlaceholder: "Enter your email",
@@ -135,7 +135,7 @@ export default class UserInfo extends Component {
   async askPhone() {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: phone } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new phone",
       input: "text",
       inputPlaceholder: "Enter your phone",
@@ -167,7 +167,7 @@ export default class UserInfo extends Component {
   async askBirthdate() {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: birthdate } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new birthdate",
       input: "text",
       inputPlaceholder: "Enter your birthdate",
@@ -390,16 +390,6 @@ export default class UserInfo extends Component {
         </header>
         <section className="page-content">
           <section className="search-and-user">
-            {/*
-            <form>
-              <input type="search" placeholder="Search Pages..." />
-              <button type="submit" aria-label="submit form">
-                <svg aria-hidden="true">
-                  <use href="#search"></use>
-                </svg>
-              </button>
-            </form>
-            */}
             <div className="admin-profile">
               <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">

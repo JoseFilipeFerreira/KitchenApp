@@ -1,5 +1,4 @@
 import React from "react";
-import Swal from "sweetalert2";
 import axios from "axios";
 
 export default class Notifications extends React.Component {
@@ -53,7 +52,7 @@ export default class Notifications extends React.Component {
       )
       .then((response) => {
         this.setState({
-          requests: response.data
+          requests: response.data,
         });
         console.log(response.data);
       })
@@ -80,16 +79,18 @@ export default class Notifications extends React.Component {
       )
       .then((response) => {
         this.setState({
-          expired: response.data
+          expired: response.data,
         });
-        let number = Object.keys(this.state.requests).length + Object.keys(this.state.expired).length
+        let number =
+          Object.keys(this.state.requests).length +
+          Object.keys(this.state.expired).length;
         this.setState({
-            number: number
-        })
+          number: number,
+        });
         if (this.state.number > 99)
-            this.setState({
-                number: '99+'
-            })
+          this.setState({
+            number: "99+",
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -102,7 +103,16 @@ export default class Notifications extends React.Component {
       return (
         <li>
           <a href="/dashboard/friends">
-            <div id="topic-friends">👥 Friends</div>
+            <div id="topic-friends">
+              <span
+                className="edit-button"
+                role="img"
+                aria-label="jsx-a11y/aria-proptypes"
+              >
+                👥
+              </span>{" "}
+              Friends
+            </div>
             <div id="desc">
               You have {Object.keys(json).length} friend requests.
             </div>
@@ -129,9 +139,18 @@ export default class Notifications extends React.Component {
     if (Object.keys(json).length) {
       return products.map((request, index) => {
         return (
-          <li>
+          <li key={uid[index] + products[index]}>
             <a href={"/dashboard/inventory/" + uid[index]}>
-              <div id="topic-inventory">🥗 Inventory {names[index]}</div>
+              <div id="topic-inventory">
+                <span
+                  className="edit-button"
+                  role="img"
+                  aria-label="jsx-a11y/aria-proptypes"
+                >
+                  🥗
+                </span>{" "}
+                Inventory {names[index]}
+              </div>
               <div id="desc">
                 <i>
                   <u>{products[index]}</u>
@@ -148,13 +167,17 @@ export default class Notifications extends React.Component {
   };
 
   expandNotifications() {
-    if (document.getElementById("notificationMenu").className === "notificationMenu") {
-      document.getElementById("notificationMenu").className = "notificationMenuHidden";
+    if (
+      document.getElementById("notificationMenu").className ===
+      "notificationMenu"
+    ) {
+      document.getElementById("notificationMenu").className =
+        "notificationMenuHidden";
     } else {
-      document.getElementById("notificationMenu").className = "notificationMenu";
+      document.getElementById("notificationMenu").className =
+        "notificationMenu";
     }
   }
-
 
   componentDidMount() {
     this.getRequests();
@@ -163,27 +186,35 @@ export default class Notifications extends React.Component {
 
   render() {
     return (
-        <div>
-            <section className="search-and-user">
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.props.name}</span>
-              <div className="notifications" onClick={this.expandNotifications}>
-    <span className="badge">{this.state.number}</span>
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
+      <div>
+        <section className="search-and-user">
+          <div className="admin-profile">
+            <span className="greeting">Hello {this.props.name}</span>
+            <div className="notifications" onClick={this.expandNotifications}>
+              <span className="badge">{this.state.number}</span>
+              <svg>
+                <use href="#users"></use>
+              </svg>
             </div>
-          </section>
-          <div className="notificationMenuHidden" id="notificationMenu">
-        <div id="title">🔔 Notifications</div>
-        <ul>
-          {this.showFriendNotifications()}
-          {this.showInventoryNotifications()}
-        </ul>
-      </div>
+          </div>
+        </section>
+        <div className="notificationMenuHidden" id="notificationMenu">
+          <div id="title">
+            <span
+              className="edit-button"
+              role="img"
+              aria-label="jsx-a11y/aria-proptypes"
+            >
+              🔔
+            </span>{" "}
+            Notifications
+          </div>
+          <ul>
+            {this.showFriendNotifications()}
+            {this.showInventoryNotifications()}
+          </ul>
         </div>
-      
+      </div>
     );
   }
 }
