@@ -331,6 +331,7 @@ body {
 #inventoryList {
   margin-top: 20px;
   border-collapse: collapse;
+  width: 100%;
 }
 
 #inventoryList td, #inventoryList th {
@@ -355,6 +356,7 @@ body {
 #sharedList {
   margin-top: 20px;
   border-collapse: collapse;
+  width: 100%;
 }
 
 #sharedList td, #sharedList th {
@@ -379,6 +381,7 @@ body {
 #recipesList {
   margin-top: 20px;
   border-collapse: collapse;
+  width: 100%;
 }
 
 #recipesList td, #recipesList th {
