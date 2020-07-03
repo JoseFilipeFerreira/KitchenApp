@@ -171,6 +171,7 @@ export default class Products extends Component {
   }
 
   render() {
+    const { search } = this.state;
     return (
       <div>
         <svg>
@@ -361,6 +362,22 @@ export default class Products extends Component {
         </header>
         <section className="page-content">
           <Notifications name={this.state.name}/>
+          <section className="search-and-user">
+            <form onSubmit={this.submitHandler}>
+              <input
+                type="text"
+                placeholder="Search recipes..."
+                name="search"
+                value={search}
+                onChange={this.changeHandler}
+              />
+              <button type="submit">
+                <svg aria-hidden="true">
+                  <use href="#search"></use>
+                </svg>
+              </button>
+            </form>
+          </section>
           <section className="grid">
             <article className="inventories">
               <div className="inventories-text">Products</div>
