@@ -20,7 +20,11 @@ export default class Inventory extends Component {
   }
 
   handler = () => {
+    let old = this.state.items.length
     this.getInventoryInfo();
+    let size = this.state.items.length
+    if (size === old)
+      this.getInventoryInfo();
   }
 
   getInfo = () => {
