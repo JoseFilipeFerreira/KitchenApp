@@ -4,6 +4,7 @@ import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
 import InventoryList from "./components/InventoryList";
+import Notifications from "./components/Notifications";
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -18,8 +19,8 @@ export default class Dashboard extends Component {
 
   handler = () => {
     this.getInventories();
-  }
-  
+  };
+
   getInventories = () => {
     let token = localStorage.getItem("auth");
     axios
@@ -95,7 +96,6 @@ export default class Dashboard extends Component {
     }
   };
 
-
   showInventoryList = () => {
     var x;
     var json = this.state.inventories;
@@ -149,12 +149,12 @@ export default class Dashboard extends Component {
     }
   }
 
+
   componentDidMount() {
     this.getInventories();
     this.getShared();
     this.getInfo();
   }
-
 
   render() {
     /*const { dashboards } = this.state;*/
@@ -329,7 +329,7 @@ export default class Dashboard extends Component {
                   </svg>
                   <span>Friends</span>
                 </a>
-              </li >
+              </li>
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
@@ -355,20 +355,11 @@ export default class Dashboard extends Component {
           </nav>
         </header>
         <section className="page-content">
-          <section className="search-and-user">
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.state.name}</span>
-              <div className="notifications">
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
-            </div>
-          </section>
-          <InventoryList 
-          inventories={this.state.inventories}
-          shared={this.state.shared}
-          handler = {this.handler}
+          <Notifications name={this.state.name}/>
+          <InventoryList
+            inventories={this.state.inventories}
+            shared={this.state.shared}
+            handler={this.handler}
           />
           <footer className="page-footer">
             <small>
