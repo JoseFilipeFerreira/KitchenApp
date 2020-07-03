@@ -19,7 +19,7 @@ namespace KitchenLib.Database
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
                         "MATCH(u:User)-[]->(i:Wishlist) WHERE u._email = $email AND i.guid = $guid RETURN i.name",
-                        new {email = user, name = uid});
+                        new {email = user, guid = uid});
                     while (await reader.FetchAsync())
                         lst.Add(reader.Current[0].ToString());
 
@@ -168,7 +168,7 @@ namespace KitchenLib.Database
                                               "where u._email = $email and i.guid = $uid and p._guid = $prodName " +
                                               "Optional match (i)-[f:CONTAIN]-(p) " +
                                               "with i, p, f, case when f is null then [1] else [] end as arr " +
-                                              "foreach(x in arr | create (i)-[:CONTAIN]->(p)",
+                                              "foreach(x in arr | create (i)-[:CONTAIN]->(p))",
                         new {email, uid, prodName});
                 });
             }
