@@ -17,11 +17,18 @@ export default class Friends extends Component {
       sent: {},
     };
   }
-
+  
   handler = () => {
+    let old = this.state.items.friends
     this.getFriends();
     this.getRequests();
     this.getSent();
+    let size = this.state.items.friends
+    if (size === old) {
+      this.getFriends();
+      this.getRequests();
+      this.getSent();
+    }
   }
 
   getFriends = () => {

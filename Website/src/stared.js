@@ -16,7 +16,11 @@ export default class Stared extends Component {
   }
 
   handler = () => {
+    let old = this.state.stared.length
     this.getStared();
+    let size = this.state.stared.length
+    if (size === old)
+      this.getStared();
   }
 
   getStared = () => {
