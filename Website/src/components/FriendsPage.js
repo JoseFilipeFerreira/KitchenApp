@@ -16,7 +16,7 @@ export default class FriendsPage extends React.Component {
         /* save this token inside localStorage */
         const token = response.headers["auth"];
         localStorage.setItem("auth", token);
-        this.props.handler()
+        this.props.handler();
       })
       .catch((error) => {
         console.log(error);
@@ -36,7 +36,7 @@ export default class FriendsPage extends React.Component {
         /* save this token inside localStorage */
         const token = response.headers["auth"];
         localStorage.setItem("auth", token);
-        this.props.handler()
+        this.props.handler();
       })
       .catch((error) => {
         console.log(error);
@@ -65,7 +65,7 @@ export default class FriendsPage extends React.Component {
               /* save this token inside localStorage */
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
-              this.props.handler()
+              this.props.handler();
             })
             .catch((error) => {
               console.log(error);

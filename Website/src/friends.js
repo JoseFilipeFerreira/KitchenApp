@@ -19,11 +19,11 @@ export default class Friends extends Component {
   }
   
   handler = () => {
-    let old = this.state.items.friends
+    let old = this.state.friends.length
     this.getFriends();
     this.getRequests();
     this.getSent();
-    let size = this.state.items.friends
+    let size = this.state.friends.length
     if (size === old) {
       this.getFriends();
       this.getRequests();
