@@ -5,6 +5,7 @@ import "./dashboard.css";
 import Swal from "sweetalert2";
 import 'sweetalert2/src/sweetalert2.scss'
 import FriendsPage from "./components/FriendsPage";
+import Notifications from "./components/Notifications"
 
 
 export default class Friends extends Component {
@@ -303,6 +304,14 @@ export default class Friends extends Component {
     }
   }
 
+  openMenu() {
+    if (document.body.className === "") {
+      document.body.className = "mob-menu-opened";
+    } else {
+      document.body.className = "";
+    }
+  }
+
   componentDidMount() {
     this.getFriends();
     this.getRequests();
@@ -384,10 +393,18 @@ export default class Friends extends Component {
         <header className="page-header">
           <nav>
             <Link to="/dashboard">
-              <img className="logo" src="https://cdn.discordapp.com/attachments/443699822025900033/703629640773795850/fork.svg"
-                alt="forecastr logo" />
+              <img
+                className="logo"
+                src="https://cdn.discordapp.com/attachments/443699822025900033/703629640773795850/fork.svg"
+                alt="forecastr logo"
+              />
             </Link>
-            <button className="toggle-mob-menu" aria-expanded="false" aria-label="open menu">
+            <button
+              className="toggle-mob-menu"
+              aria-expanded="false"
+              aria-label="open menu"
+              onClick={this.openMenu}
+            >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
               </svg>
@@ -405,7 +422,7 @@ export default class Friends extends Component {
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/wishlists">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
@@ -413,21 +430,37 @@ export default class Friends extends Component {
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/shoppinglists">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
                   <span>Shopping Lists</span>
                 </a>
-              </li >
+              </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/products">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Products</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
                   <span>Recipes</span>
                 </a>
-              </li >
+              </li>
+              <li>
+                <a href="/dashboard/recipes/stared">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Favourite Recipes</span>
+                </a>
+              </li>
               <li className="menu-heading">
                 <h3>Settings</h3>
               </li>
@@ -438,7 +471,7 @@ export default class Friends extends Component {
                   </svg>
                   <span>Account</span>
                 </a>
-              </li >
+              </li>
               <li>
                 <a href="/dashboard/friends">
                   <svg>
@@ -446,7 +479,7 @@ export default class Friends extends Component {
                   </svg>
                   <span>Friends</span>
                 </a>
-              </li >
+              </li>
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
@@ -454,29 +487,25 @@ export default class Friends extends Component {
                   </svg>
                   <span>Logout</span>
                 </Link>
-              </li >
+              </li>
               <li>
-                <button className="collapse-btn" aria-expanded="true" aria-label="collapse menu" onClick={this.collapseBar}>
+                <button
+                  className="collapse-btn"
+                  aria-expanded="true"
+                  aria-label="collapse menu"
+                  onClick={this.collapseBar}
+                >
                   <svg aria-hidden="true">
                     <use href="#collapse"></use>
                   </svg>
                   <span>Collapse</span>
                 </button>
-              </li >
-            </ul >
-          </nav >
-        </header >
+              </li>
+            </ul>
+          </nav>
+        </header>
         <section className="page-content">
-          <section className="search-and-user">
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.state.name}</span>
-              <div className="notifications">
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
-            </div>
-          </section>
+          <Notifications name={this.state.name}/>
           <FriendsPage
           requests={this.state.requests}
           friends={this.state.friends}

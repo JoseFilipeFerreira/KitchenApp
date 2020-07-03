@@ -4,6 +4,7 @@ import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
 import InventoryPage from "./components/InventoryPage";
+import Notifications from "./components/Notifications"
 
 export default class Inventory extends Component {
   constructor(props) {
@@ -169,6 +170,14 @@ export default class Inventory extends Component {
     }
   }
 
+  openMenu() {
+    if (document.body.className === "") {
+      document.body.className = "mob-menu-opened";
+    } else {
+      document.body.className = "";
+    }
+  }
+
   componentDidMount() {
     this.getInventoryID();
     this.getInfo();
@@ -263,6 +272,7 @@ export default class Inventory extends Component {
               className="toggle-mob-menu"
               aria-expanded="false"
               aria-label="open menu"
+              onClick={this.openMenu}
             >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
@@ -294,6 +304,30 @@ export default class Inventory extends Component {
                     <use href="#collection"></use>
                   </svg>
                   <span>Shopping Lists</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/products">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Products</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Recipes</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes/stared">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Favourite Recipes</span>
                 </a>
               </li>
               <li className="menu-heading">
@@ -340,26 +374,7 @@ export default class Inventory extends Component {
           </nav>
         </header>
         <section className="page-content">
-          <section className="search-and-user">
-            {/*
-            <form>
-              <input type="search" placeholder="Search Pages..." />
-              <button type="submit" aria-label="submit form">
-                <svg aria-hidden="true">
-                  <use href="#search"></use>
-                </svg>
-              </button>
-            </form>
-            */}
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.state.name}</span>
-              <div className="notifications">
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
-            </div>
-          </section>
+          <Notifications name={this.state.name}/>
             <InventoryPage 
             inventory_name={this.state.inventory_name}
             inventory_id={this.state.inventory_id}
