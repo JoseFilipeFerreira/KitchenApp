@@ -243,7 +243,10 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("Match (u:User)-[:INV]->(i:Inventory), (z:User) " +
                                               "where u._email = $email and i.guid = $name and z._email = $friend " +
-                                              "create (i)<-[:Shared]-(z)", new {email, name = uid, friend});
+                                              "Optional match (i)-[f:Shared]-(z) " +
+                                              "with i, z, f, case when f is null then [1] else [] end as arr " +
+                                              "foreach(x in arr | create (i)<-[:Shared]->(z))",
+                                              new {email, name = uid, friend});
                 });
             }
             finally
