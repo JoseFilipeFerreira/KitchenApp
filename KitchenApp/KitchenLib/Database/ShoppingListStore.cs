@@ -166,7 +166,7 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     var r = await tx.RunAsync("Match (u:User)-[]-(i:Shoppinglist), (p:Product) " +
-                                              "where u._email = $email and i.name = $name and p._guid = $pguid " +
+                                              "where u._email = $email and i.guid = $name and p._guid = $pguid " +
                                               "Optional match (i)-[f:CONTAIN]-(p) " +
                                               "with i, p, f, case when f is null then [1] else [] end as arr " +
                                               "foreach(x in arr | create (i)-[:CONTAIN {quantity: $quant}]->(p))",
@@ -188,7 +188,7 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync(
                         "Match (u:User)-[]-(i:Shoppinglist)-[c:CONTAIN]->(p:Product) " +
-                        "where u._email = $email and i.name = $name and p._guid = $pguid " +
+                        "where u._email = $email and i.guid = $name and p._guid = $pguid " +
                         "Set c.quantity = $quant", new {name = uid, pguid = prodName, email, quant});
                 });
             }
