@@ -3,70 +3,24 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
-import ShoppingList from "./components/ShoppingList";
+import ShoppingPage from "./components/ShoppingPage";
 
-export default class Dashboard extends Component {
+export default class Shopping extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      shoppings: {},
-      shared: {},
+      shopping_id: null,
+      shopping_name: null,
       name: null,
+      categories: null,
+      items: [],
     };
   }
 
   handler = () => {
-    this.getShoppings();
+    this.getShoppingInfo();
   }
-  
-  getShoppings = () => {
-    let token = localStorage.getItem("auth");
-    axios
-      .get(
-        "http://localhost:1331/shopping/all",
-        {
-          headers: { auth: token },
-        },
-        { withCredentials: true }
-      )
-      .then((response) => {
-        this.setState({ shoppings: response.data });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    if (localStorage.getItem("auth") != null) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  getShared = () => {
-    let token = localStorage.getItem("auth");
-    axios
-      .get(
-        "http://localhost:1331/shopping/shared",
-        {
-          headers: { auth: token },
-        },
-        { withCredentials: true }
-      )
-      .then((response) => {
-        this.setState({ shared: response.data });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    if (localStorage.getItem("auth") != null) {
-      return true;
-    } else {
-      return false;
-    }
-  };
 
   getInfo = () => {
     let token = localStorage.getItem("auth");
@@ -95,6 +49,78 @@ export default class Dashboard extends Component {
     }
   };
 
+  getShoppingInfo = () => {
+    let token = localStorage.getItem("auth");
+    axios
+      .get(
+        "http://localhost:1331/shopping/info/" + this.state.shopping_id,
+        {
+          headers: { auth: token },
+        },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        console.log(response.data);
+        let json = response.data;
+        this.setState({
+          shopping_name: json["_name"],
+          items: json["_products"],
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        this.props.history.push("/dashboard");
+      });
+
+    if (localStorage.getItem("auth") != null) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  getShoppingID = () => {
+    let url = window.location.pathname;
+    let regex = /[/]shopping[/](.*)/;
+    let id = url.match(regex)[1];
+    if (id != null) {
+      console.log(id);
+      this.setState({ shopping_id: id }, () => {
+        this.getShoppingInfo();
+      });
+    }
+  };
+
+  editProduct = () => {};
+
+  
+
+  
+
+  showItems = () => {
+    var x;
+    var json = this.state.items;
+    json.sort(function(a, b){
+      return a._name.localeCompare(b._name);
+    });
+    for (x in json) {
+      let product = json[x];
+      console.log(product);
+      document.getElementById("inventoryList").innerHTML += "<tr>";
+      document.getElementById("inventoryList").innerHTML +=
+        "<td>" +
+        product["_name"] +
+        "</td>" +
+        "<td>" +
+        product["_stock"] +
+        "</td>" +
+        "<td>" +
+        product["_consume_before"].substring(0, 10) +
+        "</td>";
+      document.getElementById("inventoryList").innerHTML += "</tr>";
+    }
+  };
+
   removeToken = () => {
     localStorage.removeItem("auth");
     this.props.history.push("/");
@@ -110,8 +136,7 @@ export default class Dashboard extends Component {
   }
 
   componentDidMount() {
-    this.getShoppings();
-    this.getShared();
+    this.getShoppingID();
     this.getInfo();
   }
 
@@ -237,30 +262,6 @@ export default class Dashboard extends Component {
                   <span>Shopping Lists</span>
                 </a>
               </li>
-              <li>
-                <a href="/dashboard/products">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>Products</span>
-                </a>
-              </li>
-              <li>
-                <a href="/dashboard/recipes">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>Recipes</span>
-                </a>
-              </li>
-              <li>
-                <a href="/dashboard/recipes/stared">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>Favourite Recipes</span>
-                </a>
-              </li>
               <li className="menu-heading">
                 <h3>Settings</h3>
               </li>
@@ -280,14 +281,6 @@ export default class Dashboard extends Component {
                   <span>Friends</span>
                 </a>
               </li>
-              <li>
-                <a href="/dashboard/friends">
-                  <svg>
-                    <use href="#users"></use>
-                  </svg>
-                  <span>Friends</span>
-                </a>
-              </li >
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
@@ -314,6 +307,16 @@ export default class Dashboard extends Component {
         </header>
         <section className="page-content">
           <section className="search-and-user">
+            {/*
+            <form>
+              <input type="search" placeholder="Search Pages..." />
+              <button type="submit" aria-label="submit form">
+                <svg aria-hidden="true">
+                  <use href="#search"></use>
+                </svg>
+              </button>
+            </form>
+            */}
             <div className="admin-profile">
               <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
@@ -323,11 +326,13 @@ export default class Dashboard extends Component {
               </div>
             </div>
           </section>
-          <ShoppingList 
-          shoppings={this.state.shoppings}
-          shared={this.state.shared}
-          handler = {this.handler}
-          />
+            <ShoppingPage 
+            shopping_name={this.state.shopping_name}
+            shopping_id={this.state.shopping_id}
+            items={this.state.items}
+            shared={this.props.shared}
+            handler = {this.handler}
+            />
           <footer className="page-footer">
             <small>
               Made with <span>❤</span> by{" "}

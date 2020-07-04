@@ -95,36 +95,6 @@ export default class Dashboard extends Component {
     }
   };
 
-  showInventoryList = () => {
-    var x;
-    var json = this.state.inventories;
-
-    for (x in json) {
-      document.getElementById("inventoryList").innerHTML += "<tr>";
-      document.getElementById("inventoryList").innerHTML +=
-        '<td><a href="/dashboard/inventory/' +
-        json[x] +
-        '">' +
-        x +
-        '</td><td class="table-edit""><span onclick="alert()">✏️</span></td>';
-      document.getElementById("inventoryList").innerHTML += "</tr>";
-    }
-  };
-
-  showSharedList = () => {
-    var x;
-    var json = this.state.shared;
-    for (x in json) {
-      document.getElementById("sharedList").innerHTML += "<tr>";
-      document.getElementById("sharedList").innerHTML +=
-        '<td><a href="/dashboard/inventory/' +
-        json[x] +
-        '">' +
-        x +
-        '</td><td class="table-edit""><span onclick="alert()">✏️</span></td>';
-      document.getElementById("sharedList").innerHTML += "</tr>";
-    }
-  };
 
   removeToken = () => {
     localStorage.removeItem("auth");
@@ -147,7 +117,6 @@ export default class Dashboard extends Component {
       document.body.className = "";
     }
   }
-
 
   componentDidMount() {
     this.getInventories();

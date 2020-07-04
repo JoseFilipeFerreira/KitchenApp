@@ -6,6 +6,7 @@ import Register from "./register";
 import Dashboard from "./dashboard";
 import UserInfo from "./userinfo";
 import Inventory from "./inventory";
+import Shopping from "./shopping";
 import Wishlist from "./wishlist";
 import Friends from "./friends";
 import Recipes from "./recipes";
@@ -22,7 +23,7 @@ class App extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/inventory/all",
+        "http://localhost:1331/user/info",
         {
           headers: { auth: token },
         },
@@ -32,18 +33,14 @@ class App extends Component {
         console.log("Token valido");
       })
       .catch((error) => {
-        if (localStorage.getItem("auth")) {
+        if (localStorage.getItem("auth") && error.message !== 'Request aborted') {
           localStorage.removeItem("auth")
           window.location.reload()
         }
         console.log(error);
       });
 
-    if (localStorage.getItem("auth") != null) {
-      return true;
-    } else {
-      return false;
-    }
+    return (localStorage.getItem("auth") != null);
   };
 
   render() {
@@ -81,6 +78,8 @@ class App extends Component {
               <Route path="/dashboard/wishlist/" render={(props) => <Wishlist shared={false} {...props}/>} />
               <Route path="/dashboard/shared/wishlist/" render={(props) =><Wishlist shared={true} {...props}/>} />
               <Route path="/dashboard/shoppinglists/" component={ShoppingLists} />
+              <Route path="/dashboard/shopping/" render={(props) => <Shopping shared={false} {...props}/>} />
+              <Route path="/dashboard/shared/shopping/" render={(props) =><Shopping shared={true} {...props}/>} />
               <Route path="/dashboard/products/" component={Products} />
 
               <Route exact path="*" component={Dashboard} />
