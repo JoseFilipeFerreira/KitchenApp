@@ -211,7 +211,7 @@ namespace KitchenLib.Database
                                               "where u._email = $email and i.guid = $name and z._email = $friend " +
                                               "Optional match (i)-[f:Shared]-(z) " +
                                               "with i, z, f, case when f is null then [1] else [] end as arr " +
-                                              "foreach(x in arr | create (i)<-[:Shared]->(z))",
+                                              "foreach(x in arr | create (i)<-[:Shared]-(z))",
                                               new {email, name = uid, friend});
                 });
             }
