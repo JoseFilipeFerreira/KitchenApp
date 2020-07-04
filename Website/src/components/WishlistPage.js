@@ -1,17 +1,15 @@
 import React from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
-import RecipesTable from "./RecipesTable";
 
 export default class WishlistList extends React.Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
       categories: [],
       products: [],
-    }
+    };
   }
 
   addProductMenu = () => {
@@ -82,11 +80,9 @@ export default class WishlistList extends React.Component {
       });
   };
 
-  
-
   chooseProduct = async () => {
-    let names = this.state.products.map((x) => x._name)
-    console.log(names)
+    let names = this.state.products.map((x) => x._name);
+    console.log(names);
     const { value: product } = await Swal.fire({
       title: "Select product",
       input: "select",
@@ -107,84 +103,65 @@ export default class WishlistList extends React.Component {
     if (product) this.addProduct(this.state.products[product]);
   };
 
+  editWishlist = async () => {
+    let token = localStorage.getItem("auth");
+    let uid = this.props.wishlist_id;
+    const form = new FormData();
+    await Swal.fire({
+      title: "Enter new name",
+      input: "text",
+      inputPlaceholder: "Enter your name",
+      inputValidator: (value) => {
+        if (!value) {
+          return "Invalid Name";
+        } else {
+          form.append("uid", uid);
+          form.append("name", value);
+
+          axios
+            .post("http://localhost:1331/wishlist/edit", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+              this.props.handler();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      },
+    });
+  };
+
   addProduct = async (product) => {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: formValues } = await Swal.fire({
-      title: "Add Product",
-      html:
-        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
-      focusConfirm: false,
-      preConfirm: () => {
-        let quantity = document.getElementById("swal-input1").value;
-        return quantity;
-      },
-    });
+    form.append("product", product["_guid"]);
+    form.append("uid", this.props.wishlist_id);
 
-    if (formValues != null) {
-      form.append("product", product["_guid"]);
-      form.append("quantity", formValues[0]);
-      form.append("uid", this.props.wishlist_id);
-
-      axios
-        .post("http://localhost:1331/wishlist/addproduct", form, {
-          headers: { "Content-Type": "multipart/form-data", auth: token },
-          withCredentials: true,
-        })
-        .then((response) => {
-          /* save this token inside localStorage */
-          const token = response.headers["auth"];
-          localStorage.setItem("auth", token);
-          this.props.handler();
-          Swal.fire("Product Added!", "Product has been added.", "success");
-        })
-        .catch((error) => {
-          console.log(error);
-          Swal.fire("Nope!", "Product has not been added.", "error");
-        });
-    }
-  };
-
-  editProduct = async (product) => {
-    let token = localStorage.getItem("auth");
-    const form = new FormData();
-    const { value: formValues } = await Swal.fire({
-      title: "Edit Product",
-      html:
-        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
-      focusConfirm: false,
-      preConfirm: () => {
-        let quantity = document.getElementById("swal-input1").value;
-        return quantity;
-      },
-    });
-
-    if (formValues != null) {
-      form.append("product", product["_guid"]);
-      form.append("quantity", formValues[0]);
-      form.append("uid", this.props.wishlist_id);
-
-      axios
-        .post("http://localhost:1331/wishlist/editproduct", form, {
-          headers: { "Content-Type": "multipart/form-data", auth: token },
-          withCredentials: true,
-        })
-        .then((response) => {
-          /* save this token inside localStorage */
-          const token = response.headers["auth"];
-          localStorage.setItem("auth", token);
-          this.props.handler();
-          Swal.fire("Product Added!", "Product has been added.", "success");
-        })
-        .catch((error) => {
-          console.log(error);
-          Swal.fire("Nope!", "Product has not been added.", "error");
-        });
-    }
+    axios
+      .post("http://localhost:1331/wishlist/addproduct", form, {
+        headers: { "Content-Type": "multipart/form-data", auth: token },
+        withCredentials: true,
+      })
+      .then((response) => {
+        /* save this token inside localStorage */
+        const token = response.headers["auth"];
+        localStorage.setItem("auth", token);
+        this.props.handler();
+        Swal.fire("Product Added!", "Product has been added.", "success");
+      })
+      .catch((error) => {
+        console.log(error);
+        Swal.fire("Nope!", "Product has not been added.", "error");
+      });
   };
 
   removeProduct = async (uid) => {
-    let token = localStorage.getItem("auth");
     Swal.fire({
       title: "Remove Product",
       text: "Do you want to remove this product?",
@@ -198,7 +175,7 @@ export default class WishlistList extends React.Component {
         let form = new FormData();
         let token = localStorage.getItem("auth");
         form.append("uid", this.props.wishlist_id);
-        form.append("prod", uid);
+        form.append("product", uid);
 
         axios
           .post("http://localhost:1331/wishlist/removeproduct", form, {
@@ -210,7 +187,11 @@ export default class WishlistList extends React.Component {
             const token = response.headers["auth"];
             localStorage.setItem("auth", token);
             this.props.handler();
-            Swal.fire("Product Removed!", "Product has been removed.", "success");
+            Swal.fire(
+              "Product Removed!",
+              "Product has been removed.",
+              "success"
+            );
           })
           .catch((error) => {
             console.log(error);
@@ -221,12 +202,12 @@ export default class WishlistList extends React.Component {
   };
 
   shareWishlist = async () => {
-    console.log(this.props.shared)
+    console.log(this.props.shared);
     if (!this.props.shared) {
       let token = localStorage.getItem("auth");
       let uid = this.props.wishlist_id;
       const form = new FormData();
-      const { value: name } = await Swal.fire({
+      await Swal.fire({
         title: "Enter user email",
         input: "email",
         inputPlaceholder: "Enter email",
@@ -236,7 +217,7 @@ export default class WishlistList extends React.Component {
           } else {
             form.append("uid", uid);
             form.append("friend", value);
-  
+
             axios
               .post("http://localhost:1331/wishlist/share", form, {
                 headers: { "Content-Type": "multipart/form-data", auth: token },
@@ -254,15 +235,9 @@ export default class WishlistList extends React.Component {
         },
       });
     } else {
-      Swal.fire(
-        'Nope!',
-        'You are not the owner of this wishlist',
-        'error'
-      )
+      Swal.fire("Nope!", "You are not the owner of this wishlist", "error");
     }
   };
-
-  editProduct = async (uid) => {};
 
   showItems = () => {
     let json = this.props.items;
@@ -274,18 +249,11 @@ export default class WishlistList extends React.Component {
       return (
         <tr>
           <td>{item._name}</td>
-          <td>{item._stock}</td>
-          <td className="table-edit" key={"edit" + item._guid}>
-            <span
-              onClick={() => {
-                this.editProduct(item._guid);
-              }}
-            >
-              ✏️
-            </span>
-          </td>
           <td className="table-edit" key={"remove" + item._guid}>
             <span
+            className="edit-button"
+            role="img"
+            aria-label="jsx-a11y/aria-proptypes"
               onClick={() => {
                 this.removeProduct(item._guid);
               }}
@@ -345,8 +313,6 @@ export default class WishlistList extends React.Component {
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Quantity</th>
-                <th></th>
                 <th></th>
               </tr>
             </thead>

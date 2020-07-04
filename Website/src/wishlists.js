@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
-import Swal from "sweetalert2";
 import WishlistList from "./components/WishlistList";
 
 export default class Wishlists extends Component {

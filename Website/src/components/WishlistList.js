@@ -28,7 +28,7 @@ export default class WishlistList extends React.Component {
             /* save this token inside localStorage */
             const token = response.headers["auth"];
             localStorage.setItem("auth", token);
-            this.props.handler()
+            this.props.handler();
             Swal.fire("Deleted!", "Wishlist has been deleted.", "success");
           })
           .catch((error) => {
@@ -42,7 +42,7 @@ export default class WishlistList extends React.Component {
   editWishlist = async (uid) => {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new wishlist name",
       input: "text",
       inputPlaceholder: "Enter wishlist name",
@@ -62,7 +62,7 @@ export default class WishlistList extends React.Component {
               /* save this token inside localStorage */
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
-              this.props.handler()
+              this.props.handler();
               Swal.fire("Edited!", "Wishlist has been edited.", "success");
             })
             .catch((error) => {
@@ -92,6 +92,9 @@ export default class WishlistList extends React.Component {
             </td>
             <td className="table-edit" key={"edit" + ids[index]}>
               <span
+                className="edit-button"
+                role="img"
+                aria-label="jsx-a11y/aria-proptypes"
                 onClick={() => {
                   this.editWishlist(ids[index]);
                 }}
@@ -101,6 +104,9 @@ export default class WishlistList extends React.Component {
             </td>
             <td className="table-edit" key={"remove" + ids[index]}>
               <span
+                className="edit-button"
+                role="img"
+                aria-label="jsx-a11y/aria-proptypes"
                 onClick={() => {
                   this.removeWishlist(ids[index]);
                 }}
@@ -120,7 +126,7 @@ export default class WishlistList extends React.Component {
     let names = [],
       ids = [];
     let json = this.props.shared;
-    console.log(this.props.shared)
+    console.log(this.props.shared);
     for (let x in json) {
       names.push(x);
       ids.push(json[x]);
@@ -144,7 +150,7 @@ export default class WishlistList extends React.Component {
   createWishlist = async () => {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter wishlist name",
       input: "text",
       inputPlaceholder: "Enter wishlist name",
@@ -163,7 +169,7 @@ export default class WishlistList extends React.Component {
               /* save this token inside localStorage */
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
-              this.props.handler()
+              this.props.handler();
               Swal.fire("Created!", "Wishlist has been created.", "success");
             })
             .catch((error) => {
