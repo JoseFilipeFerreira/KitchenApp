@@ -126,7 +126,7 @@ export default class WishlistList extends React.Component {
     let names = [],
       ids = [];
     let json = this.props.shared;
-    console.log(this.props.shared);
+    ;
     for (let x in json) {
       names.push(x);
       ids.push(json[x]);

@@ -82,7 +82,7 @@ export default class WishlistList extends React.Component {
 
   chooseProduct = async () => {
     let names = this.state.products.map((x) => x._name);
-    console.log(names);
+    ;
     const { value: product } = await Swal.fire({
       title: "Select product",
       input: "select",
@@ -202,7 +202,7 @@ export default class WishlistList extends React.Component {
   };
 
   shareWishlist = async () => {
-    console.log(this.props.shared);
+    ;
     if (!this.props.shared) {
       let token = localStorage.getItem("auth");
       let uid = this.props.wishlist_id;
@@ -245,7 +245,7 @@ export default class WishlistList extends React.Component {
       return a._name.localeCompare(b._name);
     });
     return json.map((item, index) => {
-      console.log(item);
+      ;
       return (
         <tr>
           <td>{item._name}</td>

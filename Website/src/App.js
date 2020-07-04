@@ -30,7 +30,7 @@ class App extends Component {
         { withCredentials: true }
       )
       .then((response) => {
-        console.log("Token valido");
+        ;
       })
       .catch((error) => {
         if (localStorage.getItem("auth") && error.message !== 'Request aborted') {

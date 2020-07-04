@@ -93,7 +93,7 @@ export default class InventoryList extends React.Component {
 
   chooseProduct = async () => {
     let names = this.state.products.map((x) => x._name);
-    console.log(names);
+    ;
     const { value: product } = await Swal.fire({
       title: "Select product",
       input: "select",
@@ -120,8 +120,8 @@ export default class InventoryList extends React.Component {
     const { value: formValues } = await Swal.fire({
       title: "Add Product",
       html:
-        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">' +
-        '<input id="swal-input2" placeholder="Expire date (YYYY/MM/DD)" class="swal2-input">',
+        '<input id="swal-input1" placeholder="Quantity" className="swal2-input">' +
+        '<input id="swal-input2" placeholder="Expire date (YYYY/MM/DD)" className="swal2-input">',
       focusConfirm: false,
       preConfirm: () => {
         let quantity = document.getElementById("swal-input1").value;
@@ -205,8 +205,8 @@ export default class InventoryList extends React.Component {
     const { value: formValues } = await Swal.fire({
       title: "Edit Product",
       html:
-        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">' +
-        '<input id="swal-input2" placeholder="Expire date (YYYY/MM/DD)" class="swal2-input">' +
+        '<input id="swal-input1" placeholder="Quantity" className="swal2-input">' +
+        '<input id="swal-input2" placeholder="Expire date (YYYY/MM/DD)" className="swal2-input">' +
         "(You can edit only one, leave the other blank)",
       focusConfirm: false,
       preConfirm: () => {
@@ -251,7 +251,7 @@ export default class InventoryList extends React.Component {
       return a._name.localeCompare(b._name);
     });
     return json.map((item, index) => {
-      console.log(item);
+      ;
       return (
         <tr>
           <td>{item._name}</td>
@@ -298,13 +298,54 @@ export default class InventoryList extends React.Component {
         })
         .then((response) => {
           this.setState({ recipes: response.data });
-          console.log(response.data);
         })
         .catch((error) => {
           console.log(error);
         });
     } else {
       Swal.fire("Nope!", "You don't have items on this inventory", "error");
+    }
+  };
+
+  shareInventory = async () => {
+    ;
+    if (!this.props.shared) {
+      let token = localStorage.getItem("auth");
+      let uid = this.props.inventory_id;
+      const form = new FormData();
+      await Swal.fire({
+        title: "Enter user email",
+        input: "email",
+        inputPlaceholder: "Enter email",
+        inputValidator: (value) => {
+          if (!value) {
+            return "Invalid Name";
+          } else {
+            form.append("uid", uid);
+            form.append("friend", value);
+
+            axios
+              .post("http://localhost:1331/inventory/share", form, {
+                headers: { "Content-Type": "multipart/form-data", auth: token },
+                withCredentials: true,
+              })
+              .then((response) => {
+                /* save this token inside localStorage */
+                const token = response.headers["auth"];
+                localStorage.setItem("auth", token);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        },
+      });
+    } else {
+      Swal.fire(
+        "Nope!",
+        "You are not the owner of this shopping list",
+        "error"
+      );
     }
   };
 

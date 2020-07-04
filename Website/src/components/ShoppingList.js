@@ -42,7 +42,7 @@ export default class ShoppingList extends React.Component {
   editShopping = async (uid) => {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new shopping list name",
       input: "text",
       inputPlaceholder: "Enter shopping list name",
@@ -92,6 +92,9 @@ export default class ShoppingList extends React.Component {
             </td>
             <td className="table-edit" key={"edit" + ids[index]}>
               <span
+              className="edit-button"
+              role="img"
+              aria-label="jsx-a11y/aria-proptypes"
                 onClick={() => {
                   this.editShopping(ids[index]);
                 }}
@@ -101,6 +104,9 @@ export default class ShoppingList extends React.Component {
             </td>
             <td className="table-edit" key={"remove" + ids[index]}>
               <span
+              className="edit-button"
+              role="img"
+              aria-label="jsx-a11y/aria-proptypes"
                 onClick={() => {
                   this.removeShopping(ids[index]);
                 }}
@@ -120,7 +126,7 @@ export default class ShoppingList extends React.Component {
     let names = [],
       ids = [];
     let json = this.props.shared;
-    console.log(this.props.shared)
+    
     for (let x in json) {
       names.push(x);
       ids.push(json[x]);
@@ -144,7 +150,7 @@ export default class ShoppingList extends React.Component {
   createShopping = async () => {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter shopping list name",
       input: "text",
       inputPlaceholder: "Enter shopping list name",

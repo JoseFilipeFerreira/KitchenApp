@@ -1,7 +1,6 @@
 import React from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
-import RecipesTable from "./RecipesTable";
 
 export default class ShoppingList extends React.Component {
   constructor(props) {
@@ -83,7 +82,7 @@ export default class ShoppingList extends React.Component {
 
   chooseProduct = async () => {
     let names = this.state.products.map((x) => x._name);
-    console.log(names);
+    ;
     const { value: product } = await Swal.fire({
       title: "Select product",
       input: "select",
@@ -110,7 +109,7 @@ export default class ShoppingList extends React.Component {
     const { value: formValues } = await Swal.fire({
       title: "Add Product",
       html:
-        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
+        '<input id="swal-input1" placeholder="Quantity" className="swal2-input">',
       focusConfirm: false,
       preConfirm: () => {
         let quantity = document.getElementById("swal-input1").value;
@@ -143,7 +142,7 @@ export default class ShoppingList extends React.Component {
   };
 
   shareShopping = async () => {
-    console.log(this.props.shared)
+    
     if (!this.props.shared) {
       let token = localStorage.getItem("auth");
       let uid = this.props.shopping_id;
@@ -188,7 +187,7 @@ export default class ShoppingList extends React.Component {
     let token = localStorage.getItem("auth");
     let uid = this.props.shopping_id;
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new name",
       input: "text",
       inputPlaceholder: "Enter your name",
@@ -219,7 +218,6 @@ export default class ShoppingList extends React.Component {
   };
 
   removeProduct = async (uid) => {
-    let token = localStorage.getItem("auth");
     Swal.fire({
       title: "Remove Product",
       text: "Do you want to remove this product?",
@@ -265,7 +263,7 @@ export default class ShoppingList extends React.Component {
     const { value: formValues } = await Swal.fire({
       title: "Edit Product",
       html:
-        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
+        '<input id="swal-input1" placeholder="Quantity" className="swal2-input">',
       focusConfirm: false,
       preConfirm: () => {
         let quantity = document.getElementById("swal-input1").value;
@@ -307,13 +305,16 @@ export default class ShoppingList extends React.Component {
       return a._name.localeCompare(b._name);
     });
     return json.map((item, index) => {
-      console.log(item);
+      ;
       return (
         <tr>
           <td>{item._name}</td>
           <td>{item._stock}</td>
           <td className="table-edit" key={"edit" + item._guid}>
             <span
+            className="edit-button"
+            role="img"
+            aria-label="jsx-a11y/aria-proptypes"
               onClick={() => {
                 this.editProduct(item._guid);
               }}
@@ -323,6 +324,9 @@ export default class ShoppingList extends React.Component {
           </td>
           <td className="table-edit" key={"remove" + item._guid}>
             <span
+            className="edit-button"
+            role="img"
+            aria-label="jsx-a11y/aria-proptypes"
               onClick={() => {
                 this.removeProduct(item._guid);
               }}

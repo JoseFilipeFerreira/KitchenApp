@@ -105,6 +105,12 @@ body {
   overflow: auto;
 }*/
 
+.icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 9.5px;
+}
+
 .page-header nav {
   display: flex;
   flex-direction: column;
@@ -561,6 +567,7 @@ body {
   font-size: 15px;
 }
 
+
 /* MQ RULES
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 @media screen and (max-width: 767px) {
@@ -620,14 +627,30 @@ body {
   }
 
   .search-and-user {
-    position: absolute;
-    left: 131px;
-    top: 10px;
+    position: relative;
+    bottom: 50px;
+    left: 145px;
     padding: 0;
+    margin-bottom: 0px;
     grid-column-gap: 5px;
     width: calc(100% - 141px);
     border-radius: var(--border-radius);
     background: transparent;
+  }
+
+  .search-and-user form {
+    position: relative;
+    top: 30px;
+  }
+
+  .notificationMenu  {
+    width: 50%;
+    height: 60%;
+    top: 190px
+  }
+
+  .notificationMenu #title {
+    font-size: 17px;
   }
 
   .search-and-user input[type="search"] {
@@ -643,6 +666,27 @@ body {
   .search-and-user .admin-profile svg {
     fill: var(--white);
   }
+
+  #inventoryList td, #inventoryList th {
+    font-size: 23px;
+  }
+
+  #recipeImage {
+    width: 100%;
+  }
+
+  #recipeSummary {
+    width: 100%;
+  }
+
+  #recipeIngredients {
+    width: 100%;
+  }
+
+  #recipeInstructions {
+    width: 100%;
+  }
+
 }
 
 @media screen and (max-width: 400px) {

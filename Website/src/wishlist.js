@@ -4,6 +4,7 @@ import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
 import WishlistPage from "./components/WishlistPage";
+import Notifications from "./components/Notifications";
 
 export default class Wishlist extends Component {
   constructor(props) {
@@ -19,11 +20,10 @@ export default class Wishlist extends Component {
   }
 
   handler = () => {
-    let old = this.state.items.length
+    let old = this.state.items.length;
     this.getWishlistInfo();
-    if (old === this.state.items.length)
-      this.getWishlistInfo();
-  }
+    if (old === this.state.items.length) this.getWishlistInfo();
+  };
 
   getInfo = () => {
     let token = localStorage.getItem("auth");
@@ -63,7 +63,7 @@ export default class Wishlist extends Component {
         { withCredentials: true }
       )
       .then((response) => {
-        console.log(response.data);
+        ;
         let json = response.data;
         this.setState({
           wishlist_name: json["_name"],
@@ -87,7 +87,7 @@ export default class Wishlist extends Component {
     let regex = /[/]wishlist[/](.*)/;
     let id = url.match(regex)[1];
     if (id != null) {
-      console.log(id);
+      ;
       this.setState({ wishlist_id: id }, () => {
         this.getWishlistInfo();
       });
@@ -100,7 +100,7 @@ export default class Wishlist extends Component {
     let token = localStorage.getItem("auth");
     let uid = this.state.wishlist_id;
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new name",
       input: "text",
       inputPlaceholder: "Enter your name",
@@ -133,12 +133,12 @@ export default class Wishlist extends Component {
   showItems = () => {
     var x;
     var json = this.state.items;
-    json.sort(function(a, b){
+    json.sort(function (a, b) {
       return a._name.localeCompare(b._name);
     });
     for (x in json) {
       let product = json[x];
-      console.log(product);
+      ;
       document.getElementById("inventoryList").innerHTML += "<tr>";
       document.getElementById("inventoryList").innerHTML +=
         "<td>" +
@@ -163,6 +163,14 @@ export default class Wishlist extends Component {
   collapseBar() {
     if (document.body.className === "") {
       document.body.className = "collapsed";
+    } else {
+      document.body.className = "";
+    }
+  }
+
+  openMenu() {
+    if (document.body.className === "") {
+      document.body.className = "mob-menu-opened";
     } else {
       document.body.className = "";
     }
@@ -262,6 +270,7 @@ export default class Wishlist extends Component {
               className="toggle-mob-menu"
               aria-expanded="false"
               aria-label="open menu"
+              onClick={this.openMenu}
             >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
@@ -273,26 +282,38 @@ export default class Wishlist extends Component {
               </li>
               <li>
                 <a href="/dashboard">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728990238734549082/inventory.svg"/>
                   <span>Inventories</span>
                 </a>
               </li>
               <li>
                 <a href="/dashboard/wishlists">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728992299346034718/heart.svg"/>
                   <span>Wishlists</span>
                 </a>
               </li>
               <li>
                 <a href="/dashboard/shoppinglists">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728992538672889856/shopping-cart.svg"/>
                   <span>Shopping Lists</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/products">
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728992885697019924/milk.svg"/>
+                  <span>Products</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes">
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728993112860393482/recipe.svg"/>
+                  <span>Recipes</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes/stared">
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728993342196547715/star.svg"/>
+                  <span>Favourite Recipes</span>
                 </a>
               </li>
               <li className="menu-heading">
@@ -308,9 +329,7 @@ export default class Wishlist extends Component {
               </li>
               <li>
                 <a href="/dashboard/friends">
-                  <svg>
-                    <use href="#users"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728993918259298355/team.svg"/>
                   <span>Friends</span>
                 </a>
               </li>
@@ -339,27 +358,18 @@ export default class Wishlist extends Component {
           </nav>
         </header>
         <section className="page-content">
-          <section className="search-and-user">
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.state.name}</span>
-              <div className="notifications">
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
-            </div>
-          </section>
-            <WishlistPage 
+          <Notifications name={this.state.name} />
+          <WishlistPage
             wishlist_name={this.state.wishlist_name}
             wishlist_id={this.state.wishlist_id}
             items={this.state.items}
             shared={this.props.shared}
-            handler = {this.handler}
-            />
+            handler={this.handler}
+          />
           <footer className="page-footer">
             <small>
               Made with <span>❤</span> by{" "}
-              <a href="http://www.uminho.pt/">Grupo 1</a>
+              <a href="https://github.com/JoseFilipeFerreira/LI4-1920/">Grupo 1</a>
             </small>
           </footer>
         </section>

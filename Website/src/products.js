@@ -39,7 +39,7 @@ export default class Products extends Component {
         })
         .then((response) => {
           this.setState({ products: response.data });
-          console.log(response.data)
+          
         })
         .catch((error) => {
           console.log(error);
@@ -99,7 +99,7 @@ export default class Products extends Component {
         { withCredentials: true }
       )
       .then((response) => {
-        console.log(response.data)
+        
         this.setState({ inventories: response.data });
       })
       .catch((error) => {
@@ -271,49 +271,37 @@ export default class Products extends Component {
               </li>
               <li>
                 <a href="/dashboard">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728990238734549082/inventory.svg"/>
                   <span>Inventories</span>
                 </a>
               </li>
               <li>
                 <a href="/dashboard/wishlists">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728992299346034718/heart.svg"/>
                   <span>Wishlists</span>
                 </a>
               </li>
               <li>
                 <a href="/dashboard/shoppinglists">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728992538672889856/shopping-cart.svg"/>
                   <span>Shopping Lists</span>
                 </a>
               </li>
               <li>
                 <a href="/dashboard/products">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728992885697019924/milk.svg"/>
                   <span>Products</span>
                 </a>
               </li>
               <li>
                 <a href="/dashboard/recipes">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728993112860393482/recipe.svg"/>
                   <span>Recipes</span>
                 </a>
               </li>
               <li>
                 <a href="/dashboard/recipes/stared">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728993342196547715/star.svg"/>
                   <span>Favourite Recipes</span>
                 </a>
               </li>
@@ -330,9 +318,7 @@ export default class Products extends Component {
               </li>
               <li>
                 <a href="/dashboard/friends">
-                  <svg>
-                    <use href="#users"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728993918259298355/team.svg"/>
                   <span>Friends</span>
                 </a>
               </li>
@@ -392,7 +378,7 @@ export default class Products extends Component {
           <footer className="page-footer">
             <small>
               Made with <span>❤</span> by{" "}
-              <a href="http://www.uminho.pt/">Grupo 1</a>
+              <a href="https://github.com/JoseFilipeFerreira/LI4-1920/">Grupo 1</a>
             </small>
           </footer>
         </section>
