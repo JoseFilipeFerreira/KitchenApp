@@ -211,14 +211,14 @@ export default class Dashboard extends Component {
             </button>
             <ul className="admin-menu">
               <li className="menu-heading">
-                <h3>Shopping Lists</h3>
+                <h3>Inventories</h3>
               </li>
               <li>
                 <a href="/dashboard">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
-                  <span>Shopping Lists</span>
+                  <span>Inventories</span>
                 </a>
               </li>
               <li>
