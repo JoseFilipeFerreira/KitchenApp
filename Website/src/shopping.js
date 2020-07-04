@@ -93,39 +93,7 @@ export default class Shopping extends Component {
 
   editProduct = () => {};
 
-  editShopping = async () => {
-    let token = localStorage.getItem("auth");
-    let uid = this.state.shopping_id;
-    const form = new FormData();
-    const { value: name } = await Swal.fire({
-      title: "Enter new name",
-      input: "text",
-      inputPlaceholder: "Enter your name",
-      inputValidator: (value) => {
-        if (!value) {
-          return "Invalid Name";
-        } else {
-          form.append("uid", uid);
-          form.append("name", value);
-
-          axios
-            .post("http://localhost:1331/shopping/edit", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-              this.handler();
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      },
-    });
-  };
+  
 
   
 
