@@ -12,7 +12,6 @@ import Friends from "./friends";
 import Recipes from "./recipes";
 import Recipe from "./recipe";
 import Stared from "./stared";
-import { Helmet } from "react-helmet";
 import Whishlists from "./wishlists";
 import ShoppingLists from "./shoppinglists";
 import Products from "./products";
@@ -30,7 +29,7 @@ class App extends Component {
         { withCredentials: true }
       )
       .then((response) => {
-        console.log("Token valido");
+        ;
       })
       .catch((error) => {
         if (localStorage.getItem("auth") && error.message !== 'Request aborted') {
@@ -47,9 +46,6 @@ class App extends Component {
     if (this.isAuth() === false) {
       return (
         <React.Fragment>
-          <Helmet>
-            <title>KitchenApp</title>
-          </Helmet>
           <Router>
             <Switch>
               <Route path="/register" component={Register} />
@@ -61,9 +57,6 @@ class App extends Component {
     } else {
       return (
         <React.Fragment>
-          <Helmet>
-            <title>KitchenApp</title>
-          </Helmet>
           <Router>
             <Switch>
               <Route exact path="/dashboard" component={Dashboard} />

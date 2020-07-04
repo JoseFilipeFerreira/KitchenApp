@@ -3,7 +3,7 @@ import React from "react";
 export default class RecipePage extends React.Component {
   getIngredients = function () {
     let ingredients = this.props.ingredients;
-    console.log(ingredients)
+    
     return ingredients.map((ingredient, index) => {
     return <div>{ingredient.original}</div>;
     });

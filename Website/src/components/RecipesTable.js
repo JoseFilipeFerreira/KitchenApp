@@ -53,7 +53,7 @@ export default class RecipesTable extends React.Component {
 }
 const RenderRow = (props) => {
   function createButton() {
-    console.log(props);
+    ;
     if (props.stared) {
       return (
         <td

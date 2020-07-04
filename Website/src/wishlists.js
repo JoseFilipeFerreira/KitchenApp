@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 import WishlistList from "./components/WishlistList";
+import Notifications from "./components/Notifications";
 
 export default class Wishlists extends Component {
   constructor(props) {
@@ -103,6 +104,14 @@ export default class Wishlists extends Component {
     }
   }
 
+  openMenu() {
+    if (document.body.className === "") {
+      document.body.className = "mob-menu-opened";
+    } else {
+      document.body.className = "";
+    }
+  }
+
   componentDidMount() {
     this.getWishlists();
     this.getShared();
@@ -183,10 +192,18 @@ export default class Wishlists extends Component {
         <header className="page-header">
           <nav>
             <Link to="/dashboard">
-              <img className="logo" src="https://cdn.discordapp.com/attachments/443699822025900033/703629640773795850/fork.svg"
-                alt="forecastr logo" />
+              <img
+                className="logo"
+                src="https://cdn.discordapp.com/attachments/443699822025900033/703629640773795850/fork.svg"
+                alt="forecastr logo"
+              />
             </Link>
-            <button className="toggle-mob-menu" aria-expanded="false" aria-label="open menu">
+            <button
+              className="toggle-mob-menu"
+              aria-expanded="false"
+              aria-label="open menu"
+              onClick={this.openMenu}
+            >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
               </svg>
@@ -197,36 +214,40 @@ export default class Wishlists extends Component {
               </li>
               <li>
                 <a href="/dashboard">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728990238734549082/inventory.svg"/>
                   <span>Inventories</span>
                 </a>
               </li>
               <li>
                 <a href="/dashboard/wishlists">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728992299346034718/heart.svg"/>
                   <span>Wishlists</span>
                 </a>
               </li>
               <li>
                 <a href="/dashboard/shoppinglists">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728992538672889856/shopping-cart.svg"/>
                   <span>Shopping Lists</span>
                 </a>
-              </li >
+              </li>
               <li>
-                <a href="#0">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
+                <a href="/dashboard/products">
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728992885697019924/milk.svg"/>
+                  <span>Products</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes">
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728993112860393482/recipe.svg"/>
                   <span>Recipes</span>
                 </a>
-              </li >
+              </li>
+              <li>
+                <a href="/dashboard/recipes/stared">
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728993342196547715/star.svg"/>
+                  <span>Favourite Recipes</span>
+                </a>
+              </li>
               <li className="menu-heading">
                 <h3>Settings</h3>
               </li>
@@ -237,15 +258,13 @@ export default class Wishlists extends Component {
                   </svg>
                   <span>Account</span>
                 </a>
-              </li >
+              </li>
               <li>
                 <a href="/dashboard/friends">
-                  <svg>
-                    <use href="#users"></use>
-                  </svg>
+                <img id="inventory" className="icon" alt="icon" src="https://cdn.discordapp.com/attachments/687251872402112533/728993918259298355/team.svg"/>
                   <span>Friends</span>
                 </a>
-              </li >
+              </li>
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
@@ -253,36 +272,32 @@ export default class Wishlists extends Component {
                   </svg>
                   <span>Logout</span>
                 </Link>
-              </li >
+              </li>
               <li>
-                <button className="collapse-btn" aria-expanded="true" aria-label="collapse menu" onClick={this.collapseBar}>
+                <button
+                  className="collapse-btn"
+                  aria-expanded="true"
+                  aria-label="collapse menu"
+                  onClick={this.collapseBar}
+                >
                   <svg aria-hidden="true">
                     <use href="#collapse"></use>
                   </svg>
                   <span>Collapse</span>
                 </button>
-              </li >
-            </ul >
-          </nav >
-        </header >
+              </li>
+            </ul>
+          </nav>
+        </header>
         <section className="page-content">
-          <section className="search-and-user">
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.state.name}</span>
-              <div className="notifications">
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
-            </div>
-          </section>
+          <Notifications name={this.state.name}/>
           <WishlistList 
           wishlists={this.state.wishlists}
           shared={this.state.shared}
           handler = {this.handler}
           />
           <footer className="page-footer">
-            <small>Made with <span>❤</span> by <a href="http://www.uminho.pt/">Grupo 1</a>
+            <small>Made with <span>❤</span> by <a href="https://github.com/JoseFilipeFerreira/LI4-1920/">Grupo 1</a>
             </small>
           </footer>
         </section >

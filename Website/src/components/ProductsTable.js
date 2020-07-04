@@ -26,7 +26,7 @@ export default class RecipesTable extends React.Component {
   getRowsData = function () {
     var items = this.props.data;
     var keys = this.getKeys();
-    console.log(keys);
+    ;
     //delete keys[2];
     return items.map((row, index) => {
       return (
@@ -60,8 +60,8 @@ const RenderRow = (props) => {
     const { value: formValues } = await Swal.fire({
       title: "Add Product",
       html:
-        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">' +
-        '<input id="swal-input2" placeholder="Expire date (YYYY/MM/DD)" class="swal2-input">',
+        '<input id="swal-input1" placeholder="Quantity" className="swal2-input">' +
+        '<input id="swal-input2" placeholder="Expire date (YYYY/MM/DD)" className="swal2-input">',
       focusConfirm: false,
       preConfirm: () => {
         let quantity = document.getElementById("swal-input1").value;
@@ -95,36 +95,23 @@ const RenderRow = (props) => {
   async function addProductWishlist(product_id, whishlist_id) {
     let token = localStorage.getItem("auth");
     const form = new FormData();
-    const { value: formValues } = await Swal.fire({
-      title: "Add Product",
-      html:
-        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
-      focusConfirm: false,
-      preConfirm: () => {
-        let quantity = document.getElementById("swal-input1").value;
-        return quantity;
-      },
-    });
 
-    if (formValues != null) {
-      form.append("product", product_id);
-      form.append("quantity", formValues);
-      form.append("uid", whishlist_id);
+    form.append("product", product_id);
+    form.append("uid", whishlist_id);
 
-      axios
-        .post("http://localhost:1331/wishlist/addproduct", form, {
-          headers: { "Content-Type": "multipart/form-data", auth: token },
-          withCredentials: true,
-        })
-        .then((response) => {
-          /* save this token inside localStorage */
-          const token = response.headers["auth"];
-          localStorage.setItem("auth", token);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    axios
+      .post("http://localhost:1331/wishlist/addproduct", form, {
+        headers: { "Content-Type": "multipart/form-data", auth: token },
+        withCredentials: true,
+      })
+      .then((response) => {
+        /* save this token inside localStorage */
+        const token = response.headers["auth"];
+        localStorage.setItem("auth", token);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   async function addProductShopping(product_id, shopping_id) {
@@ -133,7 +120,7 @@ const RenderRow = (props) => {
     const { value: formValues } = await Swal.fire({
       title: "Add Product",
       html:
-        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
+        '<input id="swal-input1" placeholder="Quantity" className="swal2-input">',
       focusConfirm: false,
       preConfirm: () => {
         let quantity = document.getElementById("swal-input1").value;
@@ -164,7 +151,7 @@ const RenderRow = (props) => {
 
   async function addProduct(e) {
     let lists = ["Inventory", "Wishlist", "Shoppinglist"];
-    console.log(e);
+    ;
 
     const { value: list } = await Swal.fire({
       title: "Select list",
@@ -217,9 +204,9 @@ const RenderRow = (props) => {
       });
 
       const id = Object.values(names)[index];
-      console.log(names);
-      console.log(Object.values(names));
-      console.log(id);
+      ;
+      ;
+      ;
       switch (choice) {
         case "Inventory":
           addProductInventory(e, id);
