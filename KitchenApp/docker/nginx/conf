@@ -34,11 +34,19 @@ http {
         server_name kitchen.app;
 
         location /login {
-           proxy_pass http://auths/login;
+            proxy_pass http://auths/login;
+            proxy_hide_header Access-Control-Allow-Origin;
+            proxy_hide_header Access-Control-Allow-Credentials;
+            add_header Access-Control-Allow-Origin $http_origin always;
+            add_header Access-Control-Allow-Credentials true always;
         }
 
         location /signup {
-           proxy_pass http://auths/signup;
+            proxy_pass http://auths/signup;
+            proxy_hide_header Access-Control-Allow-Origin;
+            proxy_hide_header Access-Control-Allow-Credentials;
+            add_header Access-Control-Allow-Origin $http_origin always;
+            add_header Access-Control-Allow-Credentials true always;
         }
 
         location /auth {
@@ -62,6 +70,10 @@ http {
             auth_request /auth;
             auth_request_set $auth_header_auth $upstream_http_header_auth;
             proxy_pass http://users/;
+            proxy_hide_header Access-Control-Allow-Origin;
+            proxy_hide_header Access-Control-Allow-Credentials;
+            add_header Access-Control-Allow-Origin $http_origin always;
+            add_header Access-Control-Allow-Credentials true always;
         }
 
         location /product/ {
@@ -77,6 +89,10 @@ http {
             auth_request /auth;
             auth_request_set $auth_header_auth $upstream_http_header_auth;
             proxy_pass http://prods/;
+            proxy_hide_header Access-Control-Allow-Origin;
+            proxy_hide_header Access-Control-Allow-Credentials;
+            add_header Access-Control-Allow-Origin $http_origin always;
+            add_header Access-Control-Allow-Credentials true always;
         }
 
         location /shopping/ {
@@ -92,6 +108,10 @@ http {
             auth_request /auth;
             auth_request_set $auth_header_auth $upstream_http_header_auth;
             proxy_pass http://shp/;
+            proxy_hide_header Access-Control-Allow-Origin;
+            proxy_hide_header Access-Control-Allow-Credentials;
+            add_header Access-Control-Allow-Origin $http_origin always;
+            add_header Access-Control-Allow-Credentials true always;
         }
 
         location /inventory/ {
@@ -107,6 +127,10 @@ http {
             auth_request /auth;
             auth_request_set $auth_header_auth $upstream_http_header_auth;
             proxy_pass http://inv/;
+            proxy_hide_header Access-Control-Allow-Origin;
+            proxy_hide_header Access-Control-Allow-Credentials;
+            add_header Access-Control-Allow-Origin $http_origin always;
+            add_header Access-Control-Allow-Credentials true always;
         }
 
         location /wishlist/ {
@@ -122,6 +146,10 @@ http {
             auth_request /auth;
             auth_request_set $auth_header_auth $upstream_http_header_auth;
             proxy_pass http://wsh/;
+            proxy_hide_header Access-Control-Allow-Origin;
+            proxy_hide_header Access-Control-Allow-Credentials;
+            add_header Access-Control-Allow-Origin $http_origin always;
+            add_header Access-Control-Allow-Credentials true always;
         }
 
         location /recipe/ {
@@ -137,6 +165,10 @@ http {
             auth_request /auth;
             auth_request_set $auth_header_auth $upstream_http_header_auth;
             proxy_pass http://rec/;
+            proxy_hide_header Access-Control-Allow-Origin;
+            proxy_hide_header Access-Control-Allow-Credentials;
+            add_header Access-Control-Allow-Origin $http_origin always;
+            add_header Access-Control-Allow-Credentials true always;
         }
     }
 }

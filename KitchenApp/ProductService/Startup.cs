@@ -30,8 +30,7 @@ namespace ProductService
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("http://localhost:1331", "http://localhost:3000")
-                        .AllowCredentials()
+                    builder.AllowAnyOrigin()
                         .AllowAnyHeader()
                         .WithExposedHeaders("auth")
                         .AllowAnyMethod();
