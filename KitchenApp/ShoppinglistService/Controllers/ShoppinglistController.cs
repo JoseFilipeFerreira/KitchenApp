@@ -89,7 +89,7 @@ namespace ShoppinglistService.Controllers
             [FromForm] string uid, [FromForm] long quantity)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !await UserStore.Exists(user))
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 return;
@@ -109,7 +109,7 @@ namespace ShoppinglistService.Controllers
         public async void RemoveProduct([FromHeader] string auth, [FromForm] string uid, [FromForm] string prod)
         {
             string user;
-            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !await UserStore.Exists(user))
+            if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
             {
                 HttpContext.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 return;

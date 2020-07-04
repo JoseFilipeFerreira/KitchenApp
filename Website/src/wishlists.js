@@ -2,17 +2,24 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
-import Swal from "sweetalert2";
+import WishlistList from "./components/WishlistList";
 
 export default class Wishlists extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      wishlists: null,
-      shared: null,
+      wishlists: {},
+      shared: {},
       name: null,
     };
+  }
+
+  handler = () => {
+    let old = this.state.wishlists.length
+    this.getWishlists();
+    if (old === this.state.wishlists.length)
+      this.getWishlists();
   }
 
   getWishlists = () => {
@@ -23,7 +30,6 @@ export default class Wishlists extends Component {
       }, { withCredentials: true })
       .then((response) => {
         this.setState({ wishlists: response.data });
-        this.showWishList();
       })
       .catch((error) => {
         console.log(error);
@@ -44,7 +50,6 @@ export default class Wishlists extends Component {
       }, { withCredentials: true })
       .then((response) => {
         this.setState({ shared: response.data });
-        this.showSharedList();
       })
       .catch((error) => {
         console.log(error);
@@ -83,56 +88,6 @@ export default class Wishlists extends Component {
       return false;
     }
   };
-
-  createWishlist = async () => {
-    let token = localStorage.getItem('auth');
-    const form = new FormData();
-    const { value: name } = await Swal.fire({
-      title: "Enter wishlist name",
-      input: "text",
-      inputPlaceholder: "Enter wishlist name",
-      inputValidator: (value) => {
-        if (!value) {
-          return "Invalid Name";
-        } else {
-          form.append("name", value);
-
-          axios
-            .post("http://localhost:1331/wishlist/add", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-              window.location.reload();
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      },
-    });
-  }
-
-  showWishList = () => {
-    var x;
-    var json = this.state.wishlists;
-    for (x in json) {
-      document.getElementById("wishList").innerHTML += '<a href="/dashboard/wishlist/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
-        x + '"></input></a>'
-    }
-  }
-
-  showSharedList = () => {
-    var x;
-    var json = this.state.shared;
-    for (x in json) {
-      document.getElementById("sharedList").innerHTML += '<a href="/dashboard/wishlist/' + json[x] + '"><input class="inventory-entry" type="button" value="' +
-        x + '"></input></a>'
-    }
-  }
 
   removeToken = () => {
     localStorage.removeItem('auth');
@@ -312,17 +267,6 @@ export default class Wishlists extends Component {
         </header >
         <section className="page-content">
           <section className="search-and-user">
-            {/*
-            <form>
-              <input type="search" placeholder="Search Pages..." />
-              <button type="submit" aria-label="submit form">
-                <svg aria-hidden="true">
-                  <use href="#search"></use>
-                </svg>
-              </button>
-            </form>
-            */
-            }
             <div className="admin-profile">
               <span className="greeting">Hello {this.state.name}</span>
               <div className="notifications">
@@ -332,32 +276,11 @@ export default class Wishlists extends Component {
               </div>
             </div>
           </section>
-          <section className="grid">
-            <article className="inventories">
-              <div className="inventories-text">
-                Wishlists
-              </div>
-              <div id="wishList">
-
-              </div>
-              <div className="inventory-button">
-                <input
-                  className="create-button"
-                  type="button"
-                  value="Create Wishlist"
-                  onClick={this.createWishlist}
-                ></input>
-              </div>
-            </article>
-            <article className="inventories">
-              <div className="inventories-text">
-                Shared Wishlists
-              </div>
-              <div id="sharedList">
-
-              </div>
-            </article>
-          </section>
+          <WishlistList 
+          wishlists={this.state.wishlists}
+          shared={this.state.shared}
+          handler = {this.handler}
+          />
           <footer className="page-footer">
             <small>Made with <span>❤</span> by <a href="http://www.uminho.pt/">Grupo 1</a>
             </small>

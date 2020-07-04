@@ -7,6 +7,7 @@ import Dashboard from "./dashboard";
 import UserInfo from "./userinfo";
 import Inventory from "./inventory";
 import Shopping from "./shopping";
+import Wishlist from "./wishlist";
 import Friends from "./friends";
 import Recipes from "./recipes";
 import Recipe from "./recipe";
@@ -74,6 +75,8 @@ class App extends Component {
               <Route path="/dashboard/recipes/" component={Recipes} />
               <Route path="/dashboard/recipe/" component={Recipe} />
               <Route path="/dashboard/wishlists/" component={Whishlists} />
+              <Route path="/dashboard/wishlist/" render={(props) => <Wishlist shared={false} {...props}/>} />
+              <Route path="/dashboard/shared/wishlist/" render={(props) =><Wishlist shared={true} {...props}/>} />
               <Route path="/dashboard/shoppinglists/" component={ShoppingLists} />
               <Route path="/dashboard/shopping/" render={(props) => <Shopping shared={false} {...props}/>} />
               <Route path="/dashboard/shared/shopping/" render={(props) =><Shopping shared={true} {...props}/>} />

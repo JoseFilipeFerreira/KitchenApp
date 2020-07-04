@@ -281,7 +281,6 @@ body {
 
 .page-content .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
   grid-gap: 30px;
 }
 
@@ -331,6 +330,7 @@ body {
 #inventoryList {
   margin-top: 20px;
   border-collapse: collapse;
+  width: 100%;
 }
 
 #inventoryList td, #inventoryList th {
@@ -355,6 +355,7 @@ body {
 #sharedList {
   margin-top: 20px;
   border-collapse: collapse;
+  width: 100%;
 }
 
 #sharedList td, #sharedList th {
@@ -379,6 +380,7 @@ body {
 #recipesList {
   margin-top: 20px;
   border-collapse: collapse;
+  width: 100%;
 }
 
 #recipesList td, #recipesList th {
@@ -407,12 +409,13 @@ body {
 }
 
 #recipesList td#image {
-  width: 1vh;
+  width: 1%;
 }
 
 #recipesList #fav-button {
   font-size: 30px;
   cursor: pointer;
+  width: 1%;
 }
 
 #recipesList td#title {
@@ -491,6 +494,72 @@ body {
   cursor: pointer;
 }
 
+
+/* Notifications */
+
+.notifications {
+  cursor: pointer;
+}
+
+.notificationMenu {
+  position: absolute;
+  right: 35px;
+  top: 70px;
+  width: 30%;
+  height: 40%;
+  overflow-y: auto;
+  background-color: var(--page-header-bgColor);
+  color: white;
+  box-shadow: 0px 0px 10px #5a5a5a;
+  z-index: 1;
+}
+
+.notificationMenuHidden {
+  display: none;
+  transition-delay: 0.35s;
+}
+
+.notificationMenu #title {
+  font-weight: bold;
+  padding: 10px;
+  font-size: 25px;
+}
+
+.notificationMenu ul{
+  margin-left: 3px;
+  margin-right: 3px;
+  margin-top: 3px;
+}
+
+.notificationMenu li{
+  margin: 5px;
+  padding: 7px;
+  background-color: #363c46;
+}
+
+.notificationMenu li:hover{
+  background-color: #454c58;
+}
+
+.notificationMenu #topic-inventory {
+  padding: 5px;
+  font-weight: bold;
+  font-size: 18px;
+  color: var(--red);
+}
+
+.notificationMenu #topic-friends {
+  padding: 5px;
+  font-weight: bold;
+  font-size: 18px;
+  color: rgb(36, 173, 82);
+}
+
+.notificationMenu #desc {
+  padding: 5px;
+  font-weight: normal;
+  font-size: 15px;
+}
 
 /* MQ RULES
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

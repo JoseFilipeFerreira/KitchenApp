@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
-import Swal from "sweetalert2";
 import ProductsTable from "./components/ProductsTable";
+import Notifications from "./components/Notifications"
 
 export default class Products extends Component {
   constructor(props) {
@@ -155,6 +155,14 @@ export default class Products extends Component {
     }
   }
 
+  openMenu() {
+    if (document.body.className === "") {
+      document.body.className = "mob-menu-opened";
+    } else {
+      document.body.className = "";
+    }
+  }
+
   componentDidMount() {
     this.getInfo();
     this.getInventories();
@@ -251,6 +259,7 @@ export default class Products extends Component {
               className="toggle-mob-menu"
               aria-expanded="false"
               aria-label="open menu"
+              onClick={this.openMenu}
             >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
@@ -285,11 +294,27 @@ export default class Products extends Component {
                 </a>
               </li>
               <li>
+                <a href="/dashboard/products">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Products</span>
+                </a>
+              </li>
+              <li>
                 <a href="/dashboard/recipes">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
                   <span>Recipes</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes/stared">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Favourite Recipes</span>
                 </a>
               </li>
               <li className="menu-heading">
@@ -336,11 +361,12 @@ export default class Products extends Component {
           </nav>
         </header>
         <section className="page-content">
+          <Notifications name={this.state.name}/>
           <section className="search-and-user">
             <form onSubmit={this.submitHandler}>
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Search recipes..."
                 name="search"
                 value={search}
                 onChange={this.changeHandler}
@@ -351,14 +377,6 @@ export default class Products extends Component {
                 </svg>
               </button>
             </form>
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.state.name}</span>
-              <div className="notifications">
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
-            </div>
           </section>
           <section className="grid">
             <article className="inventories">

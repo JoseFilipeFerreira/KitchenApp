@@ -2,12 +2,12 @@ import React from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 
-export default class InventoryList extends React.Component {
-  removeInventory = async (uid) => {
+export default class WishlistList extends React.Component {
+  removeWishlist = async (uid) => {
     let token = localStorage.getItem("auth");
     Swal.fire({
-      title: "Remove Inventory",
-      text: "Do you want to delete this inventory?",
+      title: "Remove Wishlist",
+      text: "Do you want to delete this wishlist?",
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -17,7 +17,7 @@ export default class InventoryList extends React.Component {
       if (result.value) {
         axios
           .post(
-            "http://localhost:1331/inventory/remove/" + uid,
+            "http://localhost:1331/wishlist/remove/" + uid,
             {},
             {
               headers: { auth: token },
@@ -29,23 +29,23 @@ export default class InventoryList extends React.Component {
             const token = response.headers["auth"];
             localStorage.setItem("auth", token);
             this.props.handler();
-            Swal.fire("Deleted!", "Inventory has been deleted.", "success");
+            Swal.fire("Deleted!", "Wishlist has been deleted.", "success");
           })
           .catch((error) => {
             console.log(error);
-            Swal.fire("Nope!", "Inventory has not been deleted.", "error");
+            Swal.fire("Nope!", "Wishlist has not been deleted.", "error");
           });
       }
     });
   };
 
-  editInventory = async (uid) => {
+  editWishlist = async (uid) => {
     let token = localStorage.getItem("auth");
     const form = new FormData();
     await Swal.fire({
-      title: "Enter new inventory name",
+      title: "Enter new wishlist name",
       input: "text",
-      inputPlaceholder: "Enter inventory name",
+      inputPlaceholder: "Enter wishlist name",
       inputValidator: (value) => {
         if (!value) {
           return "Invalid Name";
@@ -54,7 +54,7 @@ export default class InventoryList extends React.Component {
           form.append("name", value);
 
           axios
-            .post("http://localhost:1331/inventory/edit", form, {
+            .post("http://localhost:1331/wishlist/edit", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -63,32 +63,32 @@ export default class InventoryList extends React.Component {
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
               this.props.handler();
-              Swal.fire("Edited!", "Inventory has been edited.", "success");
+              Swal.fire("Edited!", "Wishlist has been edited.", "success");
             })
             .catch((error) => {
               console.log(error);
-              Swal.fire("Nope!", "Inventory has not been edited.", "error");
+              Swal.fire("Nope!", "Wishlist has not been edited.", "error");
             });
         }
       },
     });
   };
 
-  showInventoryList = function () {
+  showWishlistList = function () {
     let names = [],
       ids = [];
-    let json = this.props.inventories;
+    let json = this.props.wishlists;
     for (let x in json) {
       names.push(x);
       ids.push(json[x]);
     }
     if (Object.keys(json).length) {
-      return names.map((inventory, index) => {
-        let link = "/dashboard/inventory/" + ids[index];
+      return names.map((wishlist, index) => {
+        let link = "/dashboard/wishlist/" + ids[index];
         return (
-          <tr key={inventory + ids[index]}>
+          <tr key={wishlist + ids[index]}>
             <td key={ids[index]}>
-              <a href={link}>{inventory}</a>
+              <a href={link}>{wishlist}</a>
             </td>
             <td className="table-edit" key={"edit" + ids[index]}>
               <span
@@ -96,7 +96,7 @@ export default class InventoryList extends React.Component {
                 role="img"
                 aria-label="jsx-a11y/aria-proptypes"
                 onClick={() => {
-                  this.editInventory(ids[index]);
+                  this.editWishlist(ids[index]);
                 }}
               >
                 ✏️
@@ -108,7 +108,7 @@ export default class InventoryList extends React.Component {
                 role="img"
                 aria-label="jsx-a11y/aria-proptypes"
                 onClick={() => {
-                  this.removeInventory(ids[index]);
+                  this.removeWishlist(ids[index]);
                 }}
               >
                 ❌
@@ -132,12 +132,12 @@ export default class InventoryList extends React.Component {
       ids.push(json[x]);
     }
     if (Object.keys(json).length) {
-      return names.map((inventory, index) => {
-        let link = "/dashboard/shared/inventory/" + ids[index];
+      return names.map((wishlist, index) => {
+        let link = "/dashboard/shared/wishlist/" + ids[index];
         return (
-          <tr key={inventory + ids[index]}>
+          <tr key={wishlist + ids[index]}>
             <td key={ids[index]}>
-              <a href={link}>{inventory}</a>
+              <a href={link}>{wishlist}</a>
             </td>
           </tr>
         );
@@ -147,13 +147,13 @@ export default class InventoryList extends React.Component {
     }
   };
 
-  createInventory = async () => {
+  createWishlist = async () => {
     let token = localStorage.getItem("auth");
     const form = new FormData();
     await Swal.fire({
-      title: "Enter inventory name",
+      title: "Enter wishlist name",
       input: "text",
-      inputPlaceholder: "Enter inventory name",
+      inputPlaceholder: "Enter wishlist name",
       inputValidator: (value) => {
         if (!value) {
           return "Invalid Name";
@@ -161,7 +161,7 @@ export default class InventoryList extends React.Component {
           form.append("name", value);
 
           axios
-            .post("http://localhost:1331/inventory/add", form, {
+            .post("http://localhost:1331/wishlist/add", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -170,11 +170,11 @@ export default class InventoryList extends React.Component {
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
               this.props.handler();
-              Swal.fire("Created!", "Inventory has been created.", "success");
+              Swal.fire("Created!", "Wishlist has been created.", "success");
             })
             .catch((error) => {
               console.log(error);
-              Swal.fire("Nope!", "Inventory has not been created.", "error");
+              Swal.fire("Nope!", "Wishlist has not been created.", "error");
             });
         }
       },
@@ -185,22 +185,22 @@ export default class InventoryList extends React.Component {
     return (
       <section className="grid">
         <article className="inventories">
-          <div className="inventories-text">Inventories</div>
+          <div className="inventories-text">Wishlists</div>
           <table id="inventoryList">
             <thead />
-            <tbody>{this.showInventoryList()}</tbody>
+            <tbody>{this.showWishlistList()}</tbody>
           </table>
           <div className="inventory-button">
             <input
               className="create-button"
               type="button"
-              value="Create Inventory"
-              onClick={this.createInventory}
+              value="Create Wishlist"
+              onClick={this.createWishlist}
             ></input>
           </div>
         </article>
         <article className="inventories">
-          <div className="inventories-text">Shared Inventories</div>
+          <div className="inventories-text">Shared Wishlists</div>
           <table id="sharedList">
             <thead />
             <tbody>{this.showSharedList()}</tbody>

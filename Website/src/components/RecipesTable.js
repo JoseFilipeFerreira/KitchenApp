@@ -3,12 +3,9 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 export default class RecipesTable extends React.Component {
-
   getKeys = function () {
-    if (this.props.data.length)
-      return Object.keys(this.props.data[0]);
-    else
-      return [];
+    if (this.props.data.length) return Object.keys(this.props.data[0]);
+    else return [];
   };
 
   getHeader = function () {
@@ -31,7 +28,15 @@ export default class RecipesTable extends React.Component {
     var keys = this.getKeys();
     delete keys[2];
     return items.map((row, index) => {
-      return <RenderRow key={index} data={row} keys={keys} stared={this.props.stared} handler={this.props.handler}/>;
+      return (
+        <RenderRow
+          key={index}
+          data={row}
+          keys={keys}
+          stared={this.props.stared}
+          handler={this.props.handler}
+        />
+      );
     });
   };
 
@@ -47,29 +52,44 @@ export default class RecipesTable extends React.Component {
   }
 }
 const RenderRow = (props) => {
-
   function createButton() {
-    console.log(props)
+    console.log(props);
     if (props.stared) {
-      return (<td
-        id="fav-button"
-        onClick={() => {
-          unstarRecipe(props.data["id"]);
-        }}
-      >
-        <span title="Unstar">⭐</span>
-        
-      </td>)
+      return (
+        <td
+          id="fav-button"
+          onClick={() => {
+            unstarRecipe(props.data["id"]);
+          }}
+        >
+          <span
+            className="edit-button"
+            role="img"
+            aria-label="jsx-a11y/aria-proptypes"
+            title="Unstar"
+          >
+            ⭐
+          </span>
+        </td>
+      );
     } else {
-      return (<td
-        id="fav-button"
-        onClick={() => {
-          starRecipe(props.data["id"]);
-        }}
-      >
-        <span title="Star">⭐</span>
-        
-      </td>)
+      return (
+        <td
+          id="fav-button"
+          onClick={() => {
+            starRecipe(props.data["id"]);
+          }}
+        >
+          <span
+            className="edit-button"
+            role="img"
+            aria-label="jsx-a11y/aria-proptypes"
+            title="Star"
+          >
+            ⭐
+          </span>
+        </td>
+      );
     }
   }
 
@@ -86,11 +106,7 @@ const RenderRow = (props) => {
       .then((response) => {
         const token = response.headers["auth"];
         localStorage.setItem("auth", token);
-        Swal.fire(
-          'Recipe Stared!',
-          'This recipe has been stared',
-          'success'
-        )
+        Swal.fire("Recipe Stared!", "This recipe has been stared", "success");
       })
       .catch((error) => {
         console.log(error);
@@ -111,10 +127,10 @@ const RenderRow = (props) => {
         const token = response.headers["auth"];
         localStorage.setItem("auth", token);
         Swal.fire(
-          'Recipe Unstared!',
-          'This recipe has been unstared',
-          'success'
-        )
+          "Recipe Unstared!",
+          "This recipe has been unstared",
+          "success"
+        );
         props.handler();
       })
       .catch((error) => {
@@ -133,7 +149,11 @@ const RenderRow = (props) => {
             heigh="150"
           ></img>
         </td>
-        <td id="title"><a href={"/dashboard/recipe/get/" + props.data["id"]}>{props.data["title"]}</a></td>
+        <td id="title">
+          <a href={"/dashboard/recipe/get/" + props.data["id"]}>
+            {props.data["title"]}
+          </a>
+        </td>
         {createButton()}
       </tr>
     );

@@ -4,6 +4,8 @@ import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
 import 'sweetalert2/src/sweetalert2.scss'
+import FriendsPage from "./components/FriendsPage";
+import Notifications from "./components/Notifications"
 
 
 export default class Friends extends Component {
@@ -11,9 +13,23 @@ export default class Friends extends Component {
     super(props);
 
     this.state = {
-      friends: null,
-      requests: null,
+      friends: {},
+      requests: {},
+      sent: {},
     };
+  }
+  
+  handler = () => {
+    let old = this.state.friends.length
+    this.getFriends();
+    this.getRequests();
+    this.getSent();
+    let size = this.state.friends.length
+    if (size === old) {
+      this.getFriends();
+      this.getRequests();
+      this.getSent();
+    }
   }
 
   getFriends = () => {
@@ -25,7 +41,6 @@ export default class Friends extends Component {
       .then((response) => {
         this.setState({ friends: response.data });
         console.log(response.data)
-        this.showFriendsList();
       })
       .catch((error) => {
         console.log(error);
@@ -47,7 +62,27 @@ export default class Friends extends Component {
       .then((response) => {
         this.setState({ requests: response.data });
         console.log(response.data)
-        this.showRequestsList();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    if (localStorage.getItem('auth') != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  getSent = () => {
+    let token = localStorage.getItem('auth');
+    axios
+      .get("http://localhost:1331/user/friends/sent", {
+        headers: { "auth": token }
+      }, { withCredentials: true })
+      .then((response) => {
+        this.setState({ sent: response.data });
+        console.log(response.data)
       })
       .catch((error) => {
         console.log(error);
@@ -90,7 +125,7 @@ export default class Friends extends Component {
   addFriend = async () => {
     let token = localStorage.getItem('auth');
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter user email",
       input: "email",
       inputPlaceholder: "Enter email",
@@ -121,7 +156,7 @@ export default class Friends extends Component {
   removeFriend = async () => {
     let token = localStorage.getItem('auth');
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter user email",
       input: "email",
       inputPlaceholder: "Enter email",
@@ -147,34 +182,6 @@ export default class Friends extends Component {
         }
       },
     });
-  }
-
-  showRequestsList = () => {
-    var x;
-    var json = this.state.requests;
-    var button;
-    for (x in json) {
-      button = document.createElement('input')
-      button.setAttribute('type','button')
-      button.onclick = e => {this.answerRequest(x)}
-      button.className = 'inventory-entry'
-      button.value = json[x] + ' | ' + x
-      document.getElementById("requestList").append(button)
-    }
-  }
-
-  showFriendsList = () => {
-    var x;
-    var json = this.state.friends;
-    var button;
-    for (x in json) {
-      button = document.createElement('input')
-      button.setAttribute('type','button')
-      button.onclick = e => {this.editFriend(x)}
-      button.className = 'inventory-entry'
-      button.value = json[x] + ' | ' + x
-      document.getElementById("friendList").append(button)
-    }
   }
 
   answerRequest = (email) => {
@@ -297,9 +304,18 @@ export default class Friends extends Component {
     }
   }
 
+  openMenu() {
+    if (document.body.className === "") {
+      document.body.className = "mob-menu-opened";
+    } else {
+      document.body.className = "";
+    }
+  }
+
   componentDidMount() {
     this.getFriends();
     this.getRequests();
+    this.getSent();
     this.getInfo();
   }
 
@@ -377,10 +393,18 @@ export default class Friends extends Component {
         <header className="page-header">
           <nav>
             <Link to="/dashboard">
-              <img className="logo" src="https://cdn.discordapp.com/attachments/443699822025900033/703629640773795850/fork.svg"
-                alt="forecastr logo" />
+              <img
+                className="logo"
+                src="https://cdn.discordapp.com/attachments/443699822025900033/703629640773795850/fork.svg"
+                alt="forecastr logo"
+              />
             </Link>
-            <button className="toggle-mob-menu" aria-expanded="false" aria-label="open menu">
+            <button
+              className="toggle-mob-menu"
+              aria-expanded="false"
+              aria-label="open menu"
+              onClick={this.openMenu}
+            >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
               </svg>
@@ -398,7 +422,7 @@ export default class Friends extends Component {
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/wishlists">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
@@ -406,21 +430,37 @@ export default class Friends extends Component {
                 </a>
               </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/shoppinglists">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
                   <span>Shopping Lists</span>
                 </a>
-              </li >
+              </li>
               <li>
-                <a href="#0">
+                <a href="/dashboard/products">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Products</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes">
                   <svg>
                     <use href="#collection"></use>
                   </svg>
                   <span>Recipes</span>
                 </a>
-              </li >
+              </li>
+              <li>
+                <a href="/dashboard/recipes/stared">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Favourite Recipes</span>
+                </a>
+              </li>
               <li className="menu-heading">
                 <h3>Settings</h3>
               </li>
@@ -431,7 +471,7 @@ export default class Friends extends Component {
                   </svg>
                   <span>Account</span>
                 </a>
-              </li >
+              </li>
               <li>
                 <a href="/dashboard/friends">
                   <svg>
@@ -439,7 +479,7 @@ export default class Friends extends Component {
                   </svg>
                   <span>Friends</span>
                 </a>
-              </li >
+              </li>
               <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
@@ -447,66 +487,31 @@ export default class Friends extends Component {
                   </svg>
                   <span>Logout</span>
                 </Link>
-              </li >
+              </li>
               <li>
-                <button className="collapse-btn" aria-expanded="true" aria-label="collapse menu" onClick={this.collapseBar}>
+                <button
+                  className="collapse-btn"
+                  aria-expanded="true"
+                  aria-label="collapse menu"
+                  onClick={this.collapseBar}
+                >
                   <svg aria-hidden="true">
                     <use href="#collapse"></use>
                   </svg>
                   <span>Collapse</span>
                 </button>
-              </li >
-            </ul >
-          </nav >
-        </header >
+              </li>
+            </ul>
+          </nav>
+        </header>
         <section className="page-content">
-          <section className="search-and-user">
-            {/*
-            <form>
-              <input type="search" placeholder="Search Pages..." />
-              <button type="submit" aria-label="submit form">
-                <svg aria-hidden="true">
-                  <use href="#search"></use>
-                </svg>
-              </button>
-            </form>
-            */
-            }
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.state.name}</span>
-              <div className="notifications">
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
-            </div>
-          </section>
-          <section className="grid">
-          <article className="inventories">
-              <div className="inventories-text">
-                Friend Requests
-              </div>
-              <div id="requestList">
-
-              </div>
-            </article>
-            <article className="inventories">
-              <div className="inventories-text">
-                Friends
-              </div>
-              <div id="friendList">
-
-              </div>
-              <div className="inventory-button">
-                <input
-                  className="create-button"
-                  type="button"
-                  value="Add Friend"
-                  onClick={this.addFriend}
-                ></input>
-              </div>
-            </article>
-          </section>
+          <Notifications name={this.state.name}/>
+          <FriendsPage
+          requests={this.state.requests}
+          friends={this.state.friends}
+          sent={this.state.sent}
+          handler = {this.handler}
+          />
           <footer className="page-footer">
             <small>Made with <span>❤</span> by <a href="http://www.uminho.pt/">Grupo 1</a>
             </small>

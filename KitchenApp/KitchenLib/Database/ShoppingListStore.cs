@@ -10,20 +10,22 @@ namespace KitchenLib.Database
     {
         public static async Task<bool> Exists(string uid, string email)
         {
-            Boolean exists;
+            var exists = false;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
-                exists = await session.ReadTransactionAsync(async tx =>
+                await session.ReadTransactionAsync(async tx =>
                 {
                     var lst = new List<string>();
                     var reader = await tx.RunAsync(
-                        "MATCH(u:User)-[]->(i:Shoppinglist) WHERE u._email = $email AND i.guid = $name RETURN i.name",
-                        new {email, name = uid});
+                        "MATCH(u:User)-[]-(i:Shoppinglist) WHERE u._email = $email AND i.guid = $uid RETURN i.name",
+                        new {email, uid});
                     while (await reader.FetchAsync())
+                    {
                         lst.Add(reader.Current[0].ToString());
+                    }
 
-                    return lst.Count != 0;
+                    exists = lst.Count != 0;
                 });
             }
             finally
@@ -105,22 +107,22 @@ namespace KitchenLib.Database
         public static async Task<Inventory<WantedProduct>> Get(string uid, string email)
         {
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
+            Inventory<WantedProduct> inv = null;
             try
             {
                 await session.ReadTransactionAsync(async tx =>
                 {
-                    var lst = new List<string>();
                     var reader = await tx.RunAsync(
-                        "Match(u:User)-[]->(i:Shoppinglist) " +
-                        "Where u._email = $email AND i.name = $name " +
-                        "Return [(i)-[c:CONTAIN]->(b) where b: Product | { prod: b, quant: c.quantity }] as products, " +
-                        "[(i)-[:Shared]-(b) where b: User | b] as guests " +
+                        "Match(u:User)-[]-(i:Shoppinglist) " +
+                        "Where u._email = $email AND i.guid = $name " +
+                        "Return [(i)-[c:CONTAIN]->(p) where p: Product | { prod: p, quant: c.quantity }] as products, " +
+                        "[(i)-[:Shared]-(b) where b: User | b] as guests, " +
                         "u._email as owner_id, " +
                         "i.name as name, i.guid as guid",
                         new {email, name = uid});
-                    var inv = new Inventory<WantedProduct>();
                     while (await reader.FetchAsync())
                     {
+                        inv = new Inventory<WantedProduct>();
                         var prods = reader.Current["products"].As<IList<IDictionary<string, object>>>();
                         var guests = reader.Current["guests"].As<IList<INode>>();
                         inv._name = reader.Current["name"].As<string>();
@@ -143,20 +145,17 @@ namespace KitchenLib.Database
                             }
 
                             u._stock = prod["quant"].As<uint>();
-                            
+
                             inv._products.Add(u);
                         }
                     }
-
-                    return inv;
                 });
+                return inv;
             }
             finally
             {
                 await session.CloseAsync();
             }
-
-            return null;
         }
 
         public static async Task Add_prod(string email, string uid, string prodName, int quant)
@@ -167,7 +166,7 @@ namespace KitchenLib.Database
                 await session.WriteTransactionAsync(async tx =>
                 {
                     var r = await tx.RunAsync("Match (u:User)-[]-(i:Shoppinglist), (p:Product) " +
-                                              "where u._email = $email and i.name = $name and p._guid = $pguid " +
+                                              "where u._email = $email and i.guid = $name and p._guid = $pguid " +
                                               "Optional match (i)-[f:CONTAIN]-(p) " +
                                               "with i, p, f, case when f is null then [1] else [] end as arr " +
                                               "foreach(x in arr | create (i)-[:CONTAIN {quantity: $quant}]->(p))",
@@ -189,7 +188,7 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync(
                         "Match (u:User)-[]-(i:Shoppinglist)-[c:CONTAIN]->(p:Product) " +
-                        "where u._email = $email and i.name = $name and p._guid = $pguid " +
+                        "where u._email = $email and i.guid = $name and p._guid = $pguid " +
                         "Set c.quantity = $quant", new {name = uid, pguid = prodName, email, quant});
                 });
             }
@@ -229,7 +228,7 @@ namespace KitchenLib.Database
             {
                 await session.ReadTransactionAsync(async tx =>
                 {
-                    var r = await tx.RunAsync("match (u:User)-[:Shared]->(i:Shoppinglist) " +
+                    var r = await tx.RunAsync("match (u:User)-[:Shared]-(i:Shoppinglist) " +
                                               "where u._email = $email " +
                                               "return i.name as name, i.guid as guid", new {email});
                     while (await r.FetchAsync())
@@ -255,7 +254,10 @@ namespace KitchenLib.Database
                 {
                     var r = await tx.RunAsync("Match (u:User)-[:SHP]->(i:Shoppinglist), (z:User) " +
                                               "where u._email = $email and i.guid = $name and z._email = $friend " +
-                                              "create (i)<-[:Shared]-(z)", new {email, name = uid, friend});
+                                              "Optional match (i)-[f:Shared]-(z) " +
+                                              "with i, z, f, case when f is null then [1] else [] end as arr " +
+                                              "foreach(x in arr | create (i)<-[:Shared]-(z))",
+                                              new {email, name = uid, friend});
                 });
             }
             finally

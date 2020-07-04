@@ -4,50 +4,114 @@ import axios from "axios";
 import RecipesTable from "./RecipesTable";
 
 export default class InventoryList extends React.Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
       recipes: [],
+      categories: [],
+      products: [],
     };
   }
+
+  validateBirthday = (e) => {
+    if (
+      /^([12]\d{3}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01]))$/.test(e) &&
+      e !== ""
+    ) {
+      return true;
+    } else return false;
+  };
 
   addProductMenu = () => {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/product/getall",
+        "http://localhost:1331/product/category/all",
         {
           headers: { auth: token },
         },
         { withCredentials: true }
       )
-      .then(async (response) => {
-        console.log(response.data);
+      .then((response) => {
         let json = response.data;
+        this.setState({
+          categories: json,
+        });
+        this.chooseCategory();
         const token = response.headers["auth"];
         localStorage.setItem("auth", token);
-        var r = [];
-        let i = 0;
-        var p = "";
-        for (p in json) {
-          r[i++] = json[p]["_category"];
-        }
-        var categories = Array.from(new Set(r));
-        let sc = [];
-        for (i = 0; i < categories.length; i++) {
-          sc[i] = categories[i];
-        }
-        this.setState({
-          categories: sc,
-        });
-
-        this.showCategories(json, this.state.categories);
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  chooseCategory = async () => {
+    const { value: category } = await Swal.fire({
+      title: "Select category",
+      input: "select",
+      inputOptions: this.state.categories,
+      inputPlaceholder: "Select a category",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          if (value) {
+            resolve();
+          } else {
+            resolve("You need to select one");
+          }
+        });
+      },
+    });
+
+    if (category) this.showProductsList(this.state.categories[category]);
+  };
+
+  showProductsList = (category) => {
+    let token = localStorage.getItem("auth");
+    let form = new FormData();
+    form.append("category", category);
+    axios
+      .post("http://localhost:1331/product/category/getprods", form, {
+        headers: { "Content-Type": "multipart/form-data", auth: token },
+        withCredentials: true,
+      })
+      .then((response) => {
+        let json = response.data;
+        this.setState({
+          products: json,
+        });
+        const token = response.headers["auth"];
+        localStorage.setItem("auth", token);
+        this.chooseProduct();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  chooseProduct = async () => {
+    let names = this.state.products.map((x) => x._name);
+    console.log(names);
+    const { value: product } = await Swal.fire({
+      title: "Select product",
+      input: "select",
+      inputOptions: names,
+      inputPlaceholder: "Select a product",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          if (value) {
+            resolve();
+          } else {
+            resolve("You need to select one");
+          }
+        });
+      },
+    });
+
+    if (product) this.addProduct(this.state.products[product]);
   };
 
   addProduct = async (product) => {
@@ -86,70 +150,16 @@ export default class InventoryList extends React.Component {
         })
         .catch((error) => {
           console.log(error);
-          Swal.fire("Nope!", "Product has not been added.", "error");
+          Swal.fire(
+            "Nope!",
+            "Product has not been added. Make sure to insert valid expire date and valid quantity.",
+            "error"
+          );
         });
     }
-  };
-
-  showCategories = async (json, categories) => {
-    const { value: category } = await Swal.fire({
-      title: "Select category",
-      input: "select",
-      inputOptions: categories,
-      inputPlaceholder: "Select a category",
-      showCancelButton: true,
-      inputValidator: (value) => {
-        return new Promise((resolve) => {
-          if (value) {
-            resolve();
-          } else {
-            resolve("You need to select one");
-          }
-        });
-      },
-    });
-
-    if (category) {
-      this.showProducts(json, categories[category]);
-    }
-  };
-
-  showProducts = async (json, category) => {
-    var products = [];
-    var ids = [];
-    let i = 0;
-    var p = "";
-    for (p in json) {
-      if (json[p]["_category"] === category) products[i] = json[p]["_name"];
-      ids[i++] = json[p]["_guid"];
-    }
-    await Swal.fire({
-      title: "Select product",
-      input: "select",
-      inputOptions: products,
-      inputPlaceholder: "Select a category",
-      showCancelButton: true,
-      cancelButtonText: "Back",
-      inputValidator: (value) => {
-        return new Promise((resolve) => {
-          if (value) {
-            resolve();
-          } else {
-            resolve("You need to select one");
-          }
-        });
-      },
-    }).then((result) => {
-      if (!result.value) {
-        this.showCategories(json, this.state.categories);
-      } else {
-        this.addProduct(json[result.value]);
-      }
-    });
   };
 
   removeProduct = async (uid) => {
-    let token = localStorage.getItem("auth");
     Swal.fire({
       title: "Remove Product",
       text: "Do you want to remove this product?",
@@ -175,7 +185,11 @@ export default class InventoryList extends React.Component {
             const token = response.headers["auth"];
             localStorage.setItem("auth", token);
             this.props.handler();
-            Swal.fire("Product Removed!", "Product has been removed.", "success");
+            Swal.fire(
+              "Product Removed!",
+              "Product has been removed.",
+              "success"
+            );
           })
           .catch((error) => {
             console.log(error);
@@ -185,7 +199,51 @@ export default class InventoryList extends React.Component {
     });
   };
 
-  editProduct = async (uid) => {};
+  editProduct = async (uid) => {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
+    const { value: formValues } = await Swal.fire({
+      title: "Edit Product",
+      html:
+        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">' +
+        '<input id="swal-input2" placeholder="Expire date (YYYY/MM/DD)" class="swal2-input">' +
+        "(You can edit only one, leave the other blank)",
+      focusConfirm: false,
+      preConfirm: () => {
+        let quantity = document.getElementById("swal-input1").value;
+        let expire = document.getElementById("swal-input2").value;
+        return [quantity, expire];
+      },
+    });
+
+    if (formValues != null && formValues[0] != null && formValues[1] != null) {
+      form.append("product", uid);
+      if (formValues[0]) form.append("quantity", formValues[0]);
+      if (formValues[1]) form.append("expire", formValues[1]);
+      form.append("uid", this.props.inventory_id);
+
+      axios
+        .post("http://localhost:1331/inventory/editproduct", form, {
+          headers: { "Content-Type": "multipart/form-data", auth: token },
+          withCredentials: true,
+        })
+        .then((response) => {
+          /* save this token inside localStorage */
+          const token = response.headers["auth"];
+          localStorage.setItem("auth", token);
+          this.props.handler();
+          Swal.fire("Product edited!", "Product has been edited.", "success");
+        })
+        .catch((error) => {
+          console.log(error);
+          Swal.fire(
+            "Nope!",
+            "Product has not been edited. Make sure to insert valid expire date and/or valid quantity",
+            "error"
+          );
+        });
+    }
+  };
 
   showItems = () => {
     let json = this.props.items;
@@ -201,6 +259,9 @@ export default class InventoryList extends React.Component {
           <td>{item._consume_before.substring(0, 10)}</td>
           <td className="table-edit" key={"edit" + item._guid}>
             <span
+              className="edit-button"
+              role="img"
+              aria-label="jsx-a11y/aria-proptypes"
               onClick={() => {
                 this.editProduct(item._guid);
               }}
@@ -210,6 +271,9 @@ export default class InventoryList extends React.Component {
           </td>
           <td className="table-edit" key={"remove" + item._guid}>
             <span
+              className="edit-button"
+              role="img"
+              aria-label="jsx-a11y/aria-proptypes"
               onClick={() => {
                 this.removeProduct(item._guid);
               }}
@@ -240,13 +304,8 @@ export default class InventoryList extends React.Component {
           console.log(error);
         });
     } else {
-      Swal.fire(
-        'Nope!',
-        "You don't have items on this inventory",
-        'error'
-      )
+      Swal.fire("Nope!", "You don't have items on this inventory", "error");
     }
-    
   };
 
   showButtons = () => {
@@ -303,7 +362,7 @@ export default class InventoryList extends React.Component {
     if (this.state.recipes.length) {
       return (
         <article className="inventories">
-          <RecipesTable data={this.state.recipes} stared={false}/>
+          <RecipesTable data={this.state.recipes} stared={false} />
         </article>
       );
     }

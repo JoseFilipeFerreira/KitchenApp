@@ -4,7 +4,7 @@ import axios from "axios";
 import "./dashboard.css";
 import Swal from "sweetalert2";
 import InventoryPage from "./components/InventoryPage";
-import RecipesTable from "./components/RecipesTable";
+import Notifications from "./components/Notifications"
 
 export default class Inventory extends Component {
   constructor(props) {
@@ -20,7 +20,11 @@ export default class Inventory extends Component {
   }
 
   handler = () => {
+    let old = this.state.items.length
     this.getInventoryInfo();
+    let size = this.state.items.length
+    if (size === old)
+      this.getInventoryInfo();
   }
 
   getInfo = () => {
@@ -98,7 +102,7 @@ export default class Inventory extends Component {
     let token = localStorage.getItem("auth");
     let uid = this.state.inventory_id;
     const form = new FormData();
-    const { value: name } = await Swal.fire({
+    await Swal.fire({
       title: "Enter new name",
       input: "text",
       inputPlaceholder: "Enter your name",
@@ -126,48 +130,6 @@ export default class Inventory extends Component {
         }
       },
     });
-  };
-
-  shareInventory = async () => {
-    console.log(this.props.shared)
-    if (!this.props.shared) {
-      let token = localStorage.getItem("auth");
-      let uid = this.state.inventory_id;
-      const form = new FormData();
-      const { value: name } = await Swal.fire({
-        title: "Enter user email",
-        input: "email",
-        inputPlaceholder: "Enter email",
-        inputValidator: (value) => {
-          if (!value) {
-            return "Invalid Name";
-          } else {
-            form.append("uid", uid);
-            form.append("friend", value);
-  
-            axios
-              .post("http://localhost:1331/inventory/share", form, {
-                headers: { "Content-Type": "multipart/form-data", auth: token },
-                withCredentials: true,
-              })
-              .then((response) => {
-                /* save this token inside localStorage */
-                const token = response.headers["auth"];
-                localStorage.setItem("auth", token);
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          }
-        },
-      });
-    } else {
-      Swal.fire(
-        'Nope!',
-        'You are not the owner of this inventory',
-        'error'
-      )
-    }
   };
 
   showItems = () => {
@@ -203,6 +165,14 @@ export default class Inventory extends Component {
   collapseBar() {
     if (document.body.className === "") {
       document.body.className = "collapsed";
+    } else {
+      document.body.className = "";
+    }
+  }
+
+  openMenu() {
+    if (document.body.className === "") {
+      document.body.className = "mob-menu-opened";
     } else {
       document.body.className = "";
     }
@@ -302,6 +272,7 @@ export default class Inventory extends Component {
               className="toggle-mob-menu"
               aria-expanded="false"
               aria-label="open menu"
+              onClick={this.openMenu}
             >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
@@ -333,6 +304,30 @@ export default class Inventory extends Component {
                     <use href="#collection"></use>
                   </svg>
                   <span>Shopping Lists</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/products">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Products</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Recipes</span>
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard/recipes/stared">
+                  <svg>
+                    <use href="#collection"></use>
+                  </svg>
+                  <span>Favourite Recipes</span>
                 </a>
               </li>
               <li className="menu-heading">
@@ -379,26 +374,7 @@ export default class Inventory extends Component {
           </nav>
         </header>
         <section className="page-content">
-          <section className="search-and-user">
-            {/*
-            <form>
-              <input type="search" placeholder="Search Pages..." />
-              <button type="submit" aria-label="submit form">
-                <svg aria-hidden="true">
-                  <use href="#search"></use>
-                </svg>
-              </button>
-            </form>
-            */}
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.state.name}</span>
-              <div className="notifications">
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
-            </div>
-          </section>
+          <Notifications name={this.state.name}/>
             <InventoryPage 
             inventory_name={this.state.inventory_name}
             inventory_id={this.state.inventory_id}

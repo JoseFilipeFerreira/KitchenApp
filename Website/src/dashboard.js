@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
-import Swal from "sweetalert2";
 import InventoryList from "./components/InventoryList";
+import Notifications from "./components/Notifications";
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -18,8 +18,8 @@ export default class Dashboard extends Component {
 
   handler = () => {
     this.getInventories();
-  }
-  
+  };
+
   getInventories = () => {
     let token = localStorage.getItem("auth");
     axios
@@ -105,6 +105,14 @@ export default class Dashboard extends Component {
   collapseBar() {
     if (document.body.className === "") {
       document.body.className = "collapsed";
+    } else {
+      document.body.className = "";
+    }
+  }
+
+  openMenu() {
+    if (document.body.className === "") {
+      document.body.className = "mob-menu-opened";
     } else {
       document.body.className = "";
     }
@@ -205,6 +213,7 @@ export default class Dashboard extends Component {
               className="toggle-mob-menu"
               aria-expanded="false"
               aria-label="open menu"
+              onClick={this.openMenu}
             >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
@@ -282,14 +291,6 @@ export default class Dashboard extends Component {
                 </a>
               </li>
               <li>
-                <a href="/dashboard/friends">
-                  <svg>
-                    <use href="#users"></use>
-                  </svg>
-                  <span>Friends</span>
-                </a>
-              </li >
-              <li>
                 <Link to="/" onClick={this.removeToken}>
                   <svg>
                     <use href="#signout"></use>
@@ -314,20 +315,11 @@ export default class Dashboard extends Component {
           </nav>
         </header>
         <section className="page-content">
-          <section className="search-and-user">
-            <div className="admin-profile">
-              <span className="greeting">Hello {this.state.name}</span>
-              <div className="notifications">
-                <svg>
-                  <use href="#users"></use>
-                </svg>
-              </div>
-            </div>
-          </section>
-          <InventoryList 
-          inventories={this.state.inventories}
-          shared={this.state.shared}
-          handler = {this.handler}
+          <Notifications name={this.state.name}/>
+          <InventoryList
+            inventories={this.state.inventories}
+            shared={this.state.shared}
+            handler={this.handler}
           />
           <footer className="page-footer">
             <small>

@@ -2,48 +2,28 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
-import RecipesTable from "./components/RecipesTable";
-import Notifications from "./components/Notifications";
+import Swal from "sweetalert2";
+import WishlistPage from "./components/WishlistPage";
 
-export default class Recipes extends Component {
+export default class Wishlist extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      search: "",
-      recipes: [],
+      wishlist_id: null,
+      wishlist_name: null,
       name: null,
+      categories: null,
+      items: [],
     };
   }
 
-  changeHandler = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
-  submitHandler = (e) => {
-    e.preventDefault();
-    if (this.state.search) {
-      let token = localStorage.getItem("auth");
-      const form = new FormData();
-
-      let search = this.state.search;
-
-      form.append("keys", search);
-      axios
-        .post("http://localhost:1331/recipe/search", form, {
-          headers: { "Content-Type": "multipart/form-data", auth: token},
-          withCredentials: true,
-        })
-        .then((response) => {
-          this.setState({ recipes: response.data });
-          console.log(response.data)
-          this.showRecipes();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
+  handler = () => {
+    let old = this.state.items.length
+    this.getWishlistInfo();
+    if (old === this.state.items.length)
+      this.getWishlistInfo();
+  }
 
   getInfo = () => {
     let token = localStorage.getItem("auth");
@@ -72,6 +52,108 @@ export default class Recipes extends Component {
     }
   };
 
+  getWishlistInfo = () => {
+    let token = localStorage.getItem("auth");
+    axios
+      .get(
+        "http://localhost:1331/wishlist/info/" + this.state.wishlist_id,
+        {
+          headers: { auth: token },
+        },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        console.log(response.data);
+        let json = response.data;
+        this.setState({
+          wishlist_name: json["_name"],
+          items: json["_products"],
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        this.props.history.push("/dashboard");
+      });
+
+    if (localStorage.getItem("auth") != null) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  getWishlistID = () => {
+    let url = window.location.pathname;
+    let regex = /[/]wishlist[/](.*)/;
+    let id = url.match(regex)[1];
+    if (id != null) {
+      console.log(id);
+      this.setState({ wishlist_id: id }, () => {
+        this.getWishlistInfo();
+      });
+    }
+  };
+
+  editProduct = () => {};
+
+  editWishlist = async () => {
+    let token = localStorage.getItem("auth");
+    let uid = this.state.wishlist_id;
+    const form = new FormData();
+    const { value: name } = await Swal.fire({
+      title: "Enter new name",
+      input: "text",
+      inputPlaceholder: "Enter your name",
+      inputValidator: (value) => {
+        if (!value) {
+          return "Invalid Name";
+        } else {
+          form.append("uid", uid);
+          form.append("name", value);
+
+          axios
+            .post("http://localhost:1331/wishlist/edit", form, {
+              headers: { "Content-Type": "multipart/form-data", auth: token },
+              withCredentials: true,
+            })
+            .then((response) => {
+              /* save this token inside localStorage */
+              const token = response.headers["auth"];
+              localStorage.setItem("auth", token);
+              this.handler();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      },
+    });
+  };
+
+  showItems = () => {
+    var x;
+    var json = this.state.items;
+    json.sort(function(a, b){
+      return a._name.localeCompare(b._name);
+    });
+    for (x in json) {
+      let product = json[x];
+      console.log(product);
+      document.getElementById("inventoryList").innerHTML += "<tr>";
+      document.getElementById("inventoryList").innerHTML +=
+        "<td>" +
+        product["_name"] +
+        "</td>" +
+        "<td>" +
+        product["_stock"] +
+        "</td>" +
+        "<td>" +
+        product["_consume_before"].substring(0, 10) +
+        "</td>";
+      document.getElementById("inventoryList").innerHTML += "</tr>";
+    }
+  };
+
   removeToken = () => {
     localStorage.removeItem("auth");
     this.props.history.push("/");
@@ -86,31 +168,13 @@ export default class Recipes extends Component {
     }
   }
 
-  showRecipes = () => {
-    var x;
-    var json = this.state.recipes;
-    for (x in json) {
-      delete json[x]['extendedIngredients'];
-      delete json[x]['summary'];
-    }
-    this.setState({recipes: json})
-
-  };
-
-  openMenu() {
-    if (document.body.className === "") {
-      document.body.className = "mob-menu-opened";
-    } else {
-      document.body.className = "";
-    }
-  }
-
   componentDidMount() {
+    this.getWishlistID();
     this.getInfo();
   }
 
   render() {
-    const { search } = this.state;
+    /*const { dashboards } = this.state;*/
     return (
       <div>
         <svg>
@@ -198,7 +262,6 @@ export default class Recipes extends Component {
               className="toggle-mob-menu"
               aria-expanded="false"
               aria-label="open menu"
-              onClick={this.openMenu}
             >
               <svg width="20" height="20" aria-hidden="true">
                 <use href="#down"></use>
@@ -230,30 +293,6 @@ export default class Recipes extends Component {
                     <use href="#collection"></use>
                   </svg>
                   <span>Shopping Lists</span>
-                </a>
-              </li>
-              <li>
-                <a href="/dashboard/products">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>Products</span>
-                </a>
-              </li>
-              <li>
-                <a href="/dashboard/recipes">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>Recipes</span>
-                </a>
-              </li>
-              <li>
-                <a href="/dashboard/recipes/stared">
-                  <svg>
-                    <use href="#collection"></use>
-                  </svg>
-                  <span>Favourite Recipes</span>
                 </a>
               </li>
               <li className="menu-heading">
@@ -300,29 +339,23 @@ export default class Recipes extends Component {
           </nav>
         </header>
         <section className="page-content">
-          <Notifications name={this.state.name}/>
           <section className="search-and-user">
-            <form onSubmit={this.submitHandler}>
-              <input
-                type="text"
-                placeholder="Search recipes..."
-                name="search"
-                value={search}
-                onChange={this.changeHandler}
-              />
-              <button type="submit">
-                <svg aria-hidden="true">
-                  <use href="#search"></use>
+            <div className="admin-profile">
+              <span className="greeting">Hello {this.state.name}</span>
+              <div className="notifications">
+                <svg>
+                  <use href="#users"></use>
                 </svg>
-              </button>
-            </form>
+              </div>
+            </div>
           </section>
-          <section className="grid">
-            <article className="inventories">
-              <div className="inventories-text">Recipes</div>
-              <RecipesTable data={this.state.recipes} stared={false}/>
-            </article>
-          </section>
+            <WishlistPage 
+            wishlist_name={this.state.wishlist_name}
+            wishlist_id={this.state.wishlist_id}
+            items={this.state.items}
+            shared={this.props.shared}
+            handler = {this.handler}
+            />
           <footer className="page-footer">
             <small>
               Made with <span>❤</span> by{" "}
