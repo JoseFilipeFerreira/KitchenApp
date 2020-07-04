@@ -84,6 +84,17 @@ services:
         expose: 
             - "80"
         restart: always
+    frontend:
+        build:
+            dockerfile: ../KitchenApp/docker/front-docker
+            context: ../../Website
+        depends_on: 
+            - nginx
+        networks:
+            - proxy
+        ports: 
+            - 5000:5000
+        restart: always
     db:
         build:
             dockerfile: db-docker
