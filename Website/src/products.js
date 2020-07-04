@@ -352,7 +352,7 @@ export default class Products extends Component {
             <form onSubmit={this.submitHandler}>
               <input
                 type="text"
-                placeholder="Search recipes..."
+                placeholder="Search products..."
                 name="search"
                 value={search}
                 onChange={this.changeHandler}

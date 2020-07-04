@@ -64,7 +64,7 @@ export default class Recipe extends Component {
       .then((response) => {
         const token = response.headers["auth"];
         localStorage.setItem("auth", token);
-        alert("Recipe stared");
+        Swal.fire("Recipe Stared!", "This recipe has been stared", "success");
       })
       .catch((error) => {
         console.log(error);
