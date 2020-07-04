@@ -125,7 +125,7 @@ namespace WishlistService.Controllers
                 return;
             }
 
-            await WishlistStore.RemoveProd(user, uid, product);
+            await WishlistStore.RemoveProd(uid, product, user);
         }
         
         [HttpPost]
