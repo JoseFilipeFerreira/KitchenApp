@@ -259,7 +259,47 @@ export default class ShoppingList extends React.Component {
     });
   };
 
-  editProduct = async (uid) => {};
+  editProduct = async (uid) => {
+    let token = localStorage.getItem("auth");
+    const form = new FormData();
+    const { value: formValues } = await Swal.fire({
+      title: "Edit Product",
+      html:
+        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
+      focusConfirm: false,
+      preConfirm: () => {
+        let quantity = document.getElementById("swal-input1").value;
+        return quantity;
+      },
+    });
+
+    if (formValues != null) {
+      form.append("product", uid);
+      form.append("quantity", formValues);
+      form.append("uid", this.props.shopping_id);
+
+      axios
+        .post("http://localhost:1331/shopping/editproduct", form, {
+          headers: { "Content-Type": "multipart/form-data", auth: token },
+          withCredentials: true,
+        })
+        .then((response) => {
+          /* save this token inside localStorage */
+          const token = response.headers["auth"];
+          localStorage.setItem("auth", token);
+          this.props.handler();
+          Swal.fire("Product edited!", "Product has been edited.", "success");
+        })
+        .catch((error) => {
+          console.log(error);
+          Swal.fire(
+            "Nope!",
+            "Product has not been edited. Make sure to insert valid quantity",
+            "error"
+          );
+        });
+    }
+  };
 
   showItems = () => {
     let json = this.props.items;
