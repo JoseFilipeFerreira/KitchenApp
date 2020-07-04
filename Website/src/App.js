@@ -32,18 +32,14 @@ class App extends Component {
         console.log("Token valido");
       })
       .catch((error) => {
-        if (localStorage.getItem("auth")) {
+        if (localStorage.getItem("auth") && error.message !== 'Request aborted') {
           localStorage.removeItem("auth")
           window.location.reload()
         }
         console.log(error);
       });
 
-    if (localStorage.getItem("auth") != null) {
-      return true;
-    } else {
-      return false;
-    }
+    return (localStorage.getItem("auth") != null);
   };
 
   render() {
