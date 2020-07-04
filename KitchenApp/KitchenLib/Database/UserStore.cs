@@ -9,7 +9,7 @@ namespace KitchenLib.Database
     {
         public static async Task<bool> Exists(string uid)
         {
-            Boolean exists;
+            var exists = false;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
@@ -23,6 +23,10 @@ namespace KitchenLib.Database
 
                     return lst.Count != 0;
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -49,6 +53,10 @@ namespace KitchenLib.Database
                         });
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -67,6 +75,10 @@ namespace KitchenLib.Database
                         new {email = uid});
                     return reader.ConsumeAsync().Result.Counters.NodesDeleted != 0;
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -97,6 +109,10 @@ namespace KitchenLib.Database
                     }
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -121,6 +137,10 @@ namespace KitchenLib.Database
                         new {email = uid, friend});
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -140,6 +160,10 @@ namespace KitchenLib.Database
                         new {email = uid, friend});
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -158,6 +182,10 @@ namespace KitchenLib.Database
                                                    "set f.pending = false",
                         new {email = uid, friend});
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -182,6 +210,10 @@ namespace KitchenLib.Database
                         pendings.Add(reader.Current["email"].As<string>(), reader.Current["name"].As<string>());
                     }
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -209,6 +241,10 @@ namespace KitchenLib.Database
                     }
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -234,6 +270,10 @@ namespace KitchenLib.Database
                         pendings.Add(reader.Current["email"].As<string>(), reader.Current["name"].As<string>());
                     }
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {

@@ -28,6 +28,10 @@ namespace KitchenLib.Database
                     exists = lst.Count != 0;
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -38,7 +42,7 @@ namespace KitchenLib.Database
 
         public static async Task<bool> ExistName(string name, string email)
         {
-            bool exists;
+            var exists = false;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
@@ -53,6 +57,10 @@ namespace KitchenLib.Database
 
                     return lst.Count != 0;
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -75,6 +83,10 @@ namespace KitchenLib.Database
                         new {user, name = inv._name, guid = inv._guid});
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -95,6 +107,10 @@ namespace KitchenLib.Database
                         new {email, name = uid});
                     return reader.ConsumeAsync().Result.Counters.NodesDeleted != 0;
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -152,6 +168,11 @@ namespace KitchenLib.Database
                 });
                 return inv;
             }
+            catch
+            {
+                return null;
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -173,6 +194,10 @@ namespace KitchenLib.Database
                         new {quant, email, name = uid, pguid = prodName});
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -191,6 +216,10 @@ namespace KitchenLib.Database
                         "where u._email = $email and i.guid = $name and p._guid = $pguid " +
                         "Set c.quantity = $quant", new {name = uid, pguid = prodName, email, quant});
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -213,6 +242,10 @@ namespace KitchenLib.Database
 
                     var r = await tx.RunAsync(query, dic);
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -237,6 +270,10 @@ namespace KitchenLib.Database
                     }
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -259,6 +296,10 @@ namespace KitchenLib.Database
                                               "foreach(x in arr | create (i)<-[:Shared]-(z))",
                                               new {email, name = uid, friend});
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -283,6 +324,10 @@ namespace KitchenLib.Database
                     }
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -302,6 +347,10 @@ namespace KitchenLib.Database
                                               "where u._email = $email and i.guid = $uid " +
                                               "set i.name = $new_name", new {email, uid, new_name});
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {

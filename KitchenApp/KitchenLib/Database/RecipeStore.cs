@@ -8,7 +8,7 @@ namespace KitchenLib.Database
     {
         public static async Task<bool> Exists(string uid)
         {
-            bool exists;
+            var exists = false;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
@@ -22,6 +22,10 @@ namespace KitchenLib.Database
 
                     return lst.Count != 0;
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -51,6 +55,10 @@ namespace KitchenLib.Database
                         }
                     }
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -82,6 +90,10 @@ namespace KitchenLib.Database
                     }
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -103,6 +115,10 @@ namespace KitchenLib.Database
                                                    "foreach(x in arr | create (u)-[:REC]->(z))",
                         new {email = user, id});
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -136,6 +152,10 @@ namespace KitchenLib.Database
                     }
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -156,6 +176,10 @@ namespace KitchenLib.Database
                                                    "delete r",
                         new {user, id});
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
