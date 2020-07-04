@@ -9,7 +9,7 @@ namespace KitchenLib.Database
     {
         public static async Task<bool> Exists(string uid)
         {
-            bool exists;
+            var exists = false;
             var session = new Database("bolt://db:7687", "neo4j", "APPmvc").session();
             try
             {
@@ -23,6 +23,10 @@ namespace KitchenLib.Database
 
                     return lst.Count != 0;
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -48,6 +52,10 @@ namespace KitchenLib.Database
                         });
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -65,6 +73,10 @@ namespace KitchenLib.Database
                         new {guid});
                     return reader.ConsumeAsync().Result.Counters.NodesDeleted != 0;
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -133,6 +145,10 @@ namespace KitchenLib.Database
                     }
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -161,6 +177,10 @@ namespace KitchenLib.Database
                         }
                     }
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -192,6 +212,10 @@ namespace KitchenLib.Database
                     }
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -221,6 +245,10 @@ namespace KitchenLib.Database
                         l.Add(u);
                     }
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
@@ -255,6 +283,10 @@ namespace KitchenLib.Database
                     }
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -288,6 +320,10 @@ namespace KitchenLib.Database
                     }
                 });
             }
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 await session.CloseAsync();
@@ -313,6 +349,10 @@ namespace KitchenLib.Database
                         l.Add(curr);
                     }
                 });
+            }
+            catch
+            {
+                // ignored
             }
             finally
             {
