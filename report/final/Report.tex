@@ -135,44 +135,233 @@ linkcolor=black}
     \section{Requisitos Funcionais}
         \subsection{Gestão de Utilizador}
             \textbf{Definição de Requisitos de Utilizador}
+            \begin{itemize}
+                \item O utilizador tem que se registar na aplicação.
+                \item O utilizador tem que se autenticar na aplicação.
+                \item O utiliador deve conseguir editar o seu nome, número
+                de telemóvel e data de nascimento.
+            \end{itemize}
             \textbf{Definição de Requisitos de Sistema}
+            \begin{itemize}
+                \item Durante o registo, o sistema deve pedir o nome, email,
+                telemóvel, data de nascimento e password.
+                \item O sistem não deve permitir registo de utilizadores com
+                o mesmo email.
+                \item O sistema deve armazenar os dados do utilizador
+                \item O sistema deve mostrar os dados do utilizador aquando
+                a edição dos mesmos.
+            \end{itemize}
             
         \subsection{Gestão de Despensas}
             \textbf{Definição de Requisitos de Utilizador}
+            \begin{itemize}
+                \item O utilizador deve conseguir ver, adicioanr, 
+                editar e remover as suas Despensas.
+                \item O utilizador deve conseguir gerir as despensas que 
+                lhe foram partilhadas.
+            \end{itemize}
             \textbf{Definição de Requisitos de Sistema}
+            \begin{itemize}
+                \item O sistema deverá apresentar ecrãs ao utilizador onde
+                pode ver todas as suas despensas (próprias e partilhadas) e
+                o conteúdo do interior de cada despensa.
+                \item O sistem deverá permitir o utilizador adicionar, editar e 
+                remover as suas despensas.
+                \item O sistema deverá restringuir o acesso a despensas às
+                quais o utilizador não tem acesso.
+                \item O sistema deverá restringuir a edição de nome e partilha
+                de despensas às quais não é o dono.
+                \item O sistema deverá armazenar todos os dados referentes às
+                despensas do utilizador.
+            \end{itemize}
 
         \subsection{Gestão de Wishlists}
             \textbf{Definição de Requisitos de Utilizador}
+            \begin{itemize}
+                \item O utilizador deve conseguir ver, adicionar, 
+                editar e remover os seus Wishlists.
+                \item O utilizador deve conseguir gerir os wishlists que 
+                lhe foram partilhadas.
+            \end{itemize}
             \textbf{Definição de Requisitos de Sistema}
+            \begin{itemize}
+                \item O sistema deverá apresentar ecrãs ao utilizador onde
+                pode ver todas so seus wishlists (próprios e partilhados) e
+                o conteúdo do interior de cada wishlist.
+                \item O sistem deverá permitir o utilizador adicionar, editar e 
+                remover os seus wishlists.
+                \item O sistema deverá restringuir o acesso aos wishlists aos
+                quais o utilizador não tem acesso.
+                \item O sistema deverá restringuir a edição de nome e partilha
+                de wishlists aos quais não é o dono.
+                \item O sistema deverá armazenar todos os dados referentes aos
+                wishlists do utilizador.
+            \end{itemize}
 
         \subsection{Gestão de lista de compras}
             \textbf{Definição de Requisitos de Utilizador}
+            \begin{itemize}
+                \item O utilizador deve conseguir ver, adicionar, editar 
+                e remover as suas listas de compras.
+                \item O utilizador deve conseguir gerir as listas de compras 
+                quel he foram partilhadas.
+            \end{itemize}
             \textbf{Definição de Requisitos de Sistema}
+            \begin{itemize}
+                \item O sistema deverá apresentar ecrãs ao utilizador onde
+                pode ver todas as suas listas de compras (próprias e 
+                partilhadas) e o conteúdo do interior de cada lista de compras.
+                \item O sistem deverá permitir o utilizador adicionar, editar e 
+                remover as suas listas de compras.
+                \item O sistema deverá restringuir o acesso a lista de compras
+                às quais o utilizador não tem acesso.
+                \item O sistema deverá restringuir a edição de nome e partilha
+                de listas de compras às quais não é o dono.
+                \item O sistema deverá armazenar todos os dados referentes às
+                listas de compras do utilizador.
+            \end{itemize}
 
         \subsection{Adicionar utilizador a uma despensa}
             \textbf{Definição de Requisitos de Utilizador}
+            \begin{itemize}
+                \item O utilizador deve conseguir adicionar utilizadores
+                a uma das suas despensas.
+                \item O utilizador deverá introduzir um email de utilizador
+                válido e existente.
+            \end{itemize}
             \textbf{Definição de Requisitos de Sistema}
+            \begin{itemize}
+                \item O sitema deverá exigir um email ao utilizador
+                aquando a realização da partilha da despensa.
+                \item O sistema deverá dar permissões de adicionar e editar
+                produtos da despensa ao utilizador que foi partilhado.
+                \item O sistema deverá restringuir a edição do nome do
+                inventário, remoção do inventário e partilha do mesmo com
+                outros utilizadores ao utilizador adicionado.
+                \item O sistema deverá armazenar o utilizador adicionado
+                na despensa partilhada.
+                \item O sistema deverá negar a adição de um email que não
+                existe ou não é válido.
+            \end{itemize}
 
         \subsection{Gestão de produtos}
             \textbf{Definição de Requisitos de Utilizador}
+            \begin{itemize}
+                \item O utilizador deve conseguir adicionar, remover e editar 
+                produtos nas suas Despensas, Wishlists e listas de compras.
+                \item O utilizador deve conseguir adicionar, remover e editar 
+                produtos nas suas Despensas, Wishlists e listas de compras
+                patilhadas.
+            \end{itemize}
             \textbf{Definição de Requisitos de Sistema}
-
+            \begin{itemize}
+                \item O sistema deverá permitir o utilizador de adicionar, 
+                editar e remover os produtos das suas depensas.
+                \item O sistema deverá apresentar ao utilizador na adição de
+                produtos as categorias existentes, os produtos respetivos a
+                essas mesmas e exigir quantidade e data de validade 
+                (quando necessário).
+                \item O sistema deverá restringuir a adição, edição e remoção
+                de produtos de despensas, wishlists e listas de compras
+                às quais não tem acesso.
+                \item O sistema deverá armazenar todos os produtos adicionados
+                nas despensas, wishlists e listas de compras como não armazenar
+                os que foram removidos.
+            \end{itemize}
         \subsection{Gestão de Receitas Favoritas}
             \textbf{Definição de Requisitos de Utilizador}
+            \begin{itemize}
+                \item O utilizador deverá conseguir adicionar e remover
+                receitas da sua lista de receitas favoritas.
+            \end{itemize}
             \textbf{Definição de Requisitos de Sistema}
+            \begin{itemize}
+                \item O sistema deverá apresentar ao utilizador um ecrã
+                com a sua lista de receitas favoritas.
+                \item O sistema deverá permitir o utilizador de adicionar e
+                remover receitas favoritas da sua lista.
+                \item O sistema deverá restringuir o acesso ao utilizador
+                a listas de favoritos às quais não tem acesso.
+                \item O sistema deverá armazenar as receitas favoritas 
+                adicionadas pelo utilizador como deverá não armazenar as 
+                receitas que o utilizador remover da sua lista. 
+            \end{itemize}
 
         \subsection{Procura de Produtos}
             \textbf{Definição de Requisitos de Utilizador}
+            \begin{itemize}
+                \item O utilizador deverá conseguir fazer uma pesquisa
+                de produtos através da inserção de palavras na caixa
+                de pesquisa da página de produtos.
+                \item O utilizador deverá conseguir adicionar produtos
+                às suas despensas, wishlists e listas de compras dos produtos 
+                visiveis na procura de produtos.
+            \end{itemize}
             \textbf{Definição de Requisitos de Sistema}
+            \begin{itemize}
+                \item O sistema deverá apresentar ao utilizador um ecrã
+                com um campo de procura e uma lista de produtos com base
+                na procura realizada.
+                \item O sistema deverá permitir o utilizador de pesquisar
+                produtos através de palavras.
+                \item O sistema deverá permitir o utilizador de adicionar
+                produtos apresentados na pesquisa às suas despensas,
+                wishlists e listas de compras.
+                \item O sistema deverá mostrar produtos que tem armazenados.
+                \item O sistema deverá armazenar os produtos que o utilizador
+                adicionou às suas despensas, wishlists e listas de compras.
+            \end{itemize}
 
         \subsection{Procura de Receitas}
             \textbf{Definição de Requisitos de Utilizador}
+            \begin{itemize}
+                \item O utilizador deverá conseguir fazer uma pesquisa
+                de receitas através da inserção de palavras na caixa
+                de pesquisa da página de receitas.
+                \item O utilizador deverá conseguir adicionar receitas
+                à sua lista de receitas favoritas das receitas 
+                visiveis na procura de receitas.
+            \end{itemize}
             \textbf{Definição de Requisitos de Sistema}
-
+            \begin{itemize}
+                \item O sistema deverá apresentar ao utilizador um ecrã
+                com um campo de procura e uma lista de receitas com base
+                na procura realizada.
+                \item O sistema deverá permitir o utilizador de pesquisar
+                receitas através de palavras.
+                \item O sistema deverá permitir o utilizador de adicionar
+                receitas apresentadas na pesquisa à sua lista de receitas
+                favoritas.
+                \item O sistema deverá mostrar receitas da API externa.
+                \item O sistema deverá armazenar as receitas que o utilizador
+                adicionou à sua lista de receitas favoritas.
+            \end{itemize}
         \subsection{Gestão de amizades}
             \textbf{Definição de Requisitos de Utilizador}
+            \begin{itemize}
+                \item O utilizador deve conseguir ver, adicionar e remover
+                utilizadores (amigos) da sua lista de amigos.
+                \item O utilizador deve conseguir ver e remover pedidos 
+                de amizade enviados.
+                \item O utilizador deve conseguir aceitar e recusar pedidos 
+                de amizade que lhe foram enviados.
+            \end{itemize}
             \textbf{Definição de Requisitos de Sistema}
-
+            \begin{itemize}
+                \item O sistema deverá apresentar ecrãs ao utilizador onde
+                pode ver todos os seus pedidos de amizade enviados, recebidos
+                e amigos adicionados.
+                \item O sistema deverá permitir o utilizador adicionar e 
+                remover pedidos de amizade enviados.
+                \item O sistema deverá permitir o utilizador adicionar e 
+                remover amigos.
+                \item O sistema deverá permitir o utilizador aceitar e 
+                recusar pedidos de amizade recebidos.
+                \item O sistema deverá restringuir o acesso a lista de amigos
+                ao quais o utilizador não tem acesso.
+                \item O sistema deverá armazenar todos os dados referentes às
+                amizades do utilizador.
+            \end{itemize}
 
     \section{Requisitos Não Funcionais}
     \begin{itemize}
