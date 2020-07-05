@@ -1,31 +1,38 @@
 # KitchenApp
 
-- José Filipe Ferreira
-- João Teixeira
-- Maria Silva
-- Miguel Solino
-- Pedro Oliveira
+* José Filipe Ferreira
+* João Teixeira
+* Maria Silva
+* Miguel Solino
+* Pedro Oliveira
 
-## Objetivos propostos na última entrega
+# Motivação
+Proporcionar melhor gestão da dispensa em casa de forma a reduzir desperdícios e
+facilitar a tarefa de ir às compras.
 
-- Desenvolvimento mais aprofundado do relatório
-- Inicio da implementação das receitas na base de dados
-- Implementação da API de pesquisa de receitas
-- Implementação da notificação de proximidade do fim da data de validade no backend
-- Implementação do frontend para produtos
-- Implementação do frontend para gestão de lista de favoritos e lista de compras
+# Use Cases
+<img src="usecases.png" height="500px"/>
 
-## Objetivos atingidos
+# Backend
+* C# com ASP.NET *framework*
+* Neo4J
+* Deployment na Azure + Docker
 
-- Todos os objetivos propostos na última entrega
-- Implementação de receitas favoritas no backend
+# Frontend
+* JavaScript com React *framework*
+* WebApp Responsive
+* Deployment na Azure
 
-## Objetivos para a próxima entrega
-- Finalizar a pesquisa de receitas com implementação de pesquisa por produtos
-    disponíveis
-- Implementar pesquisa de produtos por categorias
-- Implementar um getter para as categorias de produtos disponíveis
-- Uniformização do frontend
-- Implementação de página para mostrar uma receita
-- Importação de produtos da API de receitas
-- Continuação do desenvolvimento do relatório
+## Desktop
+![](dashboard_pc.png)
+
+## Mobile
+<img src="login_mobile.png" height="500px" />
+
+# Arquitetura
+<img src="arquitetura.png" />
+
+# Demo
+<a href="https://kitchenapp.jff.sh/">
+    <img src="fork.svg" />
+</a>
