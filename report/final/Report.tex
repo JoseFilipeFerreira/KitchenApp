@@ -93,10 +93,6 @@ linkcolor=black}
 \tableofcontents
 
 \chapter{Introdução}
-    \section{Contextualização}
-
-    \section{Apresentação do Caso de Estudo}
-
     \section{Motivação e Objetivos}
     Com este projeto pretendemos simplificar o processo de ir as compras e de
     gestão das nossas dispensas de casa. Queremos resolver problemas comuns do
@@ -118,9 +114,9 @@ linkcolor=black}
     No segundo capítulo fundamentamos o projeto da apliação a desenvolver. Em
     seguida analisamos a viabilidade económica e a utilidade deste projeto no
     mundo real.\\
-    No terceiro capítulo começamos o \textbf{planeamento} do projeto fazendo
-    uma identificação dos recursos necessários e um alando de desenvolvimento
-    para ser seguido ao longo do desenvolvimento do projeto.\\
+    No terceiro capítulo começamos o planeamento do projeto fazendo uma análise
+    das diversas etapas do projeto ao longo do tempo apresentando um plano de
+    desenvolvimento.\\
     No quarto capítulo descrevemos o \textbf{levantamento de requisitos}
     efetuado com a explicação dos requisitos funcionais e não-funcionais de
     forma detalhada.\\
@@ -130,31 +126,28 @@ linkcolor=black}
     do projeto.\\
     Finalmente, a partir do capítulo oito, inclusive, começamos a descrever o
     desenvolvimento do projeto propriamente dito.\\
-    No capítulo 8 apresentamos a \textbf{arquitetura da camada de negócios}
+    No capítulo oito apresentamos a \textbf{arquitetura da camada de negócios}
     e a estrutura desta.\\
-    No capítulo 9 apresentamos os \textit{mockups} da aplicação realizados com
-    \textit{AdobeXD}.\\
+    No capítulo nove apresentamos os \textit{mockups} da aplicação realizados
+    com \textit{AdobeXD}.\\
     No capítulo dez explicamos a \textbf{metodologia da implementação} e no
     capítulo seguinte apresentamos as ferramentas utilizadas para a
     implementação.\\
     No capítulo doze realçamos algumas partes do trabalho mais relevantes que
     exemplificam as tecnologias utilizadas.\\
-    Finalmente, no capítulo treze apresentamos o produto final com exemplos de
-    utilização deste.
+    Finalmente, no capítulo treze e catorze apresentamos o produto final com
+    exemplos de utilização deste.
 
+\chapter{Justificação, Viabilidade e Utilidade do Sistema}
 
+\chapter{Plano de Desenvolvimento}
+    Inicialmente o projeto foi planeado para ser desenvolvido ao longo de 10
+    semanas. Assim, dividimos o projeto em duas fazes distintas: planeamento do
+    projeto e desenvolvimento. Em paralelo foi planeado ser escrito o presente
+    relatório.\\
+    O seguinte diagrama apresenta o planeamento feito inicialmente.
 
-
-\chapter{Fundamentação}
-    \section{Definição da Identidade do Sistema}
-    \section{Justificação, Viabilidade e Utilidade do Sistema}
-
-\chapter{Planeamento}
-    \section{Identificação dos Recursos Necessários}
-    \section{Modelação do Sistema a Implementar - Maqueta}
-    \section{Definição de Medida de Sucesso}
-    \section{Plano de Desenvolvimento}
-        \noindent\resizebox{\textwidth}{!}{
+    \noindent\resizebox{\textwidth}{!}{
         \begin{tikzpicture}
         \begin{ganttchart}[vgrid, hgrid]{1}{10}
             \ganttbar{Criação de Repositório}{1}{1} \\    
@@ -174,6 +167,10 @@ linkcolor=black}
         \end{ganttchart}
         \end{tikzpicture}
     }
+
+    Para facilitar o desenvolvimento em paralelo e o bom cumprimento dos timings
+    definidos utilizamos os projetos do github complementados com issues
+    ilustrativos das tarefas a fazer.
 
 
 \chapter{Levantamento de Requisitos}
@@ -420,6 +417,14 @@ linkcolor=black}
     \end{itemize}
 
 \chapter{Modelo de Domínios}
+Após a análise de requisitos desenvolvemos o seguinte modelo de domínio que
+representa todas as entidades relevantes à implementação dos requisitos
+previamente definidos.
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\textwidth]{images/modelo_dominios.png}
+        \caption{Modelo de Domínios}
+\end{figure}
 
 \chapter{Diagrama de Use Cases}
     \begin{figure}[H]
@@ -498,7 +503,6 @@ linkcolor=black}
         \end{figure}
 
 \chapter{Arquitetura da Camada de Negócios}
-    \section{Camada de Negócios}
     \section{Dicionário das Principais Classes}
         \subsection{User}
         Corresponde à representaão no sistema dos utilizadoeres registados,
@@ -658,6 +662,11 @@ interface apresentada ao utilizador final.
 
 \chapter{Arquitetura Final do Projeto}
 Após a implementação da aplicação, a arquitetura final tem o seguinte aspeto:
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\textwidth]{images/arquitetura.png}
+        \caption{Arquitetura Final da Aplicação}
+\end{figure}
 
 No backoffice, os pedidos são efetuados pela \textit{Web API} definida e
 documentada, e são atendidos pelo \textit{nginx}, e posteriormente 
@@ -822,8 +831,12 @@ sendo o backend completamente independente do frontend.
     da mesma (imagem, sumário, ingredientes e isntruções), como na 
     figura abaixo.
 
-    \section{Receitas favoritas}
+    \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/produto_final/receitas.png}
+    \end{figure}
 
+    \section{Receitas favoritas}
     Na secção anterior foi feita uma referência à pagina de receitas favoritas
     de um utilizador. Esta é acessível a partir da opção 
     \textbf{Favourite Recipes} do menu lateral e a página apresentada ao 
@@ -917,10 +930,6 @@ sendo o backend completamente independente do frontend.
     \end{figure}
 
 \chapter{Conclusões}
-
-\chapter{Referências}
-
-\chapter{Lista de Siglas e Acrónimos}
 
 \end{document}
 
