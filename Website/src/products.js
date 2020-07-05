@@ -355,6 +355,7 @@ export default class Products extends Component {
                 placeholder="Search products..."
                 name="search"
                 value={search}
+                className="searchText"
                 onChange={this.changeHandler}
               />
               <button type="submit">
