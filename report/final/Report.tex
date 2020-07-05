@@ -647,21 +647,83 @@ interface apresentada ao utilizador final.
     nome, e a capacidade de sugerir receitas com base no que existe numa
     despensa.
 
+    \section{Gestão de Logins}
+    Por forma a simplificar a gestão do utilizador que faz os pedidos,
+    implementamos um sistema de tokens, assente no standard \textit{JSON Web
+    Token} (\textit{JWT}), que contém informação sobre o utilizador, prazo de
+    validade e também uma assinatura digital que marca a autenticidade do mesmo,
+    não dando assim acessos indevidos às páginas privadas do utilizador. Este
+    token é validado e renovado a cada pedido efetuado, e é transmitido num
+    header do pedido \textit{HTTP}.
+
+\chapter{Arquitetura Final do Projeto}
+Após a implementação da aplicação, a arquitetura final tem o seguinte aspeto:
+
+No backoffice, os pedidos são efetuados pela \textit{Web API} definida e
+documentada, e são atendidos pelo \textit{nginx}, e posteriormente 
+encaminhados para o serviço referente ao pedido recebido. Caso sejam 
+pedidos que necessitem autenticação, antes de encaminhados para o serviço 
+correto, ainda passam pelo \textit{Auth Service}, responsável pela autenticação 
+dos utilizadores. Apenas é exposta a ligação ao \textit{proxy} ao exterior,
+sendo todas as restantes conexões aos serviços e base de dados feitas
+internamente. Apenas um dos serviços faz conexões diretas ao exterior, sendo
+este o referente às receitas, que faz pedidos à API externa integrada.
+
+O frontend comunica com os backend com os mesmos métodos acima descritos,
+sendo o backend completamente independente do frontend.
+
 \chapter{Produto Final}
+
+    Ao longo de várias semanas a nossa equipa desenvolveu o Kitchen App até que
+    o produto de software final fosse o inicialmente idealizado. Abaixo, iremos
+    demonstrar como a aplicação funciona no geral e onde se encontra e como
+    estão implementadas as nossas funcionalidades.
+
+    \section{Página inicial (Sem sessão iniciada)}
+    A página de login é a inicial e principal quando não se está 
+    autenticado. Redirecionados para esta página são os utilizadores que
+    ou não se autenticaram ou então não possuem um token válido (exemplos destes 
+    são os utilizadores que se encontram autenticados na aplicação há tempo
+    suficiente para que o seu token perdesse a validade). Nesta página é 
+    então possível um utilizador autenticar se ou aceder à página de registo.
+
     \begin{figure}[H]
         \centering
             \includegraphics[width=\textwidth]{images/produto_final/login.png}
     \end{figure}
+
+    Através então \textbf{da opção de Registo} é se direcionado para esta 
+    página onde se é possível realizar o registo de um utilizador. Caso 
+    não se pretenda realizar um registo podemos voltar para a página de login
+    na opção \textbf{back}.
 
     \begin{figure}[H]
         \centering
             \includegraphics[width=\textwidth]{images/produto_final/registo.png}
     \end{figure}
 
+    \section{Página inicial (com sessão iniciada)}
+
+    Estando autenticado, é apresentado ao utilizador a sua \textbf{dashboard}.
+    Nesta é possivel ver todos os \textbf{inventários} que o utilizador possui
+    (próprios e partilhados), as \textbf{notificações} (serão mostradas mais 
+    tarde) e todas as opções no \textbf{menu da esquerda} para nos ser 
+    possível mover na aplicação (tanto as notificações como o menu lateral 
+    esquerdo estão presentes em todas as páginas que é necessário 
+    autenticação).
+
     \begin{figure}[H]
         \centering
             \includegraphics[width=\textwidth]{images/produto_final/inicial.png}
     \end{figure}
+
+    \section{Inventário}
+
+    Selecionando um inventário na página inicial é nos apresentada a página
+    abaixo com todos os produtos que possui e as opções necessárias para 
+    ser possível gerir o inventário e os produtos presentes. Nas figuras
+    abaixo conseguimos ver o workflow de como se utiliza cada funcionalidade
+    de um inventário.
 
     \begin{figure}[H]
         \centering
@@ -713,6 +775,20 @@ interface apresentada ao utilizador final.
             \includegraphics[width=\textwidth]{images/produto_final/pagina_iventario_partilhado.png}
     \end{figure}
 
+    Os wishlists e as listas de compras não são apresentados aqui devido ao 
+    design e as funcionalidades implementadas em cada um deles serem 
+    minimamente semelhantes para não ser necessário apresentar capturas de 
+    ecrã.
+
+    \section{Produtos}
+
+    Selecionando a opção dos \textbf{Products} do menu lateral somos
+    redirecionados para esta página. Aqui é possível realizarmos uma 
+    pesquisa dos produtos existentes na aplicação como também adicionar
+    os mesmos a cada uma das listas existentes (despensas, wishlists e 
+    listas de compras). Abaixo é apresentado o processo de como esta 
+    página funciona.
+
     \begin{figure}[H]
         \centering
             \includegraphics[width=\textwidth]{images/produto_final/procura_de_produtos.png}
@@ -722,6 +798,15 @@ interface apresentada ao utilizador final.
         \centering
             \includegraphics[width=\textwidth]{images/produto_final/procura_de_produtos_efetuada.png}
     \end{figure}
+
+    \section{Receitas}
+
+    Continuando agora para a opção de \textbf{Recipes} no menu lateral a 
+    aplicação redireciona o utilizador para a página abaixo onde poderá,
+    semelhante à página de procura de receitas, realizar uma pesquisa
+    das receitas existentes na aplicação e escolher as que mais gostar
+    como favoritas para mais tarde serem apresentadas e consultadas na
+    página de receitas favoritas do utilizador.
 
     \begin{figure}[H]
         \centering
@@ -733,10 +818,29 @@ interface apresentada ao utilizador final.
             \includegraphics[width=\textwidth]{images/produto_final/procura_de_receitas_efetuadas.png}
     \end{figure}
 
+    Selecionando uma receita da lista será possível ver os detalhes da
+    da mesma (imagem, sumário, ingredientes e isntruções), como na 
+    figura abaixo.
+
+    \section{Receitas favoritas}
+
+    Na secção anterior foi feita uma referência à pagina de receitas favoritas
+    de um utilizador. Esta é acessível a partir da opção 
+    \textbf{Favourite Recipes} do menu lateral e a página apresentada ao 
+    utilizador é a figura abaixo. Aqui será possivel serem consultadas as
+    receitas que o utilizador colocou como favoritas e remove-las.
+
     \begin{figure}[H]
         \centering
             \includegraphics[width=\textwidth]{images/produto_final/receitas_favoritas.png}
     \end{figure}
+
+    \section{Perfil}
+
+    Passando à secção de \textbf{Settings} do menu lateral, e começando pelo 
+    \textbf{Account}, é apresentado ao utilizador os seus dados, nomeadamente,
+    nome, email, número de telemóvel e data de nascimento. Todos estes dados, 
+    exceto o de email, são editáveis caso o utilizador os pretenda mudar.
 
     \begin{figure}[H]
         \centering
@@ -758,6 +862,13 @@ interface apresentada ao utilizador final.
             \includegraphics[width=\textwidth]{images/produto_final/alterar_nascimento_iventario.png}
     \end{figure}
 
+    \section{Amigos}
+
+    Na segunda opção da mesma secção, \textbf{Friends}, temos presente o botão
+    que redireciona o utilizador para a sua página de amigos. Aqui é onde 
+    se poderá adicionar e remover amigos e responder a pedidos de amizade
+    recebidos. 
+
     \begin{figure}[H]
         \centering
             \includegraphics[width=\textwidth]{images/produto_final/pedido_amigos_enviado.png}
@@ -778,6 +889,11 @@ interface apresentada ao utilizador final.
             \includegraphics[width=\textwidth]{images/produto_final/amigo_adicionado.png}
     \end{figure}
 
+    \section{Popup Erro/Sucesso}
+
+    Abaixo são apresentados exemplos de como são os popups de \textbf{Sucesso} 
+    e \textbf{Erro} para as diferentes funcionalidades da aplicação.
+
     \begin{figure}[H]
         \centering
             \includegraphics[width=\textwidth]{images/produto_final/exemplo_erro.png}
@@ -787,6 +903,13 @@ interface apresentada ao utilizador final.
         \centering
             \includegraphics[width=\textwidth]{images/produto_final/exemplo_sucesso.png}
     \end{figure}
+
+    \section{Painel de Notificações}
+
+    Finalmente, abaixo está o nosso painel de notificações que apresentará
+    notificações quando o utilizador tiver pedidos de amizade por aceitar
+    ou produtos dos inventários perto de ficarem fora de validade ou 
+    já expirados.
 
     \begin{figure}[H]
         \centering
