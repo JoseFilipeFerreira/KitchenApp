@@ -98,7 +98,7 @@ namespace KitchenLib
 
         private static string get_request(string url)
         {
-            url = System.Web.HttpUtility.UrlEncode(url);
+            url = Uri.EscapeUriString(url);
             Console.WriteLine(url);
             var httpWebRequestQr = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequestQr.ContentType = "application/json";
