@@ -18,6 +18,7 @@ linkcolor=black}
 \usepackage{authblk}
 \usepackage{bashful}
 \usepackage{verbatim}
+\usepackage{pgfgantt}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{multirow}
@@ -107,6 +108,27 @@ linkcolor=black}
     \section{Modelação do Sistema a Implementar - Maqueta}
     \section{Definição de Medida de Sucesso}
     \section{Plano de Desenvolvimento}
+        \noindent\resizebox{\textwidth}{!}{
+        \begin{tikzpicture}
+        \begin{ganttchart}[vgrid, hgrid]{1}{10}
+            \ganttbar{Criação de Repositório}{1}{1} \\    
+            \ganttbar{Definir Objetivos}{1}{2} \\    
+            \ganttbar{Use Cases}{2}{2} \\    
+            \ganttbar{Estudo de Mercado}{2}{2} \\
+            \ganttbar{Modelação do Projeto}{3}{3} \\
+            \ganttbar{Modelação de Base de Dados}{3}{4} \\
+            \ganttbar{Planeamento da UI}{3}{4} \\
+            \ganttbar{Desenvolvimento}{5}{10} \\
+            \ganttbar{Escrita do Relatório}{1}{10} \\
+            \gantttitle{1}{2}
+            \gantttitle{2}{2}
+            \gantttitle{3}{2}
+            \gantttitle{4}{2}
+            \gantttitle{5}{2}
+        \end{ganttchart}
+        \end{tikzpicture}
+    }
+
 
 \chapter{Levantamento de Requisitos}
     \section{Requisitos Funcionais}
@@ -291,32 +313,32 @@ linkcolor=black}
 \chapter{Proposta de Interface}
     \begin{figure}[H]
     \centering
-            \includegraphics[width=0.7\textwidth]{images/mockup/login_desktop.png}
+            \includegraphics[width=0.9\textwidth]{images/mockup/login_desktop.png}
             \caption{Login no Desktop}
     \end{figure}
     \begin{figure}[H]
     \centering
-            \includegraphics[width=0.2\textwidth]{images/mockup/login_mobile.png}
+            \includegraphics[width=0.4\textwidth]{images/mockup/login_mobile.png}
             \caption{Login em Mobile}
     \end{figure}
     \begin{figure}[H]
     \centering
-            \includegraphics[width=0.7\textwidth]{images/mockup/register_desktop.png}
+            \includegraphics[width=0.9\textwidth]{images/mockup/register_desktop.png}
             \caption{Registo no Desktop}
     \end{figure}
     \begin{figure}[H]
     \centering
-            \includegraphics[width=0.2\textwidth]{images/mockup/register_mobile.png}
+            \includegraphics[width=0.4\textwidth]{images/mockup/register_mobile.png}
             \caption{Registo em Mobile}
     \end{figure}
     \begin{figure}[H]
     \centering
-            \includegraphics[width=0.7\textwidth]{images/mockup/dashboard_desktop.png}
+            \includegraphics[width=0.9\textwidth]{images/mockup/dashboard_desktop.png}
             \caption{Dashboard no Desktop}
     \end{figure}
     \begin{figure}[H]
     \centering
-            \includegraphics[width=0.2\textwidth]{images/mockup/dashboard_mobile.png}
+            \includegraphics[width=0.4\textwidth]{images/mockup/dashboard_mobile.png}
             \caption{Dashboard em Mobile}
     \end{figure}
     
