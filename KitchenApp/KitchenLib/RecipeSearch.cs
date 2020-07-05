@@ -93,7 +93,7 @@ namespace KitchenLib
                       + options
                       + "&instructionsRequired=true&apiKey="
                       + API_KEY;
-            return JsonConvert.DeserializeObject<RootMinimalRecipes>(get_request(url)).results;
+            return JsonConvert.DeserializeObject<List<MinimalRecipe>>(get_request(url));
         }
 
         private static string get_request(string url)
@@ -104,9 +104,6 @@ namespace KitchenLib
             httpWebRequestQr.ContentType = "application/json";
             httpWebRequestQr.Method = "GET";
             
-
-            
-
             var httpResponseQr = (HttpWebResponse)httpWebRequestQr.GetResponse();
             using var streamReader = new StreamReader(httpResponseQr.GetResponseStream());
             return streamReader.ReadToEnd();
