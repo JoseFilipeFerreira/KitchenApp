@@ -27,7 +27,7 @@ export default class InventoryList extends React.Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "https://thekitchenapp.azurewebsites.net/product/category/all",
+        "http://localhost:1331/product/category/all",
         {
           headers: { auth: token },
         },
@@ -73,7 +73,7 @@ export default class InventoryList extends React.Component {
     let form = new FormData();
     form.append("category", category);
     axios
-      .post("https://thekitchenapp.azurewebsites.net/product/category/getprods", form, {
+      .post("http://localhost:1331/product/category/getprods", form, {
         headers: { "Content-Type": "multipart/form-data", auth: token },
         withCredentials: true,
       })
@@ -137,7 +137,7 @@ export default class InventoryList extends React.Component {
       form.append("uid", this.props.inventory_id);
 
       axios
-        .post("https://thekitchenapp.azurewebsites.net/inventory/addproduct", form, {
+        .post("http://localhost:1331/inventory/addproduct", form, {
           headers: { "Content-Type": "multipart/form-data", auth: token },
           withCredentials: true,
         })
@@ -176,7 +176,7 @@ export default class InventoryList extends React.Component {
         form.append("prod", uid);
 
         axios
-          .post("https://thekitchenapp.azurewebsites.net/inventory/removeproduct", form, {
+          .post("http://localhost:1331/inventory/removeproduct", form, {
             headers: { "Content-Type": "multipart/form-data", auth: token },
             withCredentials: true,
           })
@@ -223,7 +223,7 @@ export default class InventoryList extends React.Component {
       form.append("uid", this.props.inventory_id);
 
       axios
-        .post("https://thekitchenapp.azurewebsites.net/inventory/editproduct", form, {
+        .post("http://localhost:1331/inventory/editproduct", form, {
           headers: { "Content-Type": "multipart/form-data", auth: token },
           withCredentials: true,
         })
@@ -292,7 +292,7 @@ export default class InventoryList extends React.Component {
       const form = new FormData();
       form.append("inventory", this.props.inventory_id);
       axios
-        .post("https://thekitchenapp.azurewebsites.net/recipe/search", form, {
+        .post("http://localhost:1331/recipe/search", form, {
           headers: { "Content-Type": "multipart/form-data", auth: token },
           withCredentials: true,
         })
@@ -322,7 +322,7 @@ export default class InventoryList extends React.Component {
           form.append("name", value);
 
           axios
-            .post("https://thekitchenapp.azurewebsites.net/inventory/edit", form, {
+            .post("http://localhost:1331/inventory/edit", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -360,7 +360,7 @@ export default class InventoryList extends React.Component {
             form.append("friend", value);
 
             axios
-              .post("https://thekitchenapp.azurewebsites.net/inventory/share", form, {
+              .post("http://localhost:1331/inventory/share", form, {
                 headers: { "Content-Type": "multipart/form-data", auth: token },
                 withCredentials: true,
               })
@@ -371,6 +371,11 @@ export default class InventoryList extends React.Component {
               })
               .catch((error) => {
                 console.log(error);
+                Swal.fire(
+                  "Nope!",
+                  "User has not been added. Check if email exists.",
+                  "error"
+                );
               });
           }
         },

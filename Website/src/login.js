@@ -59,7 +59,7 @@ class Login extends Component {
       form.append("passwd", passwd);
 
       axios
-        .post("https://thekitchenapp.azurewebsites.net/login", form, {
+        .post("http://localhost:1331/login", form, {
           headers: { "Content-Type": "multipart/form-data" }, withCredentials: true,
         })
         .then((response) => {

@@ -671,6 +671,14 @@ body {
     font-size: 18px;
   }
 
+  #sharedList td, #sharedList th {
+    font-size: 18px;
+  }
+
+  .searchText::-webkit-input-placeholder {
+    font-size: 18px;
+}
+
   #recipeImage {
     width: 100%;
   }

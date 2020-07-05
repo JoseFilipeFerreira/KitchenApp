@@ -8,7 +8,7 @@ export default class FriendsPage extends React.Component {
     let form = new FormData();
     form.append("friend", email);
     axios
-      .post("https://thekitchenapp.azurewebsites.net/user/friends/accept", form, {
+      .post("http://localhost:1331/user/friends/accept", form, {
         headers: { "Content-Type": "multipart/form-data", auth: token },
         withCredentials: true,
       })
@@ -17,9 +17,40 @@ export default class FriendsPage extends React.Component {
         const token = response.headers["auth"];
         localStorage.setItem("auth", token);
         this.props.handler();
+        Swal.fire(
+          "Accepted!",
+          "Friend request has been accepted",
+          "success"
+        );
       })
       .catch((error) => {
         console.log(error);
+      });
+  };
+
+  removeFriend = (email) => {
+    let token = localStorage.getItem("auth");
+    let form = new FormData();
+    form.append("friend", email);
+    axios
+      .post("http://localhost:1331/user/friends/remove", form, {
+        headers: { "Content-Type": "multipart/form-data", auth: token },
+        withCredentials: true,
+      })
+      .then((response) => {
+        /* save this token inside localStorage */
+        const token = response.headers["auth"];
+        localStorage.setItem("auth", token);
+        this.props.handler();
+        Swal.fire(
+          "Removed!",
+          "Friend has been removed",
+          "success"
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+        
       });
   };
 
@@ -28,7 +59,7 @@ export default class FriendsPage extends React.Component {
     let form = new FormData();
     form.append("friend", email);
     axios
-      .post("https://thekitchenapp.azurewebsites.net/user/friends/remove", form, {
+      .post("http://localhost:1331/user/friends/remove", form, {
         headers: { "Content-Type": "multipart/form-data", auth: token },
         withCredentials: true,
       })
@@ -37,9 +68,15 @@ export default class FriendsPage extends React.Component {
         const token = response.headers["auth"];
         localStorage.setItem("auth", token);
         this.props.handler();
+        Swal.fire(
+          "Declined!",
+          "Friend request has been declined",
+          "success"
+        );
       })
       .catch((error) => {
         console.log(error);
+        
       });
   };
 
@@ -57,7 +94,7 @@ export default class FriendsPage extends React.Component {
           form.append("friend", value);
 
           axios
-            .post("https://thekitchenapp.azurewebsites.net/user/friends/add", form, {
+            .post("http://localhost:1331/user/friends/add", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -66,9 +103,19 @@ export default class FriendsPage extends React.Component {
               const token = response.headers["auth"];
               localStorage.setItem("auth", token);
               this.props.handler();
+              Swal.fire(
+                "Sent!",
+                "Friend request has been sent!",
+                "success"
+              );
             })
             .catch((error) => {
               console.log(error);
+              Swal.fire(
+                "Nope!",
+                "Friend request has not been sent.",
+                "error"
+              );
             });
         }
       },
@@ -175,7 +222,7 @@ export default class FriendsPage extends React.Component {
                 role="img"
                 aria-label="jsx-a11y/aria-proptypes"
                 onClick={() => {
-                  this.declineFriend(request);
+                  this.removeFriend(request);
                 }}
               >
                 ❌

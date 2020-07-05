@@ -77,7 +77,7 @@ const RenderRow = (props) => {
       form.append("uid", inventory_id);
 
       axios
-        .post("https://thekitchenapp.azurewebsites.net/inventory/addproduct", form, {
+        .post("http://localhost:1331/inventory/addproduct", form, {
           headers: { "Content-Type": "multipart/form-data", auth: token },
           withCredentials: true,
         })
@@ -100,7 +100,7 @@ const RenderRow = (props) => {
     form.append("uid", whishlist_id);
 
     axios
-      .post("https://thekitchenapp.azurewebsites.net/wishlist/addproduct", form, {
+      .post("http://localhost:1331/wishlist/addproduct", form, {
         headers: { "Content-Type": "multipart/form-data", auth: token },
         withCredentials: true,
       })
@@ -134,7 +134,7 @@ const RenderRow = (props) => {
       form.append("uid", shopping_id);
 
       axios
-        .post("https://thekitchenapp.azurewebsites.net/shopping/addproduct", form, {
+        .post("http://localhost:1331/shopping/addproduct", form, {
           headers: { "Content-Type": "multipart/form-data", auth: token },
           withCredentials: true,
         })

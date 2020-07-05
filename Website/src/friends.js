@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
-import Swal from "sweetalert2";
 import 'sweetalert2/src/sweetalert2.scss'
 import FriendsPage from "./components/FriendsPage";
 import Notifications from "./components/Notifications"
@@ -35,7 +34,7 @@ export default class Friends extends Component {
   getFriends = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("https://thekitchenapp.azurewebsites.net/user/friends/get", {
+      .get("http://localhost:1331/user/friends/get", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
@@ -56,7 +55,7 @@ export default class Friends extends Component {
   getRequests = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("https://thekitchenapp.azurewebsites.net/user/friends/pending", {
+      .get("http://localhost:1331/user/friends/pending", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
@@ -77,7 +76,7 @@ export default class Friends extends Component {
   getSent = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("https://thekitchenapp.azurewebsites.net/user/friends/sent", {
+      .get("http://localhost:1331/user/friends/sent", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
@@ -99,7 +98,7 @@ export default class Friends extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "https://thekitchenapp.azurewebsites.net/user/info",
+        "http://localhost:1331/user/info",
         {
           headers: { auth: token },
         },
@@ -122,173 +121,6 @@ export default class Friends extends Component {
     }
   };
 
-  addFriend = async () => {
-    let token = localStorage.getItem('auth');
-    const form = new FormData();
-    await Swal.fire({
-      title: "Enter user email",
-      input: "email",
-      inputPlaceholder: "Enter email",
-      inputValidator: (value) => {
-        if (!value) {
-          return "Invalid Name";
-        } else {
-          form.append("friend", value);
-
-          axios
-            .post("https://thekitchenapp.azurewebsites.net/user/friends/add", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      },
-    });
-  }
-
-  removeFriend = async () => {
-    let token = localStorage.getItem('auth');
-    const form = new FormData();
-    await Swal.fire({
-      title: "Enter user email",
-      input: "email",
-      inputPlaceholder: "Enter email",
-      inputValidator: (value) => {
-        if (!value) {
-          return "Invalid Name";
-        } else {
-          form.append("friend", value);
-
-          axios
-            .delete("https://thekitchenapp.azurewebsites.net/user/friends/remove", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      },
-    });
-  }
-
-  answerRequest = (email) => {
-    let token = localStorage.getItem('auth');
-    const form = new FormData();
-
-    const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-danger'
-      },
-      buttonsStyling: false
-    })
-    
-    swalWithBootstrapButtons.fire({
-      title: 'Friend request',
-      text: "New friend request",
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonText: 'Accept',
-      cancelButtonText: 'Reject',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.value) {
-
-        form.append("friend", email);
-
-          axios
-            .post("https://thekitchenapp.azurewebsites.net/user/friends/accept", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-
-        swalWithBootstrapButtons.fire(
-          'Accepted!',
-          'New user added to friend list',
-          'success'
-        )
-
-      } else if (
-        /* Read more about handling dismissals below */
-        result.dismiss === Swal.DismissReason.cancel
-      ) {
-        form.append("friend", email);
-
-          axios
-            .delete("https://thekitchenapp.azurewebsites.net/user/friends/remove", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        swalWithBootstrapButtons.fire(
-          'Rejected',
-          'Friend request removed',
-          'error'
-        )
-      }
-    })
-  }
-
-  editFriend = async (email) => {
-    let token = localStorage.getItem('auth');
-    const form = new FormData();
-    Swal.fire({
-      title: 'Edit Friend',
-      text: "Do you want to delete this friend?",
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-      if (result.value) {
-        form.append("friend", email);
-
-          axios
-            .post("https://thekitchenapp.azurewebsites.net/user/friends/remove", form, {
-              headers: { "Content-Type": "multipart/form-data", auth: token },
-              withCredentials: true,
-            })
-            .then((response) => {
-              /* save this token inside localStorage */
-              const token = response.headers["auth"];
-              localStorage.setItem("auth", token);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-      }
-    })
-  }
-  
 
   removeToken = () => {
     localStorage.removeItem('auth');

@@ -99,7 +99,7 @@ const RenderRow = (props) => {
     form.append("id", e);
 
     axios
-      .post("https://thekitchenapp.azurewebsites.net/recipe/star", form, {
+      .post("http://localhost:1331/recipe/star", form, {
         headers: { "Content-Type": "multipart/form-data", auth: token },
         withCredentials: true,
       })
@@ -119,7 +119,7 @@ const RenderRow = (props) => {
     form.append("id", e);
 
     axios
-      .post("https://thekitchenapp.azurewebsites.net/recipe/unstar", form, {
+      .post("http://localhost:1331/recipe/unstar", form, {
         headers: { "Content-Type": "multipart/form-data", auth: token },
         withCredentials: true,
       })

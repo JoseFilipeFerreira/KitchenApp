@@ -115,7 +115,7 @@ class Register extends Component {
       form.append("birthdate", birthdate);
 
       axios
-        .post("https://thekitchenapp.azurewebsites.net/signup", form, {
+        .post("http://localhost:1331/signup", form, {
           headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true,
         })

@@ -17,7 +17,7 @@ export default class Notifications extends React.Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "https://thekitchenapp.azurewebsites.net/inventory/all",
+        "http://localhost:1331/inventory/all",
         {
           headers: { auth: token },
         },
@@ -44,7 +44,7 @@ export default class Notifications extends React.Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "https://thekitchenapp.azurewebsites.net/user/friends/pending",
+        "http://localhost:1331/user/friends/pending",
         {
           headers: { auth: token },
         },
@@ -70,7 +70,7 @@ export default class Notifications extends React.Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "https://thekitchenapp.azurewebsites.net/inventory/expired",
+        "http://localhost:1331/inventory/expired",
         {
           headers: { auth: token },
         },

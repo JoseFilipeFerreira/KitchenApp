@@ -26,7 +26,7 @@ export default class Wishlists extends Component {
   getWishlists = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("https://thekitchenapp.azurewebsites.net/wishlist/all", {
+      .get("http://localhost:1331/wishlist/all", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
@@ -46,7 +46,7 @@ export default class Wishlists extends Component {
   getShared = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("https://thekitchenapp.azurewebsites.net/wishlist/shared", {
+      .get("http://localhost:1331/wishlist/shared", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
@@ -67,7 +67,7 @@ export default class Wishlists extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "https://thekitchenapp.azurewebsites.net/user/info",
+        "http://localhost:1331/user/info",
         {
           headers: { auth: token },
         },

@@ -59,7 +59,7 @@ export default class UserInfo extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "https://thekitchenapp.azurewebsites.net/user/info",
+        "http://localhost:1331/user/info",
         {
           headers: { auth: token },
         },
@@ -100,7 +100,7 @@ export default class UserInfo extends Component {
           form.append("name", value);
 
           axios
-            .post("https://thekitchenapp.azurewebsites.net/user/edit", form, {
+            .post("http://localhost:1331/user/edit", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -147,7 +147,7 @@ export default class UserInfo extends Component {
           form.append("phone_number", value);
 
           axios
-            .post("https://thekitchenapp.azurewebsites.net/user/edit", form, {
+            .post("http://localhost:1331/user/edit", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -179,7 +179,7 @@ export default class UserInfo extends Component {
           form.append("birthday", value);
 
           axios
-            .post("https://thekitchenapp.azurewebsites.net/user/edit", form, {
+            .post("http://localhost:1331/user/edit", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
