@@ -294,6 +294,7 @@ export default class Recipes extends Component {
                 placeholder="Search recipes..."
                 name="search"
                 value={search}
+                className="searchText"
                 onChange={this.changeHandler}
               />
               <button type="submit">

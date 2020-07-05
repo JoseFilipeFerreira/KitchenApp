@@ -230,6 +230,11 @@ export default class WishlistList extends React.Component {
               })
               .catch((error) => {
                 console.log(error);
+                Swal.fire(
+                  "Nope!",
+                  "User has not been added. Check if email exists.",
+                  "error"
+                );
               });
           }
         },
