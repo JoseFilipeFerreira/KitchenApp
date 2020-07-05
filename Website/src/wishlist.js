@@ -29,7 +29,7 @@ export default class Wishlist extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/user/info",
+        "https://thekitchenapp.azurewebsites.net/user/info",
         {
           headers: { auth: token },
         },
@@ -56,7 +56,7 @@ export default class Wishlist extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/wishlist/info/" + this.state.wishlist_id,
+        "https://thekitchenapp.azurewebsites.net/wishlist/info/" + this.state.wishlist_id,
         {
           headers: { auth: token },
         },
@@ -112,7 +112,7 @@ export default class Wishlist extends Component {
           form.append("name", value);
 
           axios
-            .post("http://localhost:1331/wishlist/edit", form, {
+            .post("https://thekitchenapp.azurewebsites.net/wishlist/edit", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })

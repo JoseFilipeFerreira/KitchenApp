@@ -245,7 +245,33 @@ linkcolor=black}
 \chapter{Arquitetura da Camada de Negócios}
     \section{Camada de Negócios}
     \section{Dicionário das Principais Classes}
+        \subsection{User}
+        Corresponde à representaão no sistema dos utilizadoeres registados,
+        contendo a sua informação pessoal e credenciais de acesso.
+        \subsection{Product}
+        Representa a unidade básica de todas as dispensas, listas de compras e
+        listas de favoritos. Contém informação do nome, categoria, preço e
+        quantidades por embalagem. Existem classes referentes aos vários tipos
+        de produtos, que herdam desta, e contêm informação extra para ser
+        possível acomodar os diferentes tipos de listas presentes no programa.
+        \subsection{Inventory}
+        A classe Inventory representa uma lista de produtos de um utilizador, contendo
+        informação sobre o seu dono, nome e produtos disponíveis nesta, e 
+        com quem é partilhada. A lista de produtos tem que pertencer à super
+        classe \textit{Product}, e vai ser isto que vai determinar a que
+        corresponde o inventário em questão, se é uma dispensa, lista de
+        favoritos ou de compras.
+        \subsection{Recipe}
+        Esta classe representa uma receita, contendo informação sobre o seu
+        nome, resumo, ingredientes necessários à confeção e instruções de
+        preparação.
     \section{Descrição da Arquitetura}
+    Cada utilizador possui uma lista de dispensas, uma lista de listas de 
+    produtos favoritos, uma lista de listas de compras e uma lista de receitas
+    favoritas.
+    Também existe a possibilidade de um utilizador partilhar as suas listas de
+    produtos, tendo cada utilizador uma lista de inventários partilhados
+    consigo.
     \section{Diagrama de Classes}
         \begin{figure}[H]
         \centering
@@ -296,11 +322,54 @@ linkcolor=black}
     
 
 \chapter{Metodologia de Implementação}
+O padrão arquitetural escolhido para a implementação da aplicação foi o MVC
+(\textit{Model View Controller}), por forma a obter um conjunto de pequenos
+componentes modulares de fácil integração, e assim facilitar o desenvolvimento 
+em paralelo. De forma a tornar a implementação ainda mais modular, a componente
+do controlador foi decomposta em pequenos controladores individuais, cada um
+responsável por lidar com uma pequena parte da aplicação, como por exemplo,
+lidar com as dispensas, ou com a autenticação.
+
+A escolha deste padrão arquitetural proporciona também uma camada de abstação,
+deixando a possibilidade de implementar a aplicação em mais do que uma
+plataforma, sem fazer alterações ao préviamente feito.
+
+A componente do modelo foi decomposta em camada de negócio e de dados, por forma
+a garantir a consitência, integridade e disponibilidade dos dados da aplicação,
+qualquer que seja a tecnologia utilizada para o suporte da base de dados.
+
+\chapter{Ferramentas utilizadas na implementação}
+
+A principal ferramenta utilizada para a implementação da aplicação apresentada
+foi a \textit{framework} de desenvolvimento ASP.NET Core. Esta escolha foi
+tomada graças à excelente documentação disponível e simplicidade de utilização.
+
+Como gestor de base de dados escolhemos o \textit{Neo4j}, que utiliza um modelo
+não relacional e que se enquadra com a disposição definida dos dados da
+aplicação.
+
+Para a criação da interface do produto final, foi utilizada a biblioteca
+\textit{React}, assente na linguagem de programação \textit{JavaScript}, pela
+sua popularidade e facilidade de utilização.
+
+Para tornar o \textit{deployment} da aplicação o mais agnóstico da máquina onde
+é feito, e para facilitar os testes feitos durante o processo de
+desenvolvimento, foi utilizada a ferramenta \textit{Docker} e \textit{Docker
+Compose}, na qual foram criados \textit{containers} contendo a aplicação, todas
+as suas configurações, tornando o processo de correr a aplicação apenas um
+comando, sem haver qualquer preocupação ao nível de \textit{networking}.
+
+Para garantir a disponibilidade da aplicação a qualquer hora, esta foi hospedada
+na plataforma \textit{Azure}, tirando partido do esforço anterior de utilização
+da ferramenta \textit{Docker}.
+
+Por fim, foram utilizados diversos \textit{browsers}, como o \textit{Firefox} ou
+o \textit{Brave}, em várias plataformas, para garantir a boa aparência da
+interface apresentada ao utilizador final.
 
 \chapter{Desenvolvimento do Projeto}
     \section{Conexão da Base de Dados}
     \section{API de Receitas}
-    \section{Calendarização}
 
 \chapter{Produto Final}
     \begin{figure}[H]

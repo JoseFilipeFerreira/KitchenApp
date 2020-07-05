@@ -8,7 +8,7 @@ export default class FriendsPage extends React.Component {
     let form = new FormData();
     form.append("friend", email);
     axios
-      .post("http://localhost:1331/user/friends/accept", form, {
+      .post("https://thekitchenapp.azurewebsites.net/user/friends/accept", form, {
         headers: { "Content-Type": "multipart/form-data", auth: token },
         withCredentials: true,
       })
@@ -28,7 +28,7 @@ export default class FriendsPage extends React.Component {
     let form = new FormData();
     form.append("friend", email);
     axios
-      .post("http://localhost:1331/user/friends/remove", form, {
+      .post("https://thekitchenapp.azurewebsites.net/user/friends/remove", form, {
         headers: { "Content-Type": "multipart/form-data", auth: token },
         withCredentials: true,
       })
@@ -57,7 +57,7 @@ export default class FriendsPage extends React.Component {
           form.append("friend", value);
 
           axios
-            .post("http://localhost:1331/user/friends/add", form, {
+            .post("https://thekitchenapp.azurewebsites.net/user/friends/add", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })

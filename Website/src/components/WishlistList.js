@@ -17,7 +17,7 @@ export default class WishlistList extends React.Component {
       if (result.value) {
         axios
           .post(
-            "http://localhost:1331/wishlist/remove/" + uid,
+            "https://thekitchenapp.azurewebsites.net/wishlist/remove/" + uid,
             {},
             {
               headers: { auth: token },
@@ -54,7 +54,7 @@ export default class WishlistList extends React.Component {
           form.append("name", value);
 
           axios
-            .post("http://localhost:1331/wishlist/edit", form, {
+            .post("https://thekitchenapp.azurewebsites.net/wishlist/edit", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -161,7 +161,7 @@ export default class WishlistList extends React.Component {
           form.append("name", value);
 
           axios
-            .post("http://localhost:1331/wishlist/add", form, {
+            .post("https://thekitchenapp.azurewebsites.net/wishlist/add", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })

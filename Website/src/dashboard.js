@@ -24,7 +24,7 @@ export default class Dashboard extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/inventory/all",
+        "https://thekitchenapp.azurewebsites.net/inventory/all",
         {
           headers: { auth: token },
         },
@@ -48,7 +48,7 @@ export default class Dashboard extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/inventory/shared",
+        "https://thekitchenapp.azurewebsites.net/inventory/shared",
         {
           headers: { auth: token },
         },
@@ -72,7 +72,7 @@ export default class Dashboard extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/user/info",
+        "https://thekitchenapp.azurewebsites.net/user/info",
         {
           headers: { auth: token },
         },

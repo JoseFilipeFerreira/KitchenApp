@@ -27,7 +27,7 @@ export default class Stared extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/recipe/stared",
+        "https://thekitchenapp.azurewebsites.net/recipe/stared",
         {
           headers: { auth: token },
         },
@@ -46,7 +46,7 @@ export default class Stared extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/user/info",
+        "https://thekitchenapp.azurewebsites.net/user/info",
         {
           headers: { auth: token },
         },

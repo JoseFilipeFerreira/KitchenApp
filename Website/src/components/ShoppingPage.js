@@ -16,7 +16,7 @@ export default class ShoppingList extends React.Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/product/category/all",
+        "https://thekitchenapp.azurewebsites.net/product/category/all",
         {
           headers: { auth: token },
         },
@@ -62,7 +62,7 @@ export default class ShoppingList extends React.Component {
     let form = new FormData();
     form.append("category", category);
     axios
-      .post("http://localhost:1331/product/category/getprods", form, {
+      .post("https://thekitchenapp.azurewebsites.net/product/category/getprods", form, {
         headers: { "Content-Type": "multipart/form-data", auth: token },
         withCredentials: true,
       })
@@ -123,7 +123,7 @@ export default class ShoppingList extends React.Component {
       form.append("uid", this.props.shopping_id);
 
       axios
-        .post("http://localhost:1331/shopping/addproduct", form, {
+        .post("https://thekitchenapp.azurewebsites.net/shopping/addproduct", form, {
           headers: { "Content-Type": "multipart/form-data", auth: token },
           withCredentials: true,
         })
@@ -159,7 +159,7 @@ export default class ShoppingList extends React.Component {
             form.append("friend", value);
   
             axios
-              .post("http://localhost:1331/shopping/share", form, {
+              .post("https://thekitchenapp.azurewebsites.net/shopping/share", form, {
                 headers: { "Content-Type": "multipart/form-data", auth: token },
                 withCredentials: true,
               })
@@ -199,7 +199,7 @@ export default class ShoppingList extends React.Component {
           form.append("name", value);
 
           axios
-            .post("http://localhost:1331/shopping/edit", form, {
+            .post("https://thekitchenapp.azurewebsites.net/shopping/edit", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -234,7 +234,7 @@ export default class ShoppingList extends React.Component {
         form.append("prod", uid);
 
         axios
-          .post("http://localhost:1331/shopping/removeproduct", form, {
+          .post("https://thekitchenapp.azurewebsites.net/shopping/removeproduct", form, {
             headers: { "Content-Type": "multipart/form-data", auth: token },
             withCredentials: true,
           })
@@ -277,7 +277,7 @@ export default class ShoppingList extends React.Component {
       form.append("uid", this.props.shopping_id);
 
       axios
-        .post("http://localhost:1331/shopping/editproduct", form, {
+        .post("https://thekitchenapp.azurewebsites.net/shopping/editproduct", form, {
           headers: { "Content-Type": "multipart/form-data", auth: token },
           withCredentials: true,
         })

@@ -35,7 +35,7 @@ export default class Friends extends Component {
   getFriends = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("http://localhost:1331/user/friends/get", {
+      .get("https://thekitchenapp.azurewebsites.net/user/friends/get", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
@@ -56,7 +56,7 @@ export default class Friends extends Component {
   getRequests = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("http://localhost:1331/user/friends/pending", {
+      .get("https://thekitchenapp.azurewebsites.net/user/friends/pending", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
@@ -77,7 +77,7 @@ export default class Friends extends Component {
   getSent = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("http://localhost:1331/user/friends/sent", {
+      .get("https://thekitchenapp.azurewebsites.net/user/friends/sent", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
@@ -99,7 +99,7 @@ export default class Friends extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/user/info",
+        "https://thekitchenapp.azurewebsites.net/user/info",
         {
           headers: { auth: token },
         },
@@ -136,7 +136,7 @@ export default class Friends extends Component {
           form.append("friend", value);
 
           axios
-            .post("http://localhost:1331/user/friends/add", form, {
+            .post("https://thekitchenapp.azurewebsites.net/user/friends/add", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -167,7 +167,7 @@ export default class Friends extends Component {
           form.append("friend", value);
 
           axios
-            .delete("http://localhost:1331/user/friends/remove", form, {
+            .delete("https://thekitchenapp.azurewebsites.net/user/friends/remove", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -210,7 +210,7 @@ export default class Friends extends Component {
         form.append("friend", email);
 
           axios
-            .post("http://localhost:1331/user/friends/accept", form, {
+            .post("https://thekitchenapp.azurewebsites.net/user/friends/accept", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -236,7 +236,7 @@ export default class Friends extends Component {
         form.append("friend", email);
 
           axios
-            .delete("http://localhost:1331/user/friends/remove", form, {
+            .delete("https://thekitchenapp.azurewebsites.net/user/friends/remove", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })
@@ -273,7 +273,7 @@ export default class Friends extends Component {
         form.append("friend", email);
 
           axios
-            .post("http://localhost:1331/user/friends/remove", form, {
+            .post("https://thekitchenapp.azurewebsites.net/user/friends/remove", form, {
               headers: { "Content-Type": "multipart/form-data", auth: token },
               withCredentials: true,
             })

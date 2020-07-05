@@ -33,7 +33,7 @@ export default class Products extends Component {
 
       form.append("regex", search);
       axios
-        .post("http://localhost:1331/product/search", form, {
+        .post("https://thekitchenapp.azurewebsites.net/product/search", form, {
           headers: { "Content-Type": "multipart/form-data", auth: token},
           withCredentials: true,
         })
@@ -51,7 +51,7 @@ export default class Products extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/user/info",
+        "https://thekitchenapp.azurewebsites.net/user/info",
         {
           headers: { auth: token },
         },
@@ -92,7 +92,7 @@ export default class Products extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/inventory/all",
+        "https://thekitchenapp.azurewebsites.net/inventory/all",
         {
           headers: { auth: token },
         },
@@ -116,7 +116,7 @@ export default class Products extends Component {
   getWishlists = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("http://localhost:1331/wishlist/all", {
+      .get("https://thekitchenapp.azurewebsites.net/wishlist/all", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {
@@ -137,7 +137,7 @@ export default class Products extends Component {
   getShoplists = () => {
     let token = localStorage.getItem('auth');
     axios
-      .get("http://localhost:1331/shopping/all", {
+      .get("https://thekitchenapp.azurewebsites.net/shopping/all", {
         headers: { "auth": token }
       }, { withCredentials: true })
       .then((response) => {

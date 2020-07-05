@@ -29,7 +29,7 @@ export default class Recipe extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/user/info",
+        "https://thekitchenapp.azurewebsites.net/user/info",
         {
           headers: { auth: token },
         },
@@ -58,7 +58,7 @@ export default class Recipe extends Component {
     form.append("id", this.state.recipe_id);
 
     axios
-      .post("http://localhost:1331/recipe/star", form, {
+      .post("https://thekitchenapp.azurewebsites.net/recipe/star", form, {
         headers: { "Content-Type": "multipart/form-data", auth: token },
         withCredentials: true,
       })
@@ -90,7 +90,7 @@ export default class Recipe extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/recipe/get/" + this.state.id,
+        "https://thekitchenapp.azurewebsites.net/recipe/get/" + this.state.id,
         {
           headers: { auth: token },
         },

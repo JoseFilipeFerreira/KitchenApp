@@ -26,7 +26,7 @@ export default class Shopping extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/user/info",
+        "https://thekitchenapp.azurewebsites.net/user/info",
         {
           headers: { auth: token },
         },
@@ -53,7 +53,7 @@ export default class Shopping extends Component {
     let token = localStorage.getItem("auth");
     axios
       .get(
-        "http://localhost:1331/shopping/info/" + this.state.shopping_id,
+        "https://thekitchenapp.azurewebsites.net/shopping/info/" + this.state.shopping_id,
         {
           headers: { auth: token },
         },
