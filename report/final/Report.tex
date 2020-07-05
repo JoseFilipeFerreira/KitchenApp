@@ -3,8 +3,8 @@
 \usepackage[portuguese]{babel}
 \usepackage{hyperref}
 \usepackage{a4wide}
-\hypersetup{pdftitle={Trabalho 1},
-pdfauthor={João Teixeira, José Ferreira, Maria Silva, Miguel Solino},
+\hypersetup{pdftitle={LI4 - PL1 - Grupo 1},
+pdfauthor={João Teixeira, José Ferreira, Maria Silva, Miguel Solino, Pedro Oliveira},
 colorlinks=true,
 urlcolor=blue,
 linkcolor=black}
@@ -19,7 +19,20 @@ linkcolor=black}
 \usepackage{bashful}
 \usepackage{verbatim}
 \usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{tikz,fullpage}
+\usepackage{pgfgantt}
+\usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{mwe}
+\usetikzlibrary{arrows,%
+                petri,%
+                topaths}%
+\usepackage{tkz-berge}
 \usetikzlibrary{positioning,automata,decorations.markings}
+\AfterEndEnvironment{figure}{\noindent\ignorespaces}
+\AfterEndEnvironment{table}{\noindent\ignorespaces}
+
 \definecolor{solarized@base03}{HTML}{002B36}
 \definecolor{solarized@base02}{HTML}{073642}
 \definecolor{solarized@base01}{HTML}{586e75}
@@ -38,7 +51,7 @@ linkcolor=black}
 \definecolor{solarized@green}{HTML}{859900}
 
 \lstset{
-  language=Python,
+  language=Java,
   upquote=true,
   columns=fixed,
   tabsize=4,
@@ -58,134 +71,116 @@ linkcolor=black}
 
 \begin{document}
 
-% Title
-\title{Titulo\\
-\large Grupo Nº 1}
-
-% Author
-\author{João Teixeira (A85504) \and José Ferreira (A83683) \and Maria Silva (A83840) \and Miguel Solino (A86435) \and Pedro Oliveira (A83762)}
-
-% % Supervisor(s) (!!!)
-% \supervisor{Orientador}
-% \cosupervisor{Coorientador}
-
-% Date
+\title{Laboratórios de Informática IV\\
+\large PL1 - Grupo 1}
+\author{José Ferreira (A83683) \and João Teixeira (A85504) \and Maria Silva (A83840) \and Miguel Solino (A86435) \and Pedro Oliveira (A83762)}
 \date{\today}
 
-% (!!!) linhas 98 - 132 ?
 \begin{center}
     \begin{minipage}{0.75\linewidth}
         \centering
-       
-% (!!!) mudar imagem       
         \includegraphics[width=0.4\textwidth]{images/eng.jpeg}\par\vspace{1cm}
-        \vspace{1cm}
+        \vspace{1.5cm}
         \href{https://www.uminho.pt/PT}
         {\color{black}{\scshape\LARGE Universidade do Minho}} \par
         \vspace{1cm}
         \href{https://www.di.uminho.pt/}
         {\color{black}{\scshape\Large Departamento de Informática}} \par
+        \vspace{1.5cm}
         \maketitle
     \end{minipage}
 \end{center}
 
+
+\chapter{Resumo}
+
+\chapter{Indice}
 \tableofcontents
 
-\pagebreak
+\chapter{Introdução}
+    \section{Contextualização}
+    \section{Apresentação do Caso de Estudo}
+    \section{Motivação e Objetivos}
+    \section{Estrutura do Relatório}
 
-% CHAPTER - Introdução -------------------------------------------------------------------------------
-	\chapter{Introduction}
-	    \input{introduction/intro.tex}
-        \section{Context}
-        \input{introduction/context.tex}
-        \section{Motivation}
-        \input{introduction/motiv.tex}
-        \section{Goals}
-        \input{introduction/goals.tex}
-        \section{Structure}
-        \input{introduction/structure.tex}
+\chapter{Fundamentação}
+    \section{Definição da Identidade do Sistema}
+    \section{Justificação, Viabilidade e Utilidade do Sistema}
 
+\chapter{Planeamento}
+    \section{Identificação dos Recursos Necessários}
+    \section{Modelação do Sistema a Implementar - Maqueta}
+    \section{Definição de Medida de Sucesso}
+    \section{Plano de Desenvolvimento}
 
-% CHAPTER - Estado da Arte ---------------------------------------------------------------------------
-	\chapter{Literature Review}
-		State of the art review; related work
-        \input{literaturereview/introduction.tex}
-        \input{literaturereview/section1.tex}
-        \section{Section 1}
+\chapter{Levantamento de Requisitos}
+    \section{Requisitos Funcionais}
+    \section{Requisitos Não Funcionais}
 
-        
-        \section{Basics/Background/Related work}
+\chapter{Modelo de Domínios}
 
-	% CHAPTER - Problem and Challenges ---------------
-	\chapter{Methods}
-	         The problem and its challenges.
+\chapter{Diagrama de Use Cases}
+    \section{Registar}
+    \section{Autenticar}
+    \section{Editar informação pessoal}
+    \section{Editar receitas favoritas}
+    \section{Ver perfil}
+    \section{Editar inventários}
+    \section{Editar wishlists}
+    \section{Editar listas de compras}
+    \section{Editar amigos}
+    \section{Consultar receitas por inventário}
+    \section{Pesquisar receitas}
+    \section{Pesquisar produtos}
 
-	\section{Proposed Approach - solution}
-	In this section, it is presented various ways to display an image.
-     \subsection{System Architecture}
-     A block diagram of the planned system / approach
+\chapter{Especificação de Use Cases}
+    \section{Registar}
+    \section{Autenticar}
+    \section{Editar informação pessoal}
+    \section{Editar receitas favoritas}
+    \section{Ver perfil}
+    \section{Editar inventários}
+    \section{Editar wishlists}
+    \section{Editar listas de compras}
+    \section{Editar amigos}
+    \section{Consultar receitas por inventário}
+    \section{Pesquisar receitas}
+    \section{Pesquisar produtos}
 
-	Here we have an example of inserting an image between the text paragraphs.
-	
-	% CHAPTER - Contribution -------------------------
-	\chapter{Development}
-		
-	\section{Decisions}
-    \section{Implementation}
-    \section{Outcomes}
-    Main result(s) and their scientific evidence
-	\section{Summary}
+\chapter{Arquitetura da Solução}
 
-	% CHAPTER - Application -------------------------
-	\chapter{Case Studies / Experiments}
-		Application of main result (examples and case studies)
-	\section{Experiment setup}
-    \section{Results}
-    \section{Discussion}
-	\section{Summary}
+\chapter{Diagrama de Sequência de Subsistemas}
 
-	% CHAPTER - Conclusion/Future Work --------------
-	\chapter{Conclusion}
-		Conclusions and future work.
-	\section{Conclusions}
-	\section{Prospect for future work}
-	
-	% (!!!)
-	\bookmarksetup{startatroot} % Ends last part.
-	\addtocontents{toc}{\bigskip} % Making the table of contents look good.
-	%\cleardoublepage
+\chapter{Máquina de Estado - Preparar Receita}
 
-	%- Bibliography (needs bibtex) -%
-	\bibliography{dissertation}
+\chapter{Arquitetura da Camada de Negócios}
+    \section{Camada de Negócios}
+    \section{Dicionário das Principais Classes}
+    \section{Descrição da Arquitetura}
+    \section{Diagrama de Classes}
+    \section{Diagrama de ORM}
 
-	% Index of terms (needs  makeindex) -------------
-	%\printindex
-	
-	
-	% APPENDIX --------------------------------------
-	\umappendix{Appendix}
-	
-	% Add appendix chapters
-	\chapter{Support material}
-	Auxiliary results which are not main-stream; or
+\chapter{Camada de Dados}
+    \section{Modelo Lógico}
+    \section{Diagrama de Modelo Lógico}
 
-	%\chapter{Details of results}
-	Details of results whose length would compromise readability of main text; or
+\chapter{Proposta de Interface}
 
-	%\chapter{Listings}
-	Specifications and Code Listings: should this be the case; or
+\chapter{Metodologia de Imnplementação}
 
-	%\chapter{Tooling}
-	Tooling: Should this be the case.
+\chapter{Desenvolvimento do Projeto}
+    \section{Conexão da Base de Dados}
+    \section{API de Receitas}
+    \section{Calendarização}
 
-	%Anyone using \Latex\ should consider having a look at \TUG,
-	%the \tug{\TeX\ Users Group}
+\chapter{Produto Final}
+    \section{Página Inicial}
+    \section{Dashboard}
 
+\chapter{Conclusões}
 
-	% Back Cover -------------------------------------------
-	% (!!!)
-	\umbackcover{
-	NB: place here information about funding, FCT project, etc in which the work is framed. Leave empty otherwise.
-	}
+\chapter{Referências}
+
+\chapter{Lista de Siglas e Acrónimos}
 
 \end{document}
