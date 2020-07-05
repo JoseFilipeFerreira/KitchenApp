@@ -648,6 +648,31 @@ interface apresentada ao utilizador final.
     nome, e a capacidade de sugerir receitas com base no que existe numa
     despensa.
 
+    \section{Gestão de Logins}
+    Por forma a simplificar a gestão do utilizador que faz os pedidos,
+    implementamos um sistema de tokens, assente no standard \textit{JSON Web
+    Token} (\textit{JWT}), que contém informação sobre o utilizador, prazo de
+    validade e também uma assinatura digital que marca a autenticidade do mesmo,
+    não dando assim acessos indevidos às páginas privadas do utilizador. Este
+    token é validado e renovado a cada pedido efetuado, e é transmitido num
+    header do pedido \textit{HTTP}.
+
+\chapter{Arquitetura Final do Projeto}
+Após a implementação da aplicação, a arquitetura final tem o seguinte aspeto:
+
+No backoffice, os pedidos são efetuados pela \textit{Web API} definida e
+documentada, e são atendidos pelo \textit{nginx}, e posteriormente 
+encaminhados para o serviço referente ao pedido recebido. Caso sejam 
+pedidos que necessitem autenticação, antes de encaminhados para o serviço 
+correto, ainda passam pelo \textit{Auth Service}, responsável pela autenticação 
+dos utilizadores. Apenas é exposta a ligação ao \textit{proxy} ao exterior,
+sendo todas as restantes conexões aos serviços e base de dados feitas
+internamente. Apenas um dos serviços faz conexões diretas ao exterior, sendo
+este o referente às receitas, que faz pedidos à API externa integrada.
+
+O frontend comunica com os backend com os mesmos métodos acima descritos,
+sendo o backend completamente independente do frontend.
+
 \chapter{Produto Final}
 
     Ao longo de várias semanas a nossa equipa desenvolveu o Kitchen App até que
