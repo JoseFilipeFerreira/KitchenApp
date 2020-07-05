@@ -19,16 +19,12 @@ linkcolor=black}
 \usepackage{bashful}
 \usepackage{verbatim}
 \usepackage{amsmath}
-\usepackage{tikz}
-\usepackage{tikz,fullpage}
-\usepackage{pgfgantt}
 \usepackage{amssymb}
 \usepackage{multirow}
 \usepackage{mwe}
 \usetikzlibrary{arrows,%
                 petri,%
                 topaths}%
-\usepackage{tkz-berge}
 \usetikzlibrary{positioning,automata,decorations.markings}
 \AfterEndEnvironment{figure}{\noindent\ignorespaces}
 \AfterEndEnvironment{table}{\noindent\ignorespaces}
@@ -94,7 +90,6 @@ linkcolor=black}
 
 \chapter{Resumo}
 
-\chapter{Indice}
 \tableofcontents
 
 \chapter{Introdução}
@@ -120,36 +115,80 @@ linkcolor=black}
 \chapter{Modelo de Domínios}
 
 \chapter{Diagrama de Use Cases}
-    \section{Registar}
-    \section{Autenticar}
-    \section{Editar informação pessoal}
-    \section{Editar receitas favoritas}
-    \section{Ver perfil}
-    \section{Editar inventários}
-    \section{Editar wishlists}
-    \section{Editar listas de compras}
-    \section{Editar amigos}
-    \section{Consultar receitas por inventário}
-    \section{Pesquisar receitas}
-    \section{Pesquisar produtos}
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=\textwidth]{images/diagrama_use_cases.png}
+    \end{figure}
 
 \chapter{Especificação de Use Cases}
     \section{Registar}
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/usecases/registar.png}
+        \end{figure}
+
     \section{Autenticar}
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/usecases/autenticar.png}
+        \end{figure}
+
     \section{Editar informação pessoal}
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/usecases/editar_utilizador.png}
+        \end{figure}
+
     \section{Editar receitas favoritas}
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/usecases/editar_receitas_favoritas.png}
+        \end{figure}
+
     \section{Ver perfil}
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/usecases/ver_perfil.png}
+        \end{figure}
+
     \section{Editar inventários}
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/usecases/editar_iventarios_1.png}
+            \includegraphics[width=\textwidth]{images/usecases/editar_iventarios_2.png}
+        \end{figure}
+
     \section{Editar wishlists}
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/usecases/editar_whishlist_1.png}
+            \includegraphics[width=\textwidth]{images/usecases/editar_whishlist_2.png}
+        \end{figure}
+
     \section{Editar listas de compras}
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/usecases/editar_shoppinglist_1.png}
+            \includegraphics[width=\textwidth]{images/usecases/editar_shoppinglist_2.png}
+        \end{figure}
+
     \section{Editar amigos}
-    \section{Consultar receitas por inventário}
-    \section{Pesquisar receitas}
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/usecases/editar_amigos.png}
+        \end{figure}
+
     \section{Pesquisar produtos}
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/usecases/pesquisar_produto.png}
+        \end{figure}
 
-\chapter{Arquitetura da Solução}
-
-\chapter{Diagrama de Sequência de Subsistemas}
+    \section{Ver receita}
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=\textwidth]{images/usecases/ver_receita.png}
+        \end{figure}
 
 \chapter{Máquina de Estado - Preparar Receita}
 
@@ -166,7 +205,7 @@ linkcolor=black}
 
 \chapter{Proposta de Interface}
 
-\chapter{Metodologia de Imnplementação}
+\chapter{Metodologia de Implementação}
 
 \chapter{Desenvolvimento do Projeto}
     \section{Conexão da Base de Dados}
