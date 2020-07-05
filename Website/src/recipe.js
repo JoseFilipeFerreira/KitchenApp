@@ -4,6 +4,7 @@ import axios from "axios";
 import "./dashboard.css";
 import RecipePage from "./components/RecipePage";
 import Notifications from "./components/Notifications"
+import Swal from "sweetalert2";
 
 export default class Recipe extends Component {
   constructor(props) {

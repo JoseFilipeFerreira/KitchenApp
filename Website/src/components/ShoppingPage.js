@@ -109,7 +109,7 @@ export default class ShoppingList extends React.Component {
     const { value: formValues } = await Swal.fire({
       title: "Add Product",
       html:
-        '<input id="swal-input1" placeholder="Quantity" className="swal2-input">',
+        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
       focusConfirm: false,
       preConfirm: () => {
         let quantity = document.getElementById("swal-input1").value;
@@ -263,7 +263,7 @@ export default class ShoppingList extends React.Component {
     const { value: formValues } = await Swal.fire({
       title: "Edit Product",
       html:
-        '<input id="swal-input1" placeholder="Quantity" className="swal2-input">',
+        '<input id="swal-input1" placeholder="Quantity" class="swal2-input">',
       focusConfirm: false,
       preConfirm: () => {
         let quantity = document.getElementById("swal-input1").value;
