@@ -23,6 +23,7 @@ linkcolor=black}
 \usepackage{amssymb}
 \usepackage{multirow}
 \usepackage{mwe}
+\usepackage[parfill]{parskip}
 \usetikzlibrary{arrows,%
                 petri,%
                 topaths}%
@@ -381,6 +382,10 @@ Compose}, na qual foram criados \textit{containers} contendo a aplicação, toda
 as suas configurações, tornando o processo de correr a aplicação apenas um
 comando, sem haver qualquer preocupação ao nível de \textit{networking}.
 
+De forma a validar os pedidos chegados à aplicação, e encaminha-los para o
+devido controlador, utilizamos como \textit{Reverse Proxy} a ferramenta
+\textit{Nginx}.
+
 Para garantir a disponibilidade da aplicação a qualquer hora, esta foi hospedada
 na plataforma \textit{Azure}, tirando partido do esforço anterior de utilização
 da ferramenta \textit{Docker}.
@@ -391,7 +396,28 @@ interface apresentada ao utilizador final.
 
 \chapter{Desenvolvimento do Projeto}
     \section{Conexão da Base de Dados}
-    \section{API de Receitas}
+    Após a instalação e configuração do motor de base de dados Neo4j, passamos à
+    integração deste com a aplicação em desenvolvimento. Para o processo de
+    conexão entre ambas as partes utilizamos o \textit{Neo4jDotNetDriver},
+    pacote oficial deste motor de base de dados para a linguagem de programação
+    em uso, \textit{C\#}.
+
+    Como o Neo4j dispensa uma geração incial da base de dados, partimos para a
+    escrita de queries que manipulasse esta, de forma a que, quando esta estiver
+    povoada, se assemelhe ao inicialmente proposto.
+
+    Para povoar a base de dados, optamos por apenas introduzir produtos, sendo
+    contas de utilizadores criadas à medida que necessário.
+
+    \section{Pesquisa e Sugestão de Receitas}
+    Para complementar a funcionalidade chave desta aplicação, gestão de stocks
+    de despensas, foi integrado na aplicação uma API externa, chamada
+    \textit{Spoonacular}, capaz de fornecer receitas culinárias, permitindo uma
+    pesquisa bastante detalhada sobre estas.
+
+    Assim, implementamos na aplicação a capacidade de pesquisa de receitas por
+    nome, e a capacidade de sugerir receitas com base no que existe numa
+    despensa.
 
 \chapter{Produto Final}
     \begin{figure}[H]
