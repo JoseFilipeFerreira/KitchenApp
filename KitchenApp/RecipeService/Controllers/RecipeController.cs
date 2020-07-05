@@ -15,7 +15,7 @@ namespace RecipeService.Controllers
         private string API_KEY = ConfigurationManager.AppSettings.Get("SpoonacularKey");
         
         [HttpPost]
-        public async Task<List<Recipe>> Search([FromHeader] string auth, [FromForm] string keys, [FromForm] string inventory)
+        public async Task<List<MinimalRecipe>> Search([FromHeader] string auth, [FromForm] string keys, [FromForm] string inventory)
         {
             string user;
             if ((user = JwtBuilder.UserJwtToken(auth).Result) == null || !UserStore.Exists(user).Result)
@@ -24,7 +24,7 @@ namespace RecipeService.Controllers
                 return null;
             }
 
-            List<Recipe> list;
+            List<MinimalRecipe> list;
 
             HttpContext.Response.Headers.Add("auth", auth);
             if (inventory != null)
@@ -37,17 +37,17 @@ namespace RecipeService.Controllers
                 }
 
                 var r = new List<Product>(inv._products);
-                list = RecipeSearch.SearchRecipe(API_KEY, 10, keys, r);
+                list = RecipeSearch.SearchMinimalRecipe(API_KEY, 10, r);
             }
 
             else
             {
-                list = RecipeSearch.SearchRecipe(API_KEY, 10, keys);
+                list = RecipeSearch.SearchMinimalRecipe(API_KEY, 10, keys);
             }
 
             foreach (var v in list)
             {
-                await RecipeStore.Add(new MinimalRecipe(v));
+                await RecipeStore.Add(v);
             }
 
             return list;

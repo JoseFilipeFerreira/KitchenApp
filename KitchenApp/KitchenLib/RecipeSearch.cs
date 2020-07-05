@@ -15,21 +15,21 @@ namespace KitchenLib
     public class RecipeSearch
     {
         // 1 point base + 0.01 points per recipe
-        public static List<MinimalRecipe> SearchMinimalRecipe(string API_KEY, uint number, List<Product> ingridients)
+        public static List<MinimalRecipe> SearchMinimalRecipe(string API_KEY, uint number, List<Product> ingredients)
         {
             var options = "number=" + number;
 
-            var ingridientsString = ingridients.Select(s => s._name).ToList();
+            var ingredientsString = ingredients.Select(s => s._name).ToList();
             options += "&ingredients=";
-            options += string.Join(",", ingridientsString);
+            options += string.Join(",", ingredientsString);
             
-            return GetMinimalRecipies(API_KEY, options);
+            return GetMinimalIngredients(API_KEY, options);
         }
         
         // 2 point 1st recipe + 0.51 point per recipe
-        public static List<Recipe> SearchRecipe(string API_KEY, uint number, List<Product> ingridients)
+        public static List<Recipe> SearchRecipe(string API_KEY, uint number, List<Product> ingredients)
         {
-            return SearchRecipe(API_KEY, SearchMinimalRecipe(API_KEY, number, ingridients));
+            return SearchRecipe(API_KEY, SearchMinimalRecipe(API_KEY, number, ingredients));
         }
         
         // 1 point base + 0.01 points per recipe
@@ -46,27 +46,7 @@ namespace KitchenLib
         {
             return SearchRecipe(API_KEY, SearchMinimalRecipe(API_KEY, number, recipeName));
         }
-        
-        // 1 point base + 0.01 points per recipe
-        public static List<MinimalRecipe> SearchMinimalRecipe(string API_KEY, uint number, string recipeName, List<Product> ingridients)
-        {
-            var options = "number=" + number;
-            
-            options += "&query=" + recipeName;
-            
-            var ingridientsString = ingridients.Select(s => s._name).ToList();
-            options += "&ingredients=";
-            options += string.Join(",", ingridientsString);
-            
-            return GetMinimalRecipies(API_KEY, options);
-        }
-        
-        // 2 point 1st recipe + 0.51 point per recipe
-        public static List<Recipe> SearchRecipe(string API_KEY, uint number, string recipeName, List<Product> ingridients)
-        {
-            return SearchRecipe(API_KEY, SearchMinimalRecipe(API_KEY, number, recipeName, ingridients));
-        }
-        
+
         // 1 point
         public static Recipe SearchSingleRecipe(string API_KEY, MinimalRecipe mR)
         {
@@ -100,6 +80,16 @@ namespace KitchenLib
         private static List<MinimalRecipe> GetMinimalRecipies(string API_KEY, string options)
         {
             var url = "https://api.spoonacular.com/recipes/complexSearch?"
+                      + options
+                      + "&instructionsRequired=true&apiKey="
+                      + API_KEY;
+            return JsonConvert.DeserializeObject<RootMinimalRecipes>(get_request(url)).results;
+        }
+        
+        // 1 point base + 0.01 points per recipe
+        private static List<MinimalRecipe> GetMinimalIngredients(string API_KEY, string options)
+        {
+            var url = "https://api.spoonacular.com/recipes/findByIngredients?"
                       + options
                       + "&instructionsRequired=true&apiKey="
                       + API_KEY;
