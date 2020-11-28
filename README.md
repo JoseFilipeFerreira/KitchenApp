@@ -3,7 +3,7 @@
 </p>
 
 # Kitchen App
-Pantry Managment system with [Spoonacular](https://spoonacular.com/) integration created with ASP.NET and React.js framework and deployed with Docker (Informatic Labs IV assignment @ UMinho)
+Pantry Managment Webapp with [Spoonacular](https://spoonacular.com/) integration created with ASP.NET and React.js framework and deployed with Docker (Informatic Labs IV assignment @ UMinho)
 
 ## Set-up
 ```bash
